@@ -13,7 +13,7 @@
   align-items: center;
 }
 
-.loginForm {
+.registerForm {
   width: 100%;
   max-width: 400px;
   padding: 40px;
@@ -60,16 +60,24 @@
   border-bottom: 2px solid #e74c3c;
 }
 
-.warning {
-  position: absolute;
-  right: 10px;
-  top: 36px;
-  font-size: 18px;
+.errorText {
   color: #e74c3c;
+  font-size: 12px;
+  margin-top: 5px;
+  display: block;
+}
+
+.errorMessage {
+  background-color: #ffe6e6;
+  color: #e74c3c;
+  padding: 10px;
+  border-radius: 4px;
+  margin-bottom: 20px;
+  font-size: 14px;
 }
 
 /* Botón */
-.signInBtn {
+.submitButton {
   width: 100%;
   padding: 12px;
   background-color: transparent;
@@ -82,9 +90,14 @@
   transition: all 0.3s ease;
 }
 
-.signInBtn:hover {
+.submitButton:hover:not(:disabled) {
   background-color: #2f4f4f;
   color: white;
+}
+
+.submitButton:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 
 /* Enlaces */
