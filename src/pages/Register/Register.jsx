@@ -1,35 +1,52 @@
 import { useState } from "react";
-import styles from "./login.module.css";
+import styles from "./register.module.css";
 
-export default function Login() {
+export default function Register() {
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [errors, setErrors] = useState({});
   const [isLoading, setIsLoading] = useState(false);
   const [touched, setTouched] = useState({
+    name: false,
     email: false,
     password: false,
+    confirmPassword: false,
   });
 
   const validate = () => {
     const newErrors = {};
+    
+    if (!name.trim()) {
+      newErrors.name = "El nombre es obligatorio";
+    }
+    
     if (!email.includes("@") || !email.includes(".")) {
       newErrors.email = "Correo inválido";
     }
+    
     if (password.length < 8) {
       newErrors.password = "Contraseña muy corta (mínimo 8 caracteres)";
     }
+    
+    if (password !== confirmPassword) {
+      newErrors.confirmPassword = "Las contraseñas no coinciden";
+    }
+    
     return newErrors;
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Submitting form with email:", email, "and password:", password);
+    console.log("Submitting form with name:", name, "email:", email, "and password:", password);
     
     // Marcar todos los campos como tocados
     setTouched({
+      name: true,
       email: true,
       password: true,
+      confirmPassword: true,
     });
 
     const validationErrors = validate();
@@ -42,43 +59,36 @@ export default function Login() {
     setIsLoading(true);
 
     try {
-      console.log("Enviando request a:", "http://localhost:3000/auth/login");
+      console.log("Enviando request a:", "http://localhost:3000/auth/register");
       
-      const response = await fetch("http://localhost:3000/auth/login", {
+      const response = await fetch("http://localhost:3000/auth/register", {
         method: "POST",
         headers: { 
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ email, password }),
-        credentials: 'include' // Importante para cookies de autenticación
+        body: JSON.stringify({ name, email, password }),
       });
 
       console.log("Response status:", response.status);
-      console.log("Response headers:", Object.fromEntries([...response.headers]));
-
-      const responseData = await response.text(); // Primero leer como texto
+      
+      const responseData = await response.text();
       console.log("Response data:", responseData);
 
       let data;
       try {
-        data = JSON.parse(responseData); // Intentar parsear como JSON
+        data = JSON.parse(responseData);
       } catch (parseError) {
         console.error("Error parsing JSON:", parseError);
         throw new Error("Respuesta del servidor no es JSON válido");
       }
 
       if (response.ok) {
-        console.log("Login exitoso:", data);
-        // Guardar token si viene en la respuesta
-        if (data.access_token) {
-          localStorage.setItem('token', data.access_token);
-          console.log("Token guardado en localStorage");
-        }
-        // Redirigir o hacer algo con el login exitoso
-        alert("Login exitoso!");
+        console.log("Registro exitoso:", data);
+        alert("Registro exitoso! Por favor inicia sesión.");
+        // Aquí podrías redirigir al login
       } else {
-        console.error("Error en el login:", data.message || response.statusText);
-        setErrors({ submit: data.message || "Error en el login" });
+        console.error("Error en el registro:", data.message || response.statusText);
+        setErrors({ submit: data.message || "Error en el registro" });
       }
     } catch (error) {
       console.error("Error en la petición:", error);
@@ -98,8 +108,8 @@ export default function Login() {
   return (
     <div className={styles.container}>
       <div className={styles.formSection}>
-        <form onSubmit={handleSubmit} className={styles.loginForm}>
-          <h2 className={styles.title}>Login</h2>
+        <form onSubmit={handleSubmit} className={styles.registerForm}>
+          <h2 className={styles.title}>Registro</h2>
 
           {/* Mostrar error general */}
           {errors.submit && (
@@ -109,11 +119,29 @@ export default function Login() {
           )}
 
           <div className={styles.inputGroup}>
+            <label htmlFor="name">NOMBRE COMPLETO</label>
+            <input
+              type="text"
+              id="name"
+              placeholder="Ingresa tu nombre completo"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              onBlur={() => handleBlur("name")}
+              className={`${styles.input} ${errors.name && touched.name ? styles.inputError : ""}`}
+              required
+              disabled={isLoading}
+            />
+            {errors.name && touched.name && (
+              <span className={styles.errorText}>{errors.name}</span>
+            )}
+          </div>
+
+          <div className={styles.inputGroup}>
             <label htmlFor="email">EMAIL</label>
             <input
               type="email"
               id="email"
-              placeholder="Email only"
+              placeholder="Email válido"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               onBlur={() => handleBlur("email")}
@@ -127,11 +155,11 @@ export default function Login() {
           </div>
 
           <div className={styles.inputGroup}>
-            <label htmlFor="password">PASSWORD</label>
+            <label htmlFor="password">CONTRASEÑA</label>
             <input
               type="password"
               id="password"
-              placeholder="Must be at least 8 characters"
+              placeholder="Mínimo 8 caracteres"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               onBlur={() => handleBlur("password")}
@@ -144,17 +172,34 @@ export default function Login() {
             )}
           </div>
 
+          <div className={styles.inputGroup}>
+            <label htmlFor="confirmPassword">REPETIR CONTRASEÑA</label>
+            <input
+              type="password"
+              id="confirmPassword"
+              placeholder="Repite tu contraseña"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              onBlur={() => handleBlur("confirmPassword")}
+              className={`${styles.input} ${errors.confirmPassword && touched.confirmPassword ? styles.inputError : ""}`}
+              required
+              disabled={isLoading}
+            />
+            {errors.confirmPassword && touched.confirmPassword && (
+              <span className={styles.errorText}>{errors.confirmPassword}</span>
+            )}
+          </div>
+
           <button 
             type="submit" 
             className={styles.submitButton}
             disabled={isLoading}
           >
-            {isLoading ? "Cargando..." : "Iniciar sesión"}
+            {isLoading ? "Registrando..." : "CREAR CUENTA"}
           </button>
 
           <div className={styles.links}>
-            <a href="#">Forgot your password?</a>
-            <a href="#">Create Account</a>
+            <a href="/login">¿Ya tienes cuenta? Inicia sesión</a>
           </div>
         </form>
       </div>
