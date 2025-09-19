@@ -5,14 +5,14 @@ export default function Register() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
+  const [repeatPassword, setRepeatPassword] = useState("");
   const [errors, setErrors] = useState({});
   const [isLoading, setIsLoading] = useState(false);
   const [touched, setTouched] = useState({
     name: false,
     email: false,
     password: false,
-    confirmPassword: false,
+    repeatPassword: false,
   });
 
   const validate = () => {
@@ -30,8 +30,8 @@ export default function Register() {
       newErrors.password = "Contraseña muy corta (mínimo 8 caracteres)";
     }
     
-    if (password !== confirmPassword) {
-      newErrors.confirmPassword = "Las contraseñas no coinciden";
+    if (password !== repeatPassword) {
+      newErrors.repeatPassword = "Las contraseñas no coinciden";
     }
     
     return newErrors;
@@ -46,7 +46,7 @@ export default function Register() {
       name: true,
       email: true,
       password: true,
-      confirmPassword: true,
+      repeatPassword: true,
     });
 
     const validationErrors = validate();
@@ -66,7 +66,7 @@ export default function Register() {
         headers: { 
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ name, email, password }),
+        body: JSON.stringify({ name, email, password, repeatPassword }), // Ahora incluye repeatPassword
       });
 
       console.log("Response status:", response.status);
@@ -173,20 +173,20 @@ export default function Register() {
           </div>
 
           <div className={styles.inputGroup}>
-            <label htmlFor="confirmPassword">REPETIR CONTRASEÑA</label>
+            <label htmlFor="repeatPassword">REPETIR CONTRASEÑA</label>
             <input
               type="password"
-              id="confirmPassword"
+              id="repeatPassword"
               placeholder="Repite tu contraseña"
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-              onBlur={() => handleBlur("confirmPassword")}
-              className={`${styles.input} ${errors.confirmPassword && touched.confirmPassword ? styles.inputError : ""}`}
+              value={repeatPassword}
+              onChange={(e) => setRepeatPassword(e.target.value)}
+              onBlur={() => handleBlur("repeatPassword")}
+              className={`${styles.input} ${errors.repeatPassword && touched.repeatPassword ? styles.inputError : ""}`}
               required
               disabled={isLoading}
             />
-            {errors.confirmPassword && touched.confirmPassword && (
-              <span className={styles.errorText}>{errors.confirmPassword}</span>
+            {errors.repeatPassword && touched.repeatPassword && (
+              <span className={styles.errorText}>{errors.repeatPassword}</span>
             )}
           </div>
 
