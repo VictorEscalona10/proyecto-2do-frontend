@@ -99,7 +99,7 @@ export default function Login() {
     <div className={styles.container}>
       <div className={styles.formSection}>
         <form onSubmit={handleSubmit} className={styles.loginForm}>
-          <h2 className={styles.title}>Login</h2>
+          <h2 className={styles.title}>Inicia Sesion</h2>
 
           {/* Mostrar error general */}
           {errors.submit && (
@@ -113,7 +113,7 @@ export default function Login() {
             <input
               type="email"
               id="email"
-              placeholder="Email only"
+              placeholder="Solo Email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               onBlur={() => handleBlur("email")}
@@ -127,11 +127,11 @@ export default function Login() {
           </div>
 
           <div className={styles.inputGroup}>
-            <label htmlFor="password">PASSWORD</label>
+            <label htmlFor="password">CONTRASEÑA</label>
             <input
               type="password"
               id="password"
-              placeholder="Must be at least 8 characters"
+              placeholder="Debe tener al menos 8 caracteres"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               onBlur={() => handleBlur("password")}
@@ -153,8 +153,8 @@ export default function Login() {
           </button>
 
           <div className={styles.links}>
-            <a href="#">Forgot your password?</a>
-            <a href="#">Create Account</a>
+            <a href="/forgot_password">Recuperar contraseña?</a>
+            <a href="/register">Crear cuenta</a>
           </div>
         </form>
       </div>
