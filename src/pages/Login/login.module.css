@@ -11,13 +11,24 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  background-color: #fff;
 }
 
 .loginForm {
   width: 100%;
-  max-width: 400px;
+  max-width: 450px;
   padding: 40px;
   text-align: center;
+  background-color: #fff;
+  border-radius: 15px;
+  box-shadow: 0 15px 35px rgba(47, 79, 79, 0.15);
+  border: 1px solid rgba(47, 79, 79, 0.1);
+  transition: box-shadow 0.3s ease, transform 0.3s ease;
+}
+
+.loginForm:hover {
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.20);
+  transform: translateY(-2px);
 }
 
 .title {
@@ -60,16 +71,26 @@
   border-bottom: 2px solid #e74c3c;
 }
 
-.warning {
-  position: absolute;
-  right: 10px;
-  top: 36px;
-  font-size: 18px;
+.errorText {
   color: #e74c3c;
+  font-size: 12px;
+  position: absolute;
+  bottom: -20px;
+  left: 0;
+}
+
+.errorMessage {
+  background-color: #ffeaea;
+  color: #e74c3c;
+  padding: 12px;
+  border-radius: 6px;
+  margin-bottom: 20px;
+  font-size: 14px;
+  border: 1px solid #ffcdd2;
 }
 
 /* Botón */
-.signInBtn {
+.submitButton {
   width: 100%;
   padding: 12px;
   background-color: transparent;
@@ -82,9 +103,14 @@
   transition: all 0.3s ease;
 }
 
-.signInBtn:hover {
+.submitButton:hover:not(:disabled) {
   background-color: #2f4f4f;
   color: white;
+}
+
+.submitButton:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 
 /* Enlaces */
