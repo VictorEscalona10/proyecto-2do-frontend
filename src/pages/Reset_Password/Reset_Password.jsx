@@ -57,14 +57,15 @@ export default function ResetPassword() {
     try {
       console.log("Enviando nueva contraseña...");
       
-      const response = await fetch('http://localhost:3000/auth/reset-password', {
+      const response = await fetch('http://localhost:3000/password-reset/reset-password', {
         method: 'POST',
         headers: { 
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({ 
           token,
-          newPassword: password 
+          newPassword: password ,
+          confirmPassword: confirmPassword
         }),
       });
 
