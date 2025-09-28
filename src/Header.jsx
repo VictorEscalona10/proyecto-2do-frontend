@@ -14,7 +14,6 @@ export default function Header() {
         <nav className={styles.nav}>
           <Link to="/pedidos" className={styles.navLink}>PEDIDOS</Link>
           <Link to="/productos" className={styles.navLink}>PRODUCTOS</Link>
-          <Link to="/horarios" className={styles.navLink}>HORARIOS & SUCURSALES</Link>
           <Link to="/nosotros" className={styles.navLink}>NOSOTROS</Link>
         </nav>
 
