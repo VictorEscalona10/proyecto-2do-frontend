@@ -80,8 +80,62 @@
 .rightSection {
   display: flex;
   align-items: center;
+  gap: 15px;
 }
 
+/* Estilos para el botón del carrito */
+.cartButton {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  text-decoration: none;
+  color: #2f4f4f;
+  padding: 8px 16px;
+  border: 1px solid rgba(47, 79, 79, 0.2);
+  border-radius: 4px;
+  transition: all 0.3s ease;
+  background-color: transparent;
+  cursor: pointer;
+  font-family: inherit;
+  position: relative;
+}
+
+.cartButton:hover {
+  background-color: #2f4f4f;
+  color: white;
+  border-color: #2f4f4f;
+  transform: translateY(-1px);
+}
+
+.cartIcon {
+  width: 20px;
+  height: 20px;
+}
+
+.cartText {
+  font-size: 14px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.cartBadge {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  background: #8b5e3c;
+  color: white;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+}
+
+/* Estilos para el botón de login */
 .loginButton {
   display: flex;
   align-items: center;
@@ -112,6 +166,33 @@
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.5px;
+}
+
+/* Estilos para el botón de logout */
+.logoutButton {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  text-decoration: none;
+  color: #2f4f4f;
+  padding: 8px 16px;
+  border: 1px solid rgba(47, 79, 79, 0.2);
+  border-radius: 4px;
+  transition: all 0.3s ease;
+  background-color: transparent;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.logoutButton:hover {
+  background-color: #2f4f4f;
+  color: white;
+  border-color: #2f4f4f;
+  transform: translateY(-1px);
 }
 
 .header::before {
@@ -149,12 +230,14 @@
     padding: 12px 0;
   }
   
-  .loginButton {
+  .loginButton,
+  .cartButton,
+  .logoutButton {
     padding: 6px 12px;
   }
   
-  .loginText {
+  .loginText,
+  .cartText {
     font-size: 12px;
   }
 }
-
