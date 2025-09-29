@@ -69,13 +69,10 @@ export default function Login() {
 
       if (response.ok) {
         console.log("Login exitoso:", data);
-        // Guardar token si viene en la respuesta
-        if (data.access_token) {
-          localStorage.setItem('token', data.access_token);
-          console.log("Token guardado en localStorage");
-        }
-        // Redirigir o hacer algo con el login exitoso
-        alert("Login exitoso!");
+        alert("Login exitoso")
+        setTimeout(() => {
+          navigate('/');
+        }, 3000);
       } else {
         console.error("Error en el login:", data.message || response.statusText);
         setErrors({ submit: data.message || "Error en el login" });
