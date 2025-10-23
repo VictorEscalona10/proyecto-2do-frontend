@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 import { useState } from 'react';
 import { useCart } from './context/CartContext';
-import CartDropdown from './components/CartDropdown';
+import CartDropdown from './components/pages/CartDropdown';
 import styles from './Header.module.css';
 
 export default function Header() {
