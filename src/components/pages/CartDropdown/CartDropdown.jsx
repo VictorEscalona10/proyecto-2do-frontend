@@ -1,5 +1,5 @@
-import { useCart } from "../context/CartContext";
-import { useAuth } from "../hooks/useAuth";
+import { useCart } from "../../../context/CartContext";
+import { useAuth } from "../../../hooks/useAuth";
 import styles from "./CartDropdown.module.css";
 
 export default function CartDropdown({ isOpen, onClose }) {
@@ -82,6 +82,12 @@ export default function CartDropdown({ isOpen, onClose }) {
     alert('Error de conexión. Verifica tu conexión a internet.');
   }
 };
+  const handleIncrement = (itemId) => {
+    const item = items.find((i) => i.id === itemId);
+     if (item) {
+     updateQuantity(itemId, item.quantity + 1);
+    }
+  };
 
   const handleDecrement = (itemId) => {
     const item = items.find((i) => i.id === itemId);

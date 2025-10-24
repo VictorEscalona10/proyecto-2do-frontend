@@ -1,4 +1,4 @@
-import { ProductsComponent } from "./components/ProductsComponent"
+import { ProductsComponent } from "../ProductsComponent/ProductsComponent.jsx";
 
 export default function Home() {
   
