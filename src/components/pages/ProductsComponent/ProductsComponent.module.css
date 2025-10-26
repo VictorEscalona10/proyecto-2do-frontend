@@ -16,16 +16,15 @@
 
 .container {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr  ));
   gap: 25px;
   padding: 20px 0;
 }
 
 .productCard {
   border: 1px solid #e0e0e0;
-  border-radius: 12px;
+  border-radius: 5px;
   padding: 20px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
   display: flex;
   flex-direction: column;
   background: white;
@@ -55,7 +54,7 @@
   font-weight: bold;
   color: #8b5e3c;
   font-size: 16px;
-  margin: 0 0 15px 0;
+  margin: 5px 0 15px 0;
 }
 
 .productImage {
@@ -68,14 +67,14 @@
 
 .imagePlaceholder {
   width: 100%;
-  height: 200px;
+  height: 150px;
   background-color: #f8f9fa;
   display: flex;
   align-items: center;
   justify-content: center;
   color: #666;
   margin-bottom: 15px;
-  border-radius: 8px;
+  border-radius: 5px;
 }
 
 .controlsContainer {
@@ -88,16 +87,16 @@
 .quantityControls {
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: right;
   gap: 12px;
 }
 
 .quantityButton {
-  width: 36px;
-  height: 36px;
-  border: 1px solid #ddd;
+  width: 33px;
+  height: 20px;
+  border: 1px solid #ffffff;
   background: white;
-  border-radius: 6px;
+  border-radius: 4px;
   cursor: pointer;
   font-size: 16px;
   font-weight: bold;
@@ -111,15 +110,15 @@
 
 .quantityDisplay {
   font-weight: bold;
-  min-width: 40px;
+  min-width: 5px;
   text-align: center;
-  font-size: 16px;
+  font-size: 15px;
   color: #2f4f4f;
 }
 
 .addToCartButton {
   padding: 12px;
-  background: #8b5e3c;
+  background: #2f4f4f;
   color: white;
   border: none;
   border-radius: 8px;

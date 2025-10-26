@@ -53,10 +53,10 @@ export function ProductsComponent({ categoria }) {
     const button = document.getElementById(`add-to-cart-${product.id}`);
     if (button) {
       button.textContent = '✓ Agregado';
-      button.style.background = '#28a745';
+      button.style.background = '#2f4f4fbe';
       setTimeout(() => {
         button.textContent = 'Agregar al Carrito';
-        button.style.background = '#8b5e3c';
+        button.style.background = '#2f4f4f';
       }, 1500);
     }
   };
@@ -84,18 +84,7 @@ export function ProductsComponent({ categoria }) {
               key={product.id} 
               className={styles.productCard}
             >
-              <h3 className={styles.productName}>
-                {product.name}
-              </h3>
-              
-              <p className={styles.productDescription}>
-                {product.description}
-              </p>
-              
-              <p className={styles.productPrice}>
-                Precio: ${product.price}
-              </p>
-              
+                           
               {product.imageUrl ? (
                 <img 
                   src={product.imageUrl} 
@@ -107,6 +96,14 @@ export function ProductsComponent({ categoria }) {
                   🎂 Sin imagen
                 </div>
               )}
+
+              <h3 className={styles.productName}>
+                {product.name}
+              </h3>
+
+              <p className={styles.productPrice}>
+                Precio: ${product.price}
+              </p>
               
               {/* Controles de cantidad y botón de ordenar */}
               <div className={styles.controlsContainer}>
