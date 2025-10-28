@@ -1,0 +1,129 @@
+.loading {
+  text-align: center;
+  padding: 20px;
+}
+
+.error {
+  color: red;
+  text-align: center;
+  padding: 20px;
+}
+
+.empty {
+  text-align: center;
+  color: #666;
+}
+
+.container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr  ));
+  gap: 25px;
+  padding: 20px 0;
+}
+
+.productCard {
+  border: 1px solid #e0e0e0;
+  border-radius: 5px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  background: white;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.productCard:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+}
+
+.productName {
+  margin: 0 0 10px 0;
+  color: #2f4f4f;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.productDescription {
+  color: #666;
+  font-size: 14px;
+  margin: 0 0 15px 0;
+  flex: 1;
+}
+
+.productPrice {
+  font-weight: bold;
+  color: #8b5e3c;
+  font-size: 16px;
+  margin: 5px 0 15px 0;
+}
+
+.productImage {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  margin-bottom: 15px;
+  border-radius: 8px;
+}
+
+.imagePlaceholder {
+  width: 100%;
+  height: 150px;
+  background-color: #f8f9fa;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #666;
+  margin-bottom: 15px;
+  border-radius: 5px;
+}
+
+.controlsContainer {
+  margin-top: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.quantityControls {
+  display: flex;
+  align-items: center;
+  justify-content: right;
+  gap: 12px;
+}
+
+.quantityButton {
+  width: 33px;
+  height: 20px;
+  border: 1px solid #ffffff;
+  background: white;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: bold;
+  transition: all 0.2s ease;
+}
+
+.quantityButton:hover {
+  background: #f8f9fa;
+  border-color: #2f4f4f;
+}
+
+.quantityDisplay {
+  font-weight: bold;
+  min-width: 5px;
+  text-align: center;
+  font-size: 15px;
+  color: #2f4f4f;
+}
+
+.addToCartButton {
+  padding: 12px;
+  background: #2f4f4f;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 14px;
+  transition: all 0.2s ease;
+}

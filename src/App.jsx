@@ -2,11 +2,11 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { CartProvider } from './context/CartContext.jsx';
 import Header from './Header.jsx';
 
-import Home from './pages/Home/Home.jsx';
-import Login from './pages/Login/Login.jsx';
-import Register from './pages/Register/Register.jsx';
-import Forgot_Password from './pages/Forgot_Password/Forgot_Password.jsx';
-import Reset_Password from './pages/Reset_Password/Reset_Password.jsx';
+import Home from './components/pages/Home/Home.jsx';
+import Login from './components/pages/Login/Login.jsx';
+import Register from './components/pages/Register/Register.jsx';
+import Forgot_Password from './components/pages/Forgot_Password/Forgot_Password.jsx';
+import Reset_Password from './components/pages/Reset_Password/Reset_Password.jsx';
 
 function App() {
   return (
