@@ -1,5 +1,5 @@
 .header {
-  background-color: #f1f1de;
+  background-color: #e9e5e0;
   border-bottom: 2px solid rgba(47, 79, 79, 0.15);
   padding: 15px 0;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -27,7 +27,7 @@
   font-family: 'Georgia', serif;
   font-size: 30px;
   font-weight: bold;
-  color: #2f4f4f;
+  color: #8b008b;
   margin: 0;
   letter-spacing: 1.5px;
   text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
@@ -46,7 +46,7 @@
 }
 
 .navLink {
-  color: #2f4f4f;
+  color: #8b008b;
   text-decoration: none;
   font-size: 15px;
   font-weight: 600;
@@ -69,7 +69,7 @@
   height: 2px;
   bottom: 0;
   left: 0;
-  background: linear-gradient(90deg, #8b5e3c, #2f4f4f);
+  background: linear-gradient(90deg,#ce8dcf, #541581f1);
   transition: width 0.3s ease;
 }
 
@@ -89,9 +89,9 @@
   align-items: center;
   gap: 8px;
   text-decoration: none;
-  color: #2f4f4f;
+  color: #8b008b;
   padding: 8px 8px;
-  border: 1px solid rgba(47, 79, 79, 0.2);
+  border: 1px solid rgba(0, 0, 0, 0.202);
   border-radius: 20px;
   transition: all 0.3s ease;
   background-color: transparent;
@@ -101,9 +101,9 @@
 }
 
 .cartButton:hover {
-  background-color: #2f4f4f;
+  background-color: #d9a3df;
   color: white;
-  border-color: #2f4f4f;
+  border-color: rgba(0, 0, 0, 0.202);
   transform: translateY(-1px);
 }
 
@@ -141,18 +141,18 @@
   align-items: center;
   gap: 8px;
   text-decoration: none;
-  color: #2f4f4f;
+  color: #8b008b;
   padding: 8px 8px;
-  border: 1px solid rgba(47, 79, 79, 0.2);
+  border: 1px solid rgba(0, 0, 0, 0.2);
   border-radius: 20px;
   transition: all 0.3s ease;
   background-color: transparent;
 }
 
 .loginButton:hover {
-  background-color: #2f4f4f;
+  background-color: #d9a3df;
   color: white;
-  border-color: #2f4f4f;
+  border-color: rgba(0, 0, 0, 0.202);
   transform: translateY(-1px);
 }
 

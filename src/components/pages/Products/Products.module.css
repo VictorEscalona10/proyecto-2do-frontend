@@ -1,0 +1,113 @@
+.productsContainer {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 40px 20px;
+  text-align: center;
+  background-color: #fff9fb;
+  min-height: 60vh;
+  font-family: 'Comic Sans MS', cursive, sans-serif;
+}
+
+.productsTitle {
+  color: #d65db1;
+  font-size: 2.5rem;
+  margin-bottom: 20px;
+  font-weight: 600;
+  text-shadow: 2px 2px 4px rgba(214, 93, 177, 0.2);
+}
+
+.productos {
+  font-size: 2.5rem;
+  text-align: center;
+  margin-bottom: 20px;
+  color: #000000;
+  font-family: 'Georgia', serif;
+}
+.categoria {
+  font-size: 2rem;
+  margin-bottom: 15px;
+  color: #000000;
+  font-family: 'Georgia', serif;
+}
+.productsSubtitle {
+  color: #ff6b91;
+  font-size: 1.3rem;
+  margin-bottom: 30px;
+  font-weight: 500;
+}
+
+.welcomeMessage {
+  background-color: #e9e5e0;
+  padding: 30px;
+  border-radius: 15px;
+  border: 5px dashed #4e0462;
+  box-shadow: 0 8px 16px rgba(255, 107, 145, 0.1);
+  margin-top: 30px;
+}
+
+.welcomeMessage p {
+  color: #8b5e83;
+  font-size: 1.1rem;
+  margin-bottom: 20px;
+  line-height: 1.6;
+}
+.productsconst {
+  margin-bottom: 30px;
+  font-size: 1.1rem;
+}
+.emojiContainer {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  margin: 30px 0;
+  flex-wrap: wrap;
+}
+
+.emojiButton {
+  font-size: 2.5rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  padding: 10px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 70px;
+  height: 70px;
+}
+
+.emojiButton:hover {
+  transform: scale(1.2);
+  background-color: rgba(215, 25, 218, 0.1);
+  box-shadow: 0 4px 12px rgba(215, 25, 218, 0.2);
+}
+
+.emojiButton:active {
+  transform: scale(1.1);
+}
+/* Responsive */
+@media (max-width: 768px) {
+  .emojiButton {
+    font-size: 2rem;
+    width: 60px;
+    height: 60px;
+  }
+  
+  .emojiContainer {
+    gap: 15px;
+  }
+}
+
+@media (max-width: 480px) {
+  .emojiButton {
+    font-size: 1.8rem;
+    width: 50px;
+    height: 50px;
+  }
+  
+  .emojiContainer {
+    gap: 10px;
+  }
+}
