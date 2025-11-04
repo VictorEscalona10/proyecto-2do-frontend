@@ -55,8 +55,8 @@ export default function Home() {
           Donde cada bocado es un momento de felicidad
         </p>
         <p className={styles.welcomeMessage}>
-          Descubre nuestros exquisitos pasteles y postres artesanales, 
-          elaborados con los mejores ingredientes y mucho amor. 
+          Descubre nuestros exquisitos pasteles y postres caseros, 
+          elaborados con los mejores ingredientes y mucho amor. <br /> 
           Cada creación es una obra de arte dulce que endulzará tus momentos especiales.
         </p>
         <button className={styles.ctaButton} onClick={handleViewProducts}>

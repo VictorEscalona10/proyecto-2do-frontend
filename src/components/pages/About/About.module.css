@@ -33,7 +33,7 @@ background: linear-gradient(135deg, #fdf2ff 0%, #fff0f8 50%, #fef4ff 100%);
 
 .heroSubtitle {
   font-size: 1.3rem;
-  color: #666;
+  color: #000000;
   max-width: 600px;
   margin: 0 auto;
   animation: fadeInUp 1s ease 0.3s both;
@@ -81,7 +81,7 @@ background: linear-gradient(135deg, #fdf2ff 0%, #fff0f8 50%, #fef4ff 100%);
 }
 
 .cardText {
-  color: #666;
+  color: #480232;
   line-height: 1.6;
   font-size: 1.1rem;
 }
@@ -111,7 +111,7 @@ background: linear-gradient(135deg, #fdf2ff 0%, #fff0f8 50%, #fef4ff 100%);
 
 .storyText {
   text-align: left;
-  color: #666;
+  color: #480232;
   line-height: 1.8;
   font-size: 1.1rem;
 }
@@ -149,7 +149,7 @@ background: linear-gradient(135deg, #fdf2ff 0%, #fff0f8 50%, #fef4ff 100%);
   transform: translateX(-50%);
   width: 100px;
   height: 3px;
-  background: linear-gradient(45deg, #d719da, #ff6b6b);
+  background: linear-gradient(45deg,#3b004f,#d719da, #3b004f);
 }
 
 .valuesGrid {
@@ -180,13 +180,13 @@ background: linear-gradient(135deg, #fdf2ff 0%, #fff0f8 50%, #fef4ff 100%);
 
 .valueTitle {
   font-size: 1.3rem;
-  color: #333;
+  color: #000000;
   margin-bottom: 15px;
   font-weight: bold;
 }
 
 .valueDescription {
-  color: #666;
+  color: #480232;
   line-height: 1.5;
 }
 
@@ -195,7 +195,7 @@ background: linear-gradient(135deg, #fdf2ff 0%, #fff0f8 50%, #fef4ff 100%);
   background: white;
   padding: 60px 40px;
   border-radius: 20px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.204);
 }
 
 .teamGrid {
@@ -214,6 +214,8 @@ background: linear-gradient(135deg, #fdf2ff 0%, #fff0f8 50%, #fef4ff 100%);
 
 .teamMember:hover {
   transform: scale(1.05);
+  border: 1px solid #000000;
+  box-shadow: 0 10px 25px rgba(55, 1, 56, 0.405);
 }
 
 .memberPhoto {
@@ -221,7 +223,7 @@ background: linear-gradient(135deg, #fdf2ff 0%, #fff0f8 50%, #fef4ff 100%);
   height: 150px;
   border-radius: 50%;
   margin: 0 auto 20px;
-  background: linear-gradient(45deg, #d719da, #ff6b6b);
+  background: linear-gradient(45deg, #eb6fed, #330844);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -244,13 +246,13 @@ background: linear-gradient(135deg, #fdf2ff 0%, #fff0f8 50%, #fef4ff 100%);
 }
 
 .memberDescription {
-  color: #666;
+  color: #000000;
   line-height: 1.5;
 }
 
 /* Contact Info */
 .contactSection {
-  background: linear-gradient(135deg, #8b008b, #d719da);
+  background: linear-gradient(135deg, #410075, #f664f6, #410075);
   color: white;
   padding: 60px 40px;
   border-radius: 20px;
@@ -281,6 +283,29 @@ background: linear-gradient(135deg, #fdf2ff 0%, #fff0f8 50%, #fef4ff 100%);
 .contactIcon {
   font-size: 1.5rem;
 }
+.footer {
+  background: linear-gradient(135deg, #000000, #555, #000000);
+  color: white;
+  text-align: center;
+  padding: 30px 20px;
+  margin-top: 60px;
+}
+
+.footerContent {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.footerText {
+  margin-bottom: 10px;
+  font-size: 1rem;
+}
+
+.copyright {
+  color: #ccc;
+  font-size: 0.9rem;
+}
+
 
 /* Animations */
 @keyframes fadeInUp {

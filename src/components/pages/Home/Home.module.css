@@ -32,7 +32,7 @@ url('https://images.unsplash.com/photo-1555507036-ab794f27d2e9?ixlib=rb-4.0.3&au
 .homeSubtitle {
   font-size: 1.5rem;
   margin-bottom: 30px;
-  color: #666;
+  color: #510138;
   animation: fadeInUp 1s ease 0.3s both;
 }
 
@@ -41,7 +41,7 @@ url('https://images.unsplash.com/photo-1555507036-ab794f27d2e9?ixlib=rb-4.0.3&au
   max-width: 600px;
   margin: 0 auto 40px;
   line-height: 1.6;
-  color: #373737;
+  color: #5e0341;
   animation: fadeInUp 1s ease 0.6s both;
 }
 
@@ -129,13 +129,13 @@ url('https://images.unsplash.com/photo-1555507036-ab794f27d2e9?ixlib=rb-4.0.3&au
 
 .productName {
   font-size: 1.5rem;
-  color: #333;
+  color: #000000;
   margin-bottom: 10px;
   font-weight: bold;
 }
 
 .productDescription {
-  color: #666;
+  color: #510138;
   margin-bottom: 15px;
   line-height: 1.5;
 }
@@ -165,7 +165,7 @@ url('https://images.unsplash.com/photo-1555507036-ab794f27d2e9?ixlib=rb-4.0.3&au
 
 /* Footer */
 .footer {
-  background: linear-gradient(135deg, #333, #555);
+  background: linear-gradient(135deg, #000000, #555, #000000);
   color: white;
   text-align: center;
   padding: 30px 20px;

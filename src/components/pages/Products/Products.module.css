@@ -1,15 +1,22 @@
+.pageContainer {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background-color: #fff9fb;
+}
+
 .productsContainer {
-  max-width: 1200px;
+  max-width: 1500px;
   margin: 0 auto;
   padding: 40px 20px;
   text-align: center;
-  background-color: #fff9fb;
-  min-height: 60vh;
+  background-color: #ffffff;
+  flex: 1;
   font-family: 'Comic Sans MS', cursive, sans-serif;
 }
 
 .productsTitle {
-  color: #d65db1;
+  color: #8b008b;
   font-size: 2.5rem;
   margin-bottom: 20px;
   font-weight: 600;
@@ -20,17 +27,19 @@
   font-size: 2.5rem;
   text-align: center;
   margin-bottom: 20px;
-  color: #000000;
+  color: #8b008b;
   font-family: 'Georgia', serif;
 }
+
 .categoria {
   font-size: 2rem;
   margin-bottom: 15px;
-  color: #000000;
+  color: #9b169b;
   font-family: 'Georgia', serif;
 }
+
 .productsSubtitle {
-  color: #ff6b91;
+  color: #510138;
   font-size: 1.3rem;
   margin-bottom: 30px;
   font-weight: 500;
@@ -38,7 +47,7 @@
 
 .welcomeMessage {
   background-color: #e9e5e0;
-  padding: 30px;
+  padding: 30px ;
   border-radius: 15px;
   border: 5px dashed #4e0462;
   box-shadow: 0 8px 16px rgba(255, 107, 145, 0.1);
@@ -46,15 +55,17 @@
 }
 
 .welcomeMessage p {
-  color: #8b5e83;
+  color: #5e0341;
   font-size: 1.1rem;
   margin-bottom: 20px;
   line-height: 1.6;
 }
-.productsconst {
+
+.Productscont {
   margin-bottom: 30px;
   font-size: 1.1rem;
 }
+
 .emojiContainer {
   display: flex;
   justify-content: center;
@@ -87,6 +98,35 @@
 .emojiButton:active {
   transform: scale(1.1);
 }
+
+/* Footer Styles - Agregados al final */
+.footer {
+  background: linear-gradient(135deg, #000000, #555, #000000);
+  color: white;
+  padding: 20px 0;
+  width: 100%;
+  margin-top: auto;
+}
+
+.footerContent {
+  max-width: 1200px;
+  margin: 0 auto;
+  text-align: center;
+  padding: 0 20px;
+}
+
+.footerText {
+  font-size: 14px;
+  margin-bottom: 8px;
+  font-weight: 500;
+}
+
+.copyright {
+  font-size: 12px;
+  margin: 4px 0;
+  opacity: 0.9;
+}
+
 /* Responsive */
 @media (max-width: 768px) {
   .emojiButton {
@@ -97,6 +137,10 @@
   
   .emojiContainer {
     gap: 15px;
+  }
+  
+  .productsContainer {
+    padding: 30px 15px;
   }
 }
 
@@ -109,5 +153,21 @@
   
   .emojiContainer {
     gap: 10px;
+  }
+  
+  .productsContainer {
+    padding: 20px 10px;
+  }
+  
+  .footer {
+    padding: 15px 0;
+  }
+  
+  .footerText {
+    font-size: 13px;
+  }
+  
+  .copyright {
+    font-size: 11px;
   }
 }

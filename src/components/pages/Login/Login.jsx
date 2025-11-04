@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate, Link } from "react-router-dom";
 import styles from "./login.module.css";
 
 export default function Login() {
@@ -10,6 +11,8 @@ export default function Login() {
     email: false,
     password: false,
   });
+  
+  const navigate = useNavigate();
 
   const validate = () => {
     const newErrors = {};
@@ -93,73 +96,92 @@ export default function Login() {
   };
 
   return (
-    <div className={styles.container}>
-      <div className={styles.formSection}>
-        <form onSubmit={handleSubmit} className={styles.loginForm}>
-          <h2 className={styles.title}>Inicia Sesion</h2>
+    <div className={styles.mainContainer}>
+      <div className={styles.contentWrapper}>
+        <div className={styles.formSection}>
+          <form onSubmit={handleSubmit} className={styles.loginForm}>
+            <h2 className={styles.title}>Inicia Sesión</h2>
 
-          {/* Mostrar error general */}
-          {errors.submit && (
-            <div className={styles.errorMessage}>
-              ⚠️ {errors.submit}
+            {/* Mostrar error general */}
+            {errors.submit && (
+              <div className={styles.errorMessage}>
+                ⚠️ {errors.submit}
+              </div>
+            )}
+
+            <div className={styles.inputGroup}>
+              <label htmlFor="email">EMAIL</label>
+              <input
+                type="email"
+                id="email"
+                placeholder="Solo Email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                onBlur={() => handleBlur("email")}
+                className={`${styles.input} ${errors.email && touched.email ? styles.inputError : ""}`}
+                required
+                disabled={isLoading}
+              />
+              {errors.email && touched.email && (
+                <span className={styles.errorText}>{errors.email}</span>
+              )}
             </div>
-          )}
 
-          <div className={styles.inputGroup}>
-            <label htmlFor="email">EMAIL</label>
-            <input
-              type="email"
-              id="email"
-              placeholder="Solo Email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              onBlur={() => handleBlur("email")}
-              className={`${styles.input} ${errors.email && touched.email ? styles.inputError : ""}`}
-              required
+            <div className={styles.inputGroup}>
+              <label htmlFor="password">CONTRASEÑA</label>
+              <input
+                type="password"
+                id="password"
+                placeholder="Debe tener al menos 8 caracteres"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                onBlur={() => handleBlur("password")}
+                className={`${styles.input} ${errors.password && touched.password ? styles.inputError : ""}`}
+                required
+                disabled={isLoading}
+              />
+              {errors.password && touched.password && (
+                <span className={styles.errorText}>{errors.password}</span>
+              )}
+            </div>
+
+            <button 
+              type="submit" 
+              className={styles.submitButton}
               disabled={isLoading}
-            />
-            {errors.email && touched.email && (
-              <span className={styles.errorText}>{errors.email}</span>
-            )}
-          </div>
+            >
+              {isLoading ? "Cargando..." : "Iniciar sesión"}
+            </button>
 
-          <div className={styles.inputGroup}>
-            <label htmlFor="password">CONTRASEÑA</label>
-            <input
-              type="password"
-              id="password"
-              placeholder="Debe tener al menos 8 caracteres"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              onBlur={() => handleBlur("password")}
-              className={`${styles.input} ${errors.password && touched.password ? styles.inputError : ""}`}
-              required
-              disabled={isLoading}
-            />
-            {errors.password && touched.password && (
-              <span className={styles.errorText}>{errors.password}</span>
-            )}
-          </div>
+            <div className={styles.links}>
+              <Link to="/forgot_password" className={styles.link}>¿Recuperar contraseña?</Link>
+              <Link to="/register" className={styles.link}>Crear cuenta</Link>
+            </div>
+          </form>
+        </div>
 
-          <button 
-            type="submit" 
-            className={styles.submitButton}
-            disabled={isLoading}
-          >
-            {isLoading ? "Cargando..." : "Iniciar sesión"}
-          </button>
-
-          <div className={styles.links}>
-            <a href="/forgot_password">Recuperar contraseña?</a>
-            <a href="/register">Crear cuenta</a>
+        <div className={styles.logoSection}>
+          <div className={styles.logoContainer}>
+            <h1 className={styles.logo}>MIGDALIS<br />TORTAS</h1>
+            <p className={styles.est}>EST. 2008</p>
           </div>
-        </form>
+        </div>
       </div>
 
-      <div className={styles.logoSection}>
-        <h1 className={styles.logo}>MIGDALIS<br />TORTAS</h1>
-        <p className={styles.est}>EST. 2006</p>
-      </div>
+      {/* Footer */}
+      <footer className={styles.footer}>
+        <div className={styles.footerContent}>
+          <p className={styles.footerText}>
+            Repostería "Migdalis Tortas" - Endulzando tus momentos especiales
+          </p>
+          <p className={styles.copyright}>
+            © {new Date().getFullYear()} Migdalis Tortas. Todos los derechos reservados.
+          </p>
+          <p className={styles.copyright}>
+            Diseñado con 💜 para los amantes de la repostería
+          </p>
+        </div>
+      </footer>
     </div>
   );
 }
