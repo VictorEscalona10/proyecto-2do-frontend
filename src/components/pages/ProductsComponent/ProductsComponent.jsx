@@ -104,7 +104,7 @@ export function ProductsComponent({ categoria }) {
               </h3>
 
               <p className={styles.productPrice}>
-                Precio: ${product.price}
+                Precio: ${product.price} 
               </p>
               
               {/* Controles de cantidad y botón de ordenar */}
