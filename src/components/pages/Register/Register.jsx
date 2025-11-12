@@ -7,6 +7,8 @@ export default function Register() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [repeatPassword, setRepeatPassword] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState("");
+  const [identification, setIdentification] = useState("");
   const [errors, setErrors] = useState({});
   const [isLoading, setIsLoading] = useState(false);
   const [touched, setTouched] = useState({
@@ -14,6 +16,8 @@ export default function Register() {
     email: false,
     password: false,
     repeatPassword: false,
+    phoneNumber: false,
+    identification: false,
   });
   
   const navigate = useNavigate();
@@ -37,12 +41,28 @@ export default function Register() {
       newErrors.repeatPassword = "Las contraseñas no coinciden";
     }
     
+    // Validación del número de teléfono con formato específico
+    const phoneRegex = /^\+58(412|414|416|424)\d{7}$/;
+    if (!phoneNumber.trim()) {
+      newErrors.phoneNumber = "El número de teléfono es obligatorio";
+    } else if (!phoneRegex.test(phoneNumber.replace(/\s/g, ""))) {
+      newErrors.phoneNumber = "El número debe tener el formato +58412XXXXXXX y comenzar con 412, 414, 416 o 424";
+    }
+    
+    // Validación de identificación (solo números)
+    const identificationRegex = /^\d{6,10}$/;
+    if (!identification.trim()) {
+      newErrors.identification = "El número de identificación es obligatorio";
+    } else if (!identificationRegex.test(identification)) {
+      newErrors.identification = "La identificación debe contener entre 6 y 10 dígitos";
+    }
+    
     return newErrors;
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Submitting form with name:", name, "email:", email, "and password:", password);
+    console.log("Submitting form with name:", name, "email:", email, "phone:", phoneNumber, "identification:", identification, "and password:", password);
     
     // Marcar todos los campos como tocados
     setTouched({
@@ -50,6 +70,8 @@ export default function Register() {
       email: true,
       password: true,
       repeatPassword: true,
+      phoneNumber: true,
+      identification: true,
     });
 
     const validationErrors = validate();
@@ -69,7 +91,14 @@ export default function Register() {
         headers: { 
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ name, email, password, repeatPassword }), 
+        body: JSON.stringify({ 
+          name, 
+          email, 
+          password, 
+          repeatPassword, 
+          phoneNumber,
+          identification: parseInt(identification)
+        }), 
       });
 
       console.log("Response status:", response.status);
@@ -108,6 +137,40 @@ export default function Register() {
     // Validar solo el campo que perdió el foco
     const validationErrors = validate();
     setErrors(validationErrors);
+  };
+
+  // Función para formatear el número de teléfono mientras el usuario escribe
+  const handlePhoneChange = (e) => {
+    let value = e.target.value.replace(/\D/g, ""); // Remover todo excepto números
+    
+    // Si empieza a escribir sin +58, lo agregamos automáticamente
+    if (value.startsWith("58")) {
+      value = "+" + value;
+    } else if (!value.startsWith("+58") && value.length > 0) {
+      value = "+58" + value;
+    }
+    
+    // Limitar la longitud total a 13 caracteres (+58 + 10 dígitos)
+    if (value.length > 13) {
+      value = value.substring(0, 13);
+    }
+    
+    setPhoneNumber(value);
+  };
+
+  // Función para formatear la identificación (solo números)
+  const handleIdentificationChange = (e) => {
+    let value = e.target.value;
+    
+    // Permitir solo números
+    value = value.replace(/\D/g, '');
+    
+    // Limitar la longitud total
+    if (value.length > 10) {
+      value = value.substring(0, 10);
+    }
+    
+    setIdentification(value);
   };
 
   return (
@@ -158,6 +221,44 @@ export default function Register() {
               {errors.email && touched.email && (
                 <span className={styles.errorText}>{errors.email}</span>
               )}
+            </div>
+
+            <div className={styles.inputGroup}>
+              <label htmlFor="identification">NÚMERO DE IDENTIFICACIÓN</label>
+              <input
+                type="text"
+                id="identification"
+                placeholder="Solo números (6-10 dígitos)"
+                value={identification}
+                onChange={handleIdentificationChange}
+                onBlur={() => handleBlur("identification")}
+                className={`${styles.input} ${errors.identification && touched.identification ? styles.inputError : ""}`}
+                required
+                disabled={isLoading}
+              />
+              {errors.identification && touched.identification && (
+                <span className={styles.errorText}>{errors.identification}</span>
+              )}
+              
+            </div>
+
+            <div className={styles.inputGroup}>
+              <label htmlFor="phoneNumber">NÚMERO DE TELÉFONO</label>
+              <input
+                type="tel"
+                id="phoneNumber"
+                placeholder="+58412XXXXXXX"
+                value={phoneNumber}
+                onChange={handlePhoneChange}
+                onBlur={() => handleBlur("phoneNumber")}
+                className={`${styles.input} ${errors.phoneNumber && touched.phoneNumber ? styles.inputError : ""}`}
+                required
+                disabled={isLoading}
+              />
+              {errors.phoneNumber && touched.phoneNumber && (
+                <span className={styles.errorText}>{errors.phoneNumber}</span>
+              )}
+              
             </div>
 
             <div className={styles.inputGroup}>
