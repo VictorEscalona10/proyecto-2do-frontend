@@ -48,15 +48,17 @@ export function ProductsComponent({ categoria }) {
   const handleAddToCart = (product) => {
     const quantity = quantities[product.id] || 1;
     addToCart(product, quantity);
+
+    
     
     // Feedback visual
     const button = document.getElementById(`add-to-cart-${product.id}`);
     if (button) {
       button.textContent = '✓ Agregado';
-      button.style.background = '#2f4f4fbe';
+      button.style.background = '#d719da9a';
       setTimeout(() => {
         button.textContent = 'Agregar al Carrito';
-        button.style.background = '#2f4f4f';
+        button.style.background = '#d719da9a';
       }, 1500);
     }
   };
@@ -84,7 +86,7 @@ export function ProductsComponent({ categoria }) {
               key={product.id} 
               className={styles.productCard}
             >
-                           
+            
               {product.imageUrl ? (
                 <img 
                   src={product.imageUrl} 

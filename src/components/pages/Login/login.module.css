@@ -1,17 +1,25 @@
-.container {
+.mainContainer {
+  min-height: 100vh;
   display: flex;
-  height: 100vh;
+  flex-direction: column;
   background-color: #fff;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
+.contentWrapper {
+  display: flex;
+  flex: 1;
+  width: 100%;
+}
+
 /* Sección del formulario */
 .formSection {
-  width: 50%;
+  flex: 1;
   display: flex;
   justify-content: center;
   align-items: center;
   background-color: #fff;
+  padding: 40px 20px;
 }
 
 .loginForm {
@@ -21,20 +29,21 @@
   text-align: center;
   background-color: #fff;
   border-radius: 15px;
-  box-shadow: 0 15px 35px rgba(47, 79, 79, 0.15);
-  border: 1px solid rgba(47, 79, 79, 0.1);
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.186);
+  border: 1px solid #ffffff2d;
   transition: box-shadow 0.3s ease, transform 0.3s ease;
 }
 
 .loginForm:hover {
-  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.20);
+  box-shadow: 0 15px 40px rgba(104, 12, 89, 0.318);
   transform: translateY(-2px);
+  border-color: #8b008b;
 }
 
 .title {
   font-size: 32px;
   font-family: 'Georgia', serif;
-  color: #2f4f4f;
+  color: #8b008b;
   margin-bottom: 40px;
 }
 
@@ -48,27 +57,27 @@
   display: block;
   font-size: 14px;
   font-weight: bold;
-  color: #2f4f4f;
+  color: #000000;
   margin-bottom: 8px;
 }
 
 .input {
   width: 100%;
   border: none;
-  border-bottom: 1px solid #2f4f4f;
+  border-bottom: 1px solid #000000;
   padding: 8px 4px;
   font-size: 16px;
   background-color: transparent;
-  color: #333;
+  color: #000000;
 }
 
 .input:focus {
   outline: none;
-  border-bottom: 2px solid #8b5e3c;
+  border-bottom: 2px solid #ff0000;
 }
 
 .inputError {
-  border-bottom: 2px solid #e74c3c;
+  border-bottom: 2px solid #ff0000;
 }
 
 .errorText {
@@ -94,8 +103,8 @@
   width: 100%;
   padding: 12px;
   background-color: transparent;
-  border: 1px solid #2f4f4f;
-  color: #2f4f4f;
+  border: 1px solid #000000;
+  color: #d9a3df;
   font-weight: bold;
   font-size: 16px;
   border-radius: 4px;
@@ -104,8 +113,8 @@
 }
 
 .submitButton:hover:not(:disabled) {
-  background-color: #2f4f4f;
-  color: white;
+  background-color: #d9a3df;
+  color: rgb(0, 0, 0);
 }
 
 .submitButton:disabled {
@@ -123,36 +132,126 @@
   gap: 6px;
 }
 
-.links a {
+.link {
   text-decoration: none;
-  color: #2f4f4f;
+  color: #8b008b;
+  transition: color 0.3s ease;
 }
 
-.links a:hover {
+.link:hover {
+  color: #e438e4;
   text-decoration: underline;
 }
 
 /* Sección del logo */
 .logoSection {
-  width: 50%;
-  background-color: #fff;
+  flex: 1;
+  background-color: #f8f9fa;
   display: flex;
-  flex-direction: column;
   justify-content: center;
   align-items: center;
+  padding: 40px 20px;
+}
+
+.logoContainer {
+  text-align: center;
 }
 
 .logo {
   font-family: 'Georgia', serif;
   font-size: 48px;
   font-weight: bold;
-  color: #2f4f4f;
+  color: #8b008b;
   text-align: center;
   line-height: 1.2;
+  margin-bottom: 10px;
 }
 
 .est {
   font-size: 18px;
-  color: #2f4f4f;
-  margin-top: 10px;
+  color: #8b008b;
+  font-style: italic;
+}
+
+/* Footer */
+.footer {
+  background: linear-gradient(135deg, #000000, #555, #000000);
+  color: white;
+  padding: 20px 0;
+  width: 100%;
+}
+
+.footerContent {
+  max-width: 1200px;
+  margin: 0 auto;
+  text-align: center;
+  padding: 0 20px;
+}
+
+.footerText {
+  font-size: 14px;
+  margin-bottom: 8px;
+  font-weight: 500;
+}
+
+.copyright {
+  font-size: 12px;
+  margin: 4px 0;
+  opacity: 0.9;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .contentWrapper {
+    flex-direction: column;
+  }
+  
+  .formSection, .logoSection {
+    width: 100%;
+    padding: 40px 20px;
+  }
+  
+  .logoSection {
+    order: -1;
+    padding-top: 40px;
+    padding-bottom: 20px;
+    background-color: #fff;
+  }
+  
+  .loginForm {
+    box-shadow: none;
+    border: none;
+    padding: 20px;
+  }
+  
+  .logo {
+    font-size: 36px;
+  }
+  
+  .est {
+    font-size: 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .formSection {
+    padding: 20px 15px;
+  }
+  
+  .loginForm {
+    padding: 20px 15px;
+  }
+  
+  .title {
+    font-size: 28px;
+  }
+  
+  .logo {
+    font-size: 32px;
+  }
+  
+  .links {
+    flex-direction: column;
+    gap: 10px;
+  }
 }

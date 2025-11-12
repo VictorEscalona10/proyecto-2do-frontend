@@ -11,7 +11,7 @@
 
 .empty {
   text-align: center;
-  color: #666;
+  color: #0cf332;
 }
 
 .container {
@@ -22,23 +22,23 @@
 }
 
 .productCard {
-  border: 1px solid #e0e0e0;
+  border: 1px solid #000000;
   border-radius: 5px;
   padding: 20px;
   display: flex;
   flex-direction: column;
-  background: white;
+  background: #f5f3f1;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .productCard:hover {
   transform: translateY(-4px);
-  box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+  box-shadow: 0 4px 16px rgba(221, 119, 216, 0.509);
 }
 
 .productName {
   margin: 0 0 10px 0;
-  color: #2f4f4f;
+  color: #9a4c9e;
   font-size: 18px;
   font-weight: 600;
 }
@@ -52,7 +52,7 @@
 
 .productPrice {
   font-weight: bold;
-  color: #8b5e3c;
+  color: #000000;
   font-size: 16px;
   margin: 5px 0 15px 0;
 }
@@ -68,11 +68,11 @@
 .imagePlaceholder {
   width: 100%;
   height: 150px;
-  background-color: #f8f9fa;
+  background-color: #ffffff;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #666;
+  color: #bd8585;
   margin-bottom: 15px;
   border-radius: 5px;
 }
@@ -94,7 +94,7 @@
 .quantityButton {
   width: 33px;
   height: 20px;
-  border: 1px solid #ffffff;
+  border: 1px solid #000000;
   background: white;
   border-radius: 4px;
   cursor: pointer;
@@ -104,8 +104,8 @@
 }
 
 .quantityButton:hover {
-  background: #f8f9fa;
-  border-color: #2f4f4f;
+  background: #ffffff;
+  border-color: #9a4c9e;
 }
 
 .quantityDisplay {
@@ -113,17 +113,21 @@
   min-width: 5px;
   text-align: center;
   font-size: 15px;
-  color: #2f4f4f;
+  color: #000000;
 }
 
 .addToCartButton {
   padding: 12px;
-  background: #2f4f4f;
-  color: white;
+  background: #f700ff43;
+  color: rgb(0, 0, 0);
   border: none;
   border-radius: 8px;
   cursor: pointer;
   font-weight: 600;
   font-size: 14px;
   transition: all 0.2s ease;
+}
+.addToCartButton:hover {
+  background: #f700ff84;
+  color: white;
 }
