@@ -1,30 +1,44 @@
+import { useState } from "react";
+import {Category} from "./pages/CategoryPage"
 
-import React, { useState } from "react";
+const Users = () => (
+  <div>
+    <h2>Usuarios</h2>
+    <p>Lista de usuarios...</p>
+  </div>
+);
 
-const AdminHome = () => <div><h2>Inicio Admin</h2><p>Resumen rápido</p></div>;
-
-const Users = () => <div><h2>Usuarios</h2><p>Lista de usuarios...</p></div>;
-
-const Products = () => <div><h2>Productos</h2><p>Lista de productos...</p></div>;
+const Products = () => (
+  <div>
+    <h2>Productos</h2>
+    <p>Lista de productos...</p>
+  </div>
+);
 
 export const AdminDashboard = () => {
-  const [tab, setTab] = useState("home");
+  const [tab, setTab] = useState("category");
 
   return (
     <div style={{ padding: 16 }}>
       <h1>Panel de Administración</h1>
 
       <nav style={{ marginBottom: 12 }}>
-        <button onClick={() => setTab("home")} style={{ marginRight: 8 }}>Inicio</button>
-        <button onClick={() => setTab("users")} style={{ marginRight: 8 }}>Usuarios</button>
-        <button onClick={() => setTab("products")} style={{ marginRight: 8 }}>Productos</button>
+        <button onClick={() => setTab("category")} style={{ marginRight: 8 }}>
+          Inicio
+        </button>
+        <button onClick={() => setTab("users")} style={{ marginRight: 8 }}>
+          Usuarios
+        </button>
+        <button onClick={() => setTab("products")} style={{ marginRight: 8 }}>
+          Productos
+        </button>
       </nav>
 
       <div>
-        {tab === "home" && <AdminHome />}
+        {tab === "category" && <Category />}
         {tab === "users" && <Users />}
         {tab === "products" && <Products />}
       </div>
     </div>
   );
-}
+};
