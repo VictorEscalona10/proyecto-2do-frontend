@@ -15,10 +15,6 @@ import { AdminDashboard } from "./components/Admin/AdminDashboard.jsx";
 function App() {
   const { isAuthenticated, isLoading, user } = useAuth();
 
-  if (isLoading) {
-    return <div>Cargando...</div>;
-  }
-
   // proteger acceso a role si user es undefined/null
   if (user?.role === 'ADMINISTRADOR') {
     // envolver en providers/router si quieres mantener contexto y routing para admin
