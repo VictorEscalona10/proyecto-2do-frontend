@@ -56,6 +56,8 @@ export default function Login() {
         credentials: 'include' // Importante para cookies de autenticación
       });
 
+      console.log(password)
+
       console.log("Response status:", response.status);
       console.log("Response headers:", Object.fromEntries([...response.headers]));
 
