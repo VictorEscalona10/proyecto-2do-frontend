@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 
+const API_URL = import.meta.env.VITE_API_URL;
+
 // Función para buscar usuario
 const searchUserByEmail = async (email) => {
   try {
@@ -13,7 +15,7 @@ const searchUserByEmail = async (email) => {
       headers['Authorization'] = `Bearer ${token}`;
     }
 
-    const response = await fetch(`http://localhost:3000/users/search?email=${encodeURIComponent(email)}`, {
+    const response = await fetch(`${API_URL}/users/search?email=${encodeURIComponent(email)}`, {
       method: 'GET',
       credentials: 'include',
       headers: headers,
@@ -45,7 +47,7 @@ const deleteUser = async (email) => {
     }
 
     // Usar el endpoint correcto con el email como query parameter
-    const url = `http://localhost:3000/users/delete?email=${encodeURIComponent(email)}`;
+    const url = `${API_URL}/users/delete?email=${encodeURIComponent(email)}`;
     console.log('🌐 URL de DELETE:', url);
 
     const response = await fetch(url, {
