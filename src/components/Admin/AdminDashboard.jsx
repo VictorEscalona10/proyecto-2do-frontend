@@ -1,14 +1,8 @@
 import { useState } from "react";
 import {Category} from "./pages/CategoryPage"
+import { ProductPage } from "./pages/ProductPage"
 import { Users } from "./pages/UsersPage"
 
-
-const Products = () => (
-  <div>
-    <h2>Productos</h2>
-    <p>Lista de productos...</p>
-  </div>
-);
 
 export const AdminDashboard = () => {
   const [tab, setTab] = useState("category");
@@ -32,7 +26,7 @@ export const AdminDashboard = () => {
       <div>
         {tab === "category" && <Category />}
         {tab === "users" && <Users />}
-        {tab === "products" && <Products />}
+        {tab === "products" && <ProductPage />}
       </div>
     </div>
   );
