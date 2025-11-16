@@ -72,10 +72,9 @@ export default function Login() {
 
       if (response.ok) {
         console.log("Login exitoso:", data);
-        alert("Login exitoso")
-        setTimeout(() => {
-          navigate('/');
-        }, 3000);
+        alert("Login exitoso");
+        // Redirigir inmediatamente al home sin esperar 3 segundos
+        navigate('/');
       } else {
         console.error("Error en el login:", data.message || response.statusText);
         setErrors({ submit: data.message || "Error en el login" });
