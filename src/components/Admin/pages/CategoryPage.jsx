@@ -24,6 +24,7 @@ export function Category() {
         body: JSON.stringify({ name }),
       });
       const response = await request.json();
+      console.log("Response:", response);
       setCategories([...categories, response]);
         alert("Categoria creada con exito");
     } catch (error) {
@@ -44,11 +45,11 @@ export function Category() {
     }
   };
 
-  getCategories();
 
   return (
     <div>
       <h1>Category</h1>
+      <button onClick={getCategories}>Cargar categorias</button>
       <ul>
         {categories.map((category) => (
           <li key={category.name}>

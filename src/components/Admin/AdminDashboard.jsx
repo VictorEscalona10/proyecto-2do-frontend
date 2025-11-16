@@ -1,13 +1,8 @@
 import { useState } from "react";
 import {Category} from "./pages/CategoryPage"
-import {ProductPage} from "./pages/ProductPage"
+import { ProductPage } from "./pages/ProductPage"
+import { Users } from "./pages/UsersPage"
 
-const Users = () => (
-  <div>
-    <h2>Usuarios</h2>
-    <p>Lista de usuarios...</p>
-  </div>
-);
 
 export const AdminDashboard = () => {
   const [tab, setTab] = useState("category");

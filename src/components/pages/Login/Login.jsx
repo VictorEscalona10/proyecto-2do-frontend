@@ -55,6 +55,7 @@ export default function Login() {
         body: JSON.stringify({ email, password }),
         credentials: 'include' // Importante para cookies de autenticación
       });
+        
 
       console.log(password)
 
