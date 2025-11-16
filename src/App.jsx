@@ -11,6 +11,7 @@ import Forgot_Password from "./components/pages/Forgot_Password/Forgot_Password.
 import Reset_Password from "./components/pages/Reset_Password/Reset_Password.jsx";
 import Products from "./components/pages/Products/Products.jsx";
 import { AdminDashboard } from "./components/Admin/AdminDashboard.jsx";
+import { WorkerDashboard } from "./components/Worker/WorkerDashboard.jsx";
 
 function App() {
   const { isAuthenticated, isLoading, user } = useAuth();
@@ -22,6 +23,16 @@ function App() {
       <CartProvider>
         <Router>
           <AdminDashboard />
+        </Router>
+      </CartProvider>
+    );
+  }
+
+  if (user?.role === 'TRABAJADOR') {
+    return (
+      <CartProvider>
+        <Router>
+          <WorkerDashboard />
         </Router>
       </CartProvider>
     );

@@ -1,10 +1,10 @@
 import { useState } from "react";
-import { Category } from "./pages/CategoryPage"
-import { ProductPage } from "./pages/ProductPage"
-import { Users } from "./pages/UsersPage"
-import { OrderPage } from "./pages/OrderPage";
+import { Category } from "./page/CategoryPage";
+import { ProductPage } from "./page/ProductPage";
 
-export const AdminDashboard = () => {
+
+// Luego define el componente principal que los usa
+export const WorkerDashboard = () => {
   const [tab, setTab] = useState("category");
   const [logoutLoading, setLogoutLoading] = useState(false);
 
@@ -32,11 +32,11 @@ export const AdminDashboard = () => {
       window.location.href = '/login';
     }
   };
-
+  
   return (
     <div style={{ padding: 16 }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
-        <h1>Panel de Administración</h1>
+        <h1>Panel de Trabajador</h1>
         <button 
           onClick={handleLogout}
           disabled={logoutLoading}
@@ -54,25 +54,21 @@ export const AdminDashboard = () => {
       </div>
 
       <nav style={{ marginBottom: 12 }}>
-        <button onClick={() => setTab("category")} style={{ marginRight: 8 }}>
-          Inicio
+        <button onClick={() => setTab("orders")} style={{ marginRight: 8 }}>
+          Pedidos
         </button>
-        <button onClick={() => setTab("users")} style={{ marginRight: 8 }}>
-          Usuarios
+        <button onClick={() => setTab("Category")} style={{ marginRight: 8 }}>
+            Categorias
         </button>
         <button onClick={() => setTab("products")} style={{ marginRight: 8 }}>
           Productos
         </button>
-        <button onClick={() => setTab("orders")} style={{ marginRight: 8 }}>
-          Ordenes
-        </button>
       </nav>
 
       <div>
-        {tab === "category" && <Category />}
-        {tab === "users" && <Users />}
+        {tab === "orders" && <Orders />}
+        {tab === "Category" && <Category />}
         {tab === "products" && <ProductPage />}
-        {tab === "orders" && <OrderPage />}
       </div>
     </div>
   );
