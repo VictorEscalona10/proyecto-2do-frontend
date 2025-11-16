@@ -1,7 +1,8 @@
 import { useState } from "react";
-import {Category} from "./pages/CategoryPage"
+import { Category } from "./pages/CategoryPage"
 import { ProductPage } from "./pages/ProductPage"
 import { Users } from "./pages/UsersPage"
+
 
 
 export const AdminDashboard = () => {
@@ -21,12 +22,16 @@ export const AdminDashboard = () => {
         <button onClick={() => setTab("products")} style={{ marginRight: 8 }}>
           Productos
         </button>
+        <button onClick={() => setTab("estatistics")} style={{ marginRight: 8 }}>
+          Estadísticas
+        </button>
       </nav>
 
       <div>
         {tab === "category" && <Category />}
         {tab === "users" && <Users />}
         {tab === "products" && <ProductPage />}
+        {tab === "estatistics" && <EstatisticsPage />}
       </div>
     </div>
   );
