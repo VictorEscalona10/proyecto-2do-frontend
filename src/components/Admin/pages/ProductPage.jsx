@@ -15,11 +15,13 @@ export function ProductPage() {
   const [searchType, setSearchType] = useState("name"); // 'name' o 'category'
   const [searchTerm, setSearchTerm] = useState("");
 
+  const API_URL = import.meta.env.VITE_API_URL;
+
   // Función para buscar productos por nombre
   const getProductByName = async (name) => {
     try {
       const response = await fetch(
-        `http://localhost:3000/products/search/name?name=${name}`
+        `${API_URL}/products/search/name?name=${name}`
       );
       const result = await response.json();
       setProducts(result.data || []);
@@ -33,7 +35,7 @@ export function ProductPage() {
   const getProductsByCategory = async (categoryName) => {
     try {
       const response = await fetch(
-        `http://localhost:3000/products/search/category?name=${categoryName}`
+        `${API_URL}/products/search/category?name=${categoryName}`
       );
       const result = await response.json();
       setProducts(result.data || []);
@@ -87,7 +89,7 @@ export function ProductPage() {
     }
 
     try {
-      const response = await fetch("http://localhost:3000/products/create", {
+      const response = await fetch(`${API_URL}/products/create`, {
         method: "POST",
         body: fd,
       });

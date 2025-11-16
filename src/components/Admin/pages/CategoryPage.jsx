@@ -3,9 +3,11 @@ import { useState } from "react";
 export function Category() {
   const [categories, setCategories] = useState([]);
 
+  const API_URL = import.meta.env.VITE_API_URL
+
   const getCategories = async () => {
     try {
-      const request = await fetch("http://localhost:3000/category");
+      const request = await fetch(`${API_URL}/category`);
       const response = await request.json();
       setCategories(response);
     } catch (error) {
@@ -15,7 +17,7 @@ export function Category() {
 
   const createCategory = async (name) => {
     try {
-      const request = await fetch("http://localhost:3000/category/create", {
+      const request = await fetch(`${API_URL}/category/create`, {
         method: "POST",
         credentials: "include",
         headers: {
@@ -34,7 +36,7 @@ export function Category() {
 
   const handleDelete = async (name) => {
     try {
-      await fetch(`http://localhost:3000/category/delete/${name}`, {
+      await fetch(`${API_URL}/category/delete/${name}`, {
         method: "DELETE",
         credentials: "include",
       });
