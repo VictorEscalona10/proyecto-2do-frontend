@@ -56,8 +56,6 @@ export default function Login() {
         credentials: 'include' // Importante para cookies de autenticación
       });
 
-      console.log(password)
-
       console.log("Response status:", response.status);
       console.log("Response headers:", Object.fromEntries([...response.headers]));
 
@@ -74,10 +72,9 @@ export default function Login() {
 
       if (response.ok) {
         console.log("Login exitoso:", data);
-        alert("Login exitoso")
-        setTimeout(() => {
-          navigate('/');
-        }, 3000);
+        alert("Login exitoso");
+        // Redirigir inmediatamente al home sin esperar 3 segundos
+        navigate('/');
       } else {
         console.error("Error en el login:", data.message || response.statusText);
         setErrors({ submit: data.message || "Error en el login" });
