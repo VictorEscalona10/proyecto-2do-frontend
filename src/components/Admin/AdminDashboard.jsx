@@ -1,12 +1,7 @@
 import { useState } from "react";
 import {Category} from "./pages/CategoryPage"
+import { Users } from "./pages/UsersPage"
 
-const Users = () => (
-  <div>
-    <h2>Usuarios</h2>
-    <p>Lista de usuarios...</p>
-  </div>
-);
 
 const Products = () => (
   <div>
