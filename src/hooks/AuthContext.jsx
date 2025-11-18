@@ -31,12 +31,26 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  const logout = async () => {
+    try {
+      await fetch('http://localhost:3000/auth/logout', {
+        method: 'POST',
+        credentials: 'include'
+      });
+    } catch (error) {
+      console.error('Error en logout:', error);
+    } finally {
+      setIsAuthenticated(false);
+      setUser(null);
+    }
+  };
+
   useEffect(() => {
     checkAuth();
   }, []);
 
   return (
-    <AuthContext.Provider value={{ isAuthenticated, isLoading, user }}>
+    <AuthContext.Provider value={{ isAuthenticated, isLoading, user, checkAuth, logout }}>
       {children}
     </AuthContext.Provider>
   );

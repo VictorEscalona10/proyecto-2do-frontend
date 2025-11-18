@@ -89,6 +89,7 @@ export function ProductPage() {
     try {
       const response = await fetch("http://localhost:3000/products/create", {
         method: "POST",
+        credentials: "include",
         body: fd,
       });
 

@@ -1,8 +1,6 @@
-/* ProductPage.css - Estilo Repostería Migdalis Tortas */
-
 .product-page {
   min-height: 100vh;
-  background-color: #fff9fb;
+  background-color: #ffffff;
   font-family: 'Comic Sans MS', cursive, sans-serif;
   padding: 20px;
 }
@@ -89,7 +87,7 @@
 }
 
 .type-btn.active {
-  background: linear-gradient(135deg, #8b008b, #9b169b);
+  background: linear-gradient(135deg, #ff70ff, #ffbaff);
   color: white;
   border-color: #8b008b;
   transform: translateY(-2px);

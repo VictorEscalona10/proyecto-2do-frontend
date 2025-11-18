@@ -27,7 +27,7 @@ background: linear-gradient(135deg, #fdf2ff 0%, #fff0f8 50%, #fef4ff 100%);
   font-weight: bold;
   margin-bottom: 20px;
   color: #8b008b;
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.715);
   animation: fadeInUp 1s ease;
 }
 

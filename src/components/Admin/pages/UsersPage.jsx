@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import "./UsersPage.css";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -176,53 +177,36 @@ export const Users = () => {
     }
   };
 
+  // Función para obtener clase de mensaje
+  const getMessageClass = () => {
+    if (message.includes('Error')) return 'message-error';
+    if (message.includes('eliminado')) return 'message-success';
+    return 'message-warning';
+  };
+
   return (
-    <div style={{ padding: '20px', maxWidth: '800px' }}>
-      <h2 style={{ color: '#333', marginBottom: '20px' }}>👥 Gestión de Usuarios</h2>
+    <div className="users-page">
+      <h2>👥 Gestión de Usuarios</h2>
       
       {/* Panel de búsqueda */}
-      <div style={{ 
-        marginBottom: '20px', 
-        padding: '20px', 
-        backgroundColor: 'white', 
-        border: '1px solid #dee2e6',
-        borderRadius: '8px',
-        boxShadow: '0 1px 3px rgba(0,0,0,0.1)'
-      }}>
-        <h3 style={{ marginTop: 0, color: '#495057' }}>🔍 Buscar Usuario</h3>
-        <p style={{ color: '#6c757d', fontSize: '14px', marginBottom: '15px' }}>
+      <div className="search-panel">
+        <h3>🔍 Buscar Usuario</h3>
+        <p className="search-description">
           Ingresa el email del usuario que deseas buscar en el sistema
         </p>
         
-        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+        <div className="search-input-group">
           <input
             type="email"
             placeholder="ejemplo@correo.com"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             onKeyPress={handleKeyPress}
-            style={{
-              padding: '12px',
-              flex: 1,
-              border: '1px solid #ced4da',
-              borderRadius: '4px',
-              fontSize: '14px',
-              minWidth: '250px'
-            }}
           />
           <button 
             onClick={handleSearch}
             disabled={loading}
-            style={{
-              padding: '12px 24px',
-              backgroundColor: '#007bff',
-              color: 'white',
-              border: 'none',
-              borderRadius: '4px',
-              cursor: loading ? 'not-allowed' : 'pointer',
-              fontSize: '14px',
-              fontWeight: 'bold'
-            }}
+            className="search-btn"
           >
             {loading ? '⏳ Buscando...' : '🔍 Buscar Usuario'}
           </button>
@@ -231,122 +215,59 @@ export const Users = () => {
 
       {/* Mostrar información del usuario */}
       {user && (
-        <div style={{
-          border: '1px solid #ddd',
-          padding: '25px',
-          borderRadius: '8px',
-          marginBottom: '20px',
-          backgroundColor: '#f8f9fa',
-          boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
-        }}>
-          <h3 style={{ 
-            marginTop: 0, 
-            color: '#333', 
-            borderBottom: '2px solid #007bff', 
-            paddingBottom: '10px',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '10px'
-          }}>
+        <div className="user-card">
+          <h3 className="user-header">
             📋 Información del Usuario
           </h3>
           
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
+          <div className="user-grid">
             {/* Columna 1 - Información básica */}
-            <div>
-              <h4 style={{ color: '#495057', marginBottom: '15px', borderBottom: '1px solid #dee2e6', paddingBottom: '5px' }}>
-                Información Básica
-              </h4>
+            <div className="info-section">
+              <h4>Información Básica</h4>
               
-              <div style={{ marginBottom: '12px' }}>
+              <div className="info-field">
                 <strong>📧 Email:</strong>
-                <div style={{ 
-                  padding: '8px', 
-                  backgroundColor: 'white', 
-                  borderRadius: '4px', 
-                  marginTop: '5px',
-                  border: '1px solid #dee2e6'
-                }}>
+                <div className="field-value">
                   {user.email || 'No disponible'}
                 </div>
               </div>
               
-              <div style={{ marginBottom: '12px' }}>
+              <div className="info-field">
                 <strong>👤 Nombre Completo:</strong>
-                <div style={{ 
-                  padding: '8px', 
-                  backgroundColor: 'white', 
-                  borderRadius: '4px', 
-                  marginTop: '5px',
-                  border: '1px solid #dee2e6'
-                }}>
+                <div className="field-value">
                   {user.name || 'No disponible'}
                 </div>
               </div>
               
-              <div style={{ marginBottom: '12px' }}>
+              <div className="info-field">
                 <strong>🆔 Cédula de Identidad:</strong>
-                <div style={{ 
-                  padding: '8px', 
-                  backgroundColor: 'white', 
-                  borderRadius: '4px', 
-                  marginTop: '5px',
-                  border: '1px solid #dee2e6',
-                  fontWeight: 'bold',
-                  color: '#28a745'
-                }}>
+                <div className="field-value identification">
                   {getFieldValue(['identification', 'cedula', 'dni', 'document', 'documentNumber'])}
                 </div>
               </div>
             </div>
 
             {/* Columna 2 - Información de contacto */}
-            <div>
-              <h4 style={{ color: '#495057', marginBottom: '15px', borderBottom: '1px solid #dee2e6', paddingBottom: '5px' }}>
-                Información de Contacto
-              </h4>
+            <div className="info-section">
+              <h4>Información de Contacto</h4>
               
-              <div style={{ marginBottom: '12px' }}>
+              <div className="info-field">
                 <strong>📞 Teléfono:</strong>
-                <div style={{ 
-                  padding: '8px', 
-                  backgroundColor: 'white', 
-                  borderRadius: '4px', 
-                  marginTop: '5px',
-                  border: '1px solid #dee2e6',
-                  fontWeight: 'bold',
-                  color: '#007bff'
-                }}>
+                <div className="field-value phone">
                   {getFieldValue(['phoneNumber', 'phone', 'telefono', 'telephone', 'cellphone', 'mobile'])}
                 </div>
               </div>
               
-              <div style={{ marginBottom: '12px' }}>
+              <div className="info-field">
                 <strong>🔐 Estado de Cuenta:</strong>
-                <div style={{ 
-                  padding: '8px', 
-                  backgroundColor: 'white', 
-                  borderRadius: '4px', 
-                  marginTop: '5px',
-                  border: '1px solid #dee2e6',
-                  color: user.isActive === false ? '#dc3545' : '#28a745',
-                  fontWeight: 'bold'
-                }}>
+                <div className={`field-value ${user.isActive === false ? 'status-inactive' : 'status-active'}`}>
                   {user.isActive === false ? '❌ Inactiva' : '✅ Activa'}
                 </div>
               </div>
               
-              <div style={{ marginBottom: '12px' }}>
+              <div className="info-field">
                 <strong>👑 Rol:</strong>
-                <div style={{ 
-                  padding: '8px', 
-                  backgroundColor: 'white', 
-                  borderRadius: '4px', 
-                  marginTop: '5px',
-                  border: '1px solid #dee2e6',
-                  color: user.role === 'admin' ? '#dc3545' : '#007bff',
-                  fontWeight: 'bold'
-                }}>
+                <div className={`field-value ${user.role === 'admin' ? 'role-admin' : 'role-user'}`}>
                   {user.role ? user.role.toUpperCase() : 'USER'}
                 </div>
               </div>
@@ -354,26 +275,15 @@ export const Users = () => {
           </div>
 
           {/* Información adicional */}
-          <div style={{ 
-            marginTop: '20px', 
-            paddingTop: '20px', 
-            borderTop: '1px solid #dee2e6'
-          }}>
-            <h4 style={{ color: '#495057', marginBottom: '15px' }}>Información Adicional</h4>
+          <div className="additional-info">
+            <h4>Información Adicional</h4>
             
             {/* Mostrar todos los campos disponibles para debug */}
-            <details style={{ marginBottom: '15px' }}>
-              <summary style={{ cursor: 'pointer', color: '#6c757d', fontSize: '14px' }}>
+            <details className="debug-section">
+              <summary className="debug-summary">
                 🔍 Ver todos los campos disponibles (Debug)
               </summary>
-              <div style={{ 
-                marginTop: '10px', 
-                padding: '10px', 
-                backgroundColor: '#e9ecef', 
-                borderRadius: '4px',
-                fontSize: '12px',
-                fontFamily: 'monospace'
-              }}>
+              <div className="debug-content">
                 {Object.entries(user).map(([key, value]) => (
                   <div key={key}>
                     <strong>{key}:</strong> {JSON.stringify(value)}
@@ -384,36 +294,16 @@ export const Users = () => {
           </div>
 
           {/* Botón de eliminar */}
-          <div style={{ 
-            marginTop: '25px', 
-            textAlign: 'center',
-            paddingTop: '20px',
-            borderTop: '2px solid #dc3545'
-          }}>
-            <h4 style={{ color: '#dc3545', marginBottom: '15px' }}>🚨 Zona de Peligro</h4>
+          <div className="danger-zone">
+            <h4>🚨 Zona de Peligro</h4>
             <button 
               onClick={handleDelete}
               disabled={deleteLoading}
-              style={{
-                padding: '12px 30px',
-                backgroundColor: deleteLoading ? '#6c757d' : '#dc3545',
-                color: 'white',
-                border: 'none',
-                borderRadius: '6px',
-                cursor: deleteLoading ? 'not-allowed' : 'pointer',
-                fontSize: '16px',
-                fontWeight: 'bold',
-                boxShadow: '0 2px 4px rgba(220, 53, 69, 0.3)'
-              }}
+              className="delete-btn"
             >
               {deleteLoading ? '⏳ Eliminando...' : '🗑️ Eliminar Usuario Permanentemente'}
             </button>
-            <p style={{ 
-              color: '#6c757d', 
-              fontSize: '12px', 
-              marginTop: '10px',
-              fontStyle: 'italic'
-            }}>
+            <p className="delete-warning">
               Esta acción no se puede deshacer. El usuario será eliminado permanentemente del sistema.
             </p>
           </div>
@@ -422,18 +312,7 @@ export const Users = () => {
 
       {/* Mensajes del sistema */}
       {message && (
-        <div style={{
-          padding: '15px',
-          borderRadius: '4px',
-          backgroundColor: message.includes('Error') ? '#f8d7da' : 
-                          message.includes('eliminado') ? '#d4edda' : '#fff3cd',
-          color: message.includes('Error') ? '#721c24' : 
-                message.includes('eliminado') ? '#155724' : '#856404',
-          border: `1px solid ${message.includes('Error') ? '#f5c6cb' : 
-                              message.includes('eliminado') ? '#c3e6cb' : '#ffeaa7'}`,
-          marginTop: '10px',
-          fontWeight: 'bold'
-        }}>
+        <div className={`system-message ${getMessageClass()}`}>
           {message}
         </div>
       )}

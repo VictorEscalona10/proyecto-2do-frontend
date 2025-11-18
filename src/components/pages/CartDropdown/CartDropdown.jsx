@@ -1,5 +1,5 @@
 import { useCart } from "../../../context/CartContext";
-import { useAuth } from "../../../hooks/useAuth";
+import { useAuth } from "../../../hooks/AuthContext.jsx";
 import styles from "./CartDropdown.module.css";
 
 export default function CartDropdown({ isOpen, onClose }) {

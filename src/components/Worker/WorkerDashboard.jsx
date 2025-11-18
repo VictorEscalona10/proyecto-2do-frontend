@@ -1,11 +1,11 @@
 import { useState } from "react";
 import { Category } from "./page/CategoryPage";
 import { ProductPage } from "./page/ProductPage";
+import { OrderPage } from "./page/OrderPage";
+import "./WorkerDashboard.css";
 
-
-// Luego define el componente principal que los usa
 export const WorkerDashboard = () => {
-  const [tab, setTab] = useState("category");
+  const [tab, setTab] = useState("orders");
   const [logoutLoading, setLogoutLoading] = useState(false);
 
   const handleLogout = async () => {
@@ -32,44 +32,56 @@ export const WorkerDashboard = () => {
       window.location.href = '/login';
     }
   };
+
+  const navItems = [
+    { id: "orders", label: "📋 Pedidos", icon: "📋" },
+    { id: "category", label: "🏷️ Categorías", icon: "🏷️" },
+    { id: "products", label: "📦 Productos", icon: "📦" }
+  ];
   
   return (
-    <div style={{ padding: 16 }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
-        <h1>Panel de Trabajador</h1>
-        <button 
-          onClick={handleLogout}
-          disabled={logoutLoading}
-          style={{
-            padding: '8px 16px',
-            backgroundColor: '#dc3545',
-            color: 'white',
-            border: 'none',
-            borderRadius: '4px',
-            cursor: logoutLoading ? 'not-allowed' : 'pointer'
-          }}
-        >
-          {logoutLoading ? 'Cerrando...' : 'Cerrar Sesión'}
-        </button>
-      </div>
+    <div className="worker-dashboard">
+      {/* Header */}
+      <header className="worker-header">
+        <div className="worker-header-content">
+          <div className="worker-title-section">
+            <h1 className="worker-main-title">👨‍💼 Panel de Trabajador</h1>
+            <p className="worker-subtitle">Migdalis Tortas - Gestión Operativa</p>
+          </div>
+          <button 
+            onClick={handleLogout}
+            disabled={logoutLoading}
+            className="worker-logout-btn"
+          >
+            {logoutLoading ? "⏳ Cerrando..." : "🚪 Cerrar Sesión"}
+          </button>
+        </div>
+      </header>
 
-      <nav style={{ marginBottom: 12 }}>
-        <button onClick={() => setTab("orders")} style={{ marginRight: 8 }}>
-          Pedidos
-        </button>
-        <button onClick={() => setTab("Category")} style={{ marginRight: 8 }}>
-            Categorias
-        </button>
-        <button onClick={() => setTab("products")} style={{ marginRight: 8 }}>
-          Productos
-        </button>
+      {/* Navigation */}
+      <nav className="worker-nav">
+        <div className="worker-nav-buttons">
+          {navItems.map((item) => (
+            <button
+              key={item.id}
+              onClick={() => setTab(item.id)}
+              className={`worker-nav-btn ${tab === item.id ? 'worker-nav-btn-active' : ''}`}
+            >
+              <span className="worker-nav-icon">{item.icon}</span>
+              <span className="worker-nav-label">{item.label}</span>
+            </button>
+          ))}
+        </div>
       </nav>
 
-      <div>
-        {tab === "orders" && <Orders />}
-        {tab === "Category" && <Category />}
-        {tab === "products" && <ProductPage />}
-      </div>
+      {/* Content */}
+      <main className="worker-main">
+        <div className="worker-content">
+          {tab === "orders" && <OrderPage />}
+          {tab === "category" && <Category />}
+          {tab === "products" && <ProductPage />}
+        </div>
+      </main>
     </div>
   );
 };

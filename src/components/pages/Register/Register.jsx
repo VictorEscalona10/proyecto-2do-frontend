@@ -117,9 +117,7 @@ export default function Register() {
       if (response.ok) {
         console.log("Registro exitoso:", data);
         alert("Registro exitoso! Por favor inicia sesión.");
-        setTimeout(() => {
           navigate('/login');
-        }, 2000);
       } else {
         console.error("Error en el registro:", data.message || response.statusText);
         setErrors({ submit: data.message || "Error en el registro" });
