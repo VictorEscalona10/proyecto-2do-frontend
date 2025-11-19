@@ -92,6 +92,7 @@ export function ProductPage() {
       const response = await fetch(`${API_URL}/products/create`, {
         credentials: "include",
         method: "POST",
+        credentials: "include",
         body: fd,
       });
 

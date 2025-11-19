@@ -1,0 +1,356 @@
+/* UsersPage.css - Estilo Repostería Migdalis Tortas */
+.users-page {
+  min-height: 100vh;
+  background-color: #fff9fb;
+  font-family: 'Comic Sans MS', cursive, sans-serif;
+  padding: 20px;
+}
+
+.users-page h2 {
+  color: #8b008b;
+  font-size: 2.8rem;
+  margin-bottom: 10px;
+  font-family: 'Georgia', serif;
+  text-align: center;
+  text-shadow: 2px 2px 4px rgba(214, 93, 177, 0.2);
+}
+
+/* Panel de búsqueda */
+.search-panel {
+  background: #ffffff;
+  padding: 30px;
+  border-radius: 20px;
+  border: 2px solid #f0e6f5;
+  box-shadow: 0 5px 20px rgba(155, 22, 155, 0.08);
+  margin-bottom: 30px;
+}
+
+.search-panel h3 {
+  color: #8b008b;
+  margin-top: 0;
+  font-size: 1.5rem;
+  font-family: 'Georgia', serif;
+  border-bottom: 2px solid #f8f0f5;
+  padding-bottom: 15px;
+}
+
+.search-description {
+  color: #9b169b;
+  font-size: 14px;
+  margin-bottom: 20px;
+  font-style: italic;
+}
+
+.search-input-group {
+  display: flex;
+  gap: 15px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.search-input-group input {
+  flex: 1;
+  padding: 15px 20px;
+  border: 2px solid #d9a3df;
+  border-radius: 12px;
+  font-size: 16px;
+  min-width: 250px;
+  background: white;
+  color: #510138;
+  font-family: 'Comic Sans MS', cursive;
+  transition: all 0.3s ease;
+}
+
+.search-input-group input:focus {
+  outline: none;
+  border-color: #8b008b;
+  box-shadow: 0 0 0 3px rgba(139, 0, 139, 0.1);
+}
+
+.search-btn {
+  padding: 15px 30px;
+  background: linear-gradient(135deg, #8b008b, #9b169b);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-family: 'Comic Sans MS', cursive;
+}
+
+.search-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(139, 0, 139, 0.3);
+}
+
+.search-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Tarjeta de usuario */
+.user-card {
+  background: #ffffff;
+  border: 2px solid #f0e6f5;
+  border-radius: 20px;
+  padding: 30px;
+  margin-bottom: 30px;
+  box-shadow: 0 5px 20px rgba(155, 22, 155, 0.08);
+  transition: all 0.3s ease;
+}
+
+.user-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(139, 0, 139, 0.15);
+  border-color: #d9a3df;
+}
+
+.user-header {
+  color: #8b008b;
+  margin-top: 0;
+  border-bottom: 3px solid #8b008b;
+  padding-bottom: 15px;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  font-family: 'Georgia', serif;
+}
+
+.user-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 25px;
+  margin-bottom: 20px;
+}
+
+.info-section h4 {
+  color: #510138;
+  margin-bottom: 15px;
+  border-bottom: 2px solid #f8f0f5;
+  padding-bottom: 8px;
+  font-family: 'Georgia', serif;
+}
+
+.info-field {
+  margin-bottom: 15px;
+}
+
+.info-field strong {
+  color: #510138;
+  display: block;
+  margin-bottom: 5px;
+  font-size: 14px;
+}
+
+.field-value {
+  padding: 12px;
+  background: white;
+  border-radius: 8px;
+  border: 2px solid #f0e6f5;
+  color: #510138;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.field-value:hover {
+  border-color: #d9a3df;
+}
+
+/* Estados especiales */
+.status-active {
+  color: #28a745 !important;
+  font-weight: bold;
+}
+
+.status-inactive {
+  color: #dc3545 !important;
+  font-weight: bold;
+}
+
+.role-admin {
+  color: #dc3545 !important;
+  font-weight: bold;
+}
+
+.role-user {
+  color: #007bff !important;
+  font-weight: bold;
+}
+
+.identification {
+  color: #28a745 !important;
+  font-weight: bold;
+}
+
+.phone {
+  color: #007bff !important;
+  font-weight: bold;
+}
+
+/* Información adicional */
+.additional-info {
+  margin-top: 25px;
+  padding-top: 25px;
+  border-top: 2px solid #f8f0f5;
+}
+
+.debug-section {
+  margin-bottom: 20px;
+}
+
+.debug-summary {
+  cursor: pointer;
+  color: #9b169b;
+  font-size: 14px;
+  font-style: italic;
+}
+
+.debug-content {
+  margin-top: 15px;
+  padding: 15px;
+  background: #f8f0f5;
+  border-radius: 8px;
+  border: 1px solid #d9a3df;
+  font-size: 12px;
+  font-family: monospace;
+  color: #510138;
+}
+
+/* Zona de peligro */
+.danger-zone {
+  margin-top: 30px;
+  text-align: center;
+  padding-top: 25px;
+  border-top: 3px solid #dc3545;
+  background: linear-gradient(135deg, #fff9fb, #f8f0f5);
+  border-radius: 15px;
+  padding: 25px;
+}
+
+.danger-zone h4 {
+  color: #dc3545;
+  margin-bottom: 20px;
+  font-family: 'Georgia', serif;
+}
+
+.delete-btn {
+  padding: 15px 40px;
+  background: linear-gradient(135deg, #dc3545, #c82333);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-family: 'Comic Sans MS', cursive;
+  box-shadow: 0 4px 15px rgba(220, 53, 69, 0.3);
+}
+
+.delete-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(220, 53, 69, 0.4);
+}
+
+.delete-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.delete-warning {
+  color: #9b169b;
+  font-size: 12px;
+  margin-top: 12px;
+  font-style: italic;
+}
+
+/* Mensajes del sistema */
+.system-message {
+  padding: 20px;
+  border-radius: 12px;
+  margin-top: 20px;
+  font-weight: bold;
+  text-align: center;
+  border: 2px solid;
+}
+
+.message-error {
+  background-color: #f8d7da;
+  color: #721c24;
+  border-color: #f5c6cb;
+}
+
+.message-success {
+  background-color: #d4edda;
+  color: #155724;
+  border-color: #c3e6cb;
+}
+
+.message-warning {
+  background-color: #fff3cd;
+  color: #856404;
+  border-color: #ffeaa7;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .users-page {
+    padding: 15px;
+  }
+  
+  .users-page h2 {
+    font-size: 2.2rem;
+  }
+  
+  .search-input-group {
+    flex-direction: column;
+  }
+  
+  .search-input-group input {
+    min-width: auto;
+    width: 100%;
+  }
+  
+  .search-btn {
+    width: 100%;
+  }
+  
+  .user-grid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+  
+  .user-header {
+    flex-direction: column;
+    text-align: center;
+    gap: 10px;
+  }
+  
+  .search-panel {
+    padding: 25px 20px;
+  }
+  
+  .user-card {
+    padding: 25px 20px;
+  }
+}
+
+@media (max-width: 480px) {
+  .users-page h2 {
+    font-size: 1.8rem;
+  }
+  
+  .search-panel,
+  .user-card {
+    padding: 20px 15px;
+  }
+  
+  .delete-btn {
+    padding: 12px 25px;
+    font-size: 14px;
+  }
+}

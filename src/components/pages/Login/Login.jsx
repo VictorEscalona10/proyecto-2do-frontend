@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
+import { useAuth } from '../../../hooks/AuthContext.jsx';
 import styles from "./login.module.css";
 
 export default function Login() {
@@ -13,6 +14,7 @@ export default function Login() {
   });
   
   const navigate = useNavigate();
+  const { checkAuth } = useAuth();
 
   const validate = () => {
     const newErrors = {};
@@ -57,8 +59,6 @@ export default function Login() {
       });
         
 
-      console.log(password)
-
       console.log("Response status:", response.status);
       console.log("Response headers:", Object.fromEntries([...response.headers]));
 
@@ -76,7 +76,12 @@ export default function Login() {
       if (response.ok) {
         console.log("Login exitoso:", data);
         alert("Login exitoso");
-        // Redirigir inmediatamente al home sin esperar 3 segundos
+        // Actualizar el estado de autenticación global y redirigir
+        try {
+          await checkAuth();
+        } catch (err) {
+          console.warn('No se pudo refrescar auth después del login:', err);
+        }
         navigate('/');
       } else {
         console.error("Error en el login:", data.message || response.statusText);
