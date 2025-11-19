@@ -58,7 +58,7 @@ export function ProductsComponent({ categoria }) {
       button.style.background = '#d719da9a';
       setTimeout(() => {
         button.textContent = 'Agregar al Carrito';
-        button.style.background = '#d719da9a';
+        button.style.background = '#f700ff43';
       }, 1500);
     }
   };

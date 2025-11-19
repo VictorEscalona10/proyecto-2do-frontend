@@ -119,13 +119,7 @@ export function Category() {
                   <div className="category-info">
                     <span className="category-name">🏷️ {category.name}</span>
                   </div>
-                  <button
-                    onClick={() => handleDelete(category.name)}
-                    className="delete-btn"
-                    title="Eliminar categoría"
-                  >
-                    🗑️ Eliminar
-                  </button>
+
                 </div>
               ))}
             </div>
