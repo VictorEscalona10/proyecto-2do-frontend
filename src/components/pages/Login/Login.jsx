@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from '../../../hooks/AuthContext.jsx';
 import styles from "./login.module.css";
+import logo from '../../../assest/img/logo.jpg'; // Importar el logo
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -102,6 +103,11 @@ export default function Login() {
     setErrors(validationErrors);
   };
 
+  // Función para redirigir al home al hacer clic en el logo
+  const handleLogoClick = () => {
+    navigate('/');
+  };
+
   return (
     <div className={styles.mainContainer}>
       <div className={styles.contentWrapper}>
@@ -169,6 +175,14 @@ export default function Login() {
 
         <div className={styles.logoSection}>
           <div className={styles.logoContainer}>
+            {/* Logo con funcionalidad de click */}
+            <img 
+              src={logo} 
+              alt="Logo Migdalis Tortas" 
+              className={styles.logoImage}
+              onClick={handleLogoClick}
+              style={{ cursor: 'pointer' }}
+            />
             <h1 className={styles.logo}>MIGDALIS<br />TORTAS</h1>
             <p className={styles.est}>EST. 2008</p>
           </div>

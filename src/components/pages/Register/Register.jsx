@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import styles from "./register.module.css";
+import logo from '../../../assest/img/logo.jpg';
 
 export default function Register() {
   const [name, setName] = useState("");
@@ -170,6 +171,10 @@ export default function Register() {
     
     setIdentification(value);
   };
+    // Función para redirigir al home al hacer clic en el logo
+  const handleLogoClick = () => {
+    navigate('/');
+  };
 
   return (
     <div className={styles.mainContainer}>
@@ -311,6 +316,14 @@ export default function Register() {
 
         <div className={styles.logoSection}>
           <div className={styles.logoContainer}>
+            {/* Logo con funcionalidad de click */}
+            <img 
+              src={logo} 
+              alt="Logo Migdalis Tortas" 
+              className={styles.logoImage}
+              onClick={handleLogoClick}
+              style={{ cursor: 'pointer' }}
+            />
             <h1 className={styles.logo}>MIGDALIS<br />TORTAS</h1>
             <p className={styles.est}>EST. 2008</p>
           </div>
