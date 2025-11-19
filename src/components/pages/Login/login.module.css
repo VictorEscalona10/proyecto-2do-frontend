@@ -157,6 +157,22 @@
   text-align: center;
 }
 
+/* Estilos para el logo */
+.logoImage {
+  width: 150px;
+  height: 150px;
+  margin-bottom: 20px;
+  border-radius: 50%;
+  object-fit: cover;
+  box-shadow: 0 4px 15px rgba(139, 0, 139, 0.3);
+  border: 3px solid #8b008b;
+  transition: transform 0.3s ease;
+}
+
+.logoImage:hover {
+  transform: scale(1.05);
+}
+
 .logo {
   font-family: 'Georgia', serif;
   font-size: 48px;
@@ -165,6 +181,7 @@
   text-align: center;
   line-height: 1.2;
   margin-bottom: 10px;
+  margin-top: 10px;
 }
 
 .est {
@@ -231,6 +248,11 @@
   .est {
     font-size: 16px;
   }
+
+  .logoImage {
+    width: 120px;
+    height: 120px;
+  }
 }
 
 @media (max-width: 480px) {
@@ -253,5 +275,10 @@
   .links {
     flex-direction: column;
     gap: 10px;
+  }
+
+  .logoImage {
+    width: 100px;
+    height: 100px;
   }
 }
