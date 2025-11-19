@@ -66,7 +66,6 @@ export const WorkerDashboard = () => {
       </nav>
 
       <div>
-        {tab === "orders" && <Orders />}
         {tab === "Category" && <Category />}
         {tab === "products" && <ProductPage />}
       </div>
