@@ -7,7 +7,7 @@ export function Category() {
   const [newCategory, setNewCategory] = useState("");
 
   const API_URL = import.meta.env.VITE_API_URL;
-
+ 
   const getCategories = async () => {
     setLoading(true);
     try {
