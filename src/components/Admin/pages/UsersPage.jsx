@@ -1,74 +1,100 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import "./UsersPage.css";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
-// Función para buscar usuario
-const searchUserByEmail = async (email) => {
+// Funciones de API
+const getAllUsers = async () => {
   try {
     const token = localStorage.getItem('authToken') || sessionStorage.getItem('authToken');
-    
     const headers = {
       'Content-Type': 'application/json',
     };
+    if (token) headers['Authorization'] = `Bearer ${token}`;
 
-    if (token) {
-      headers['Authorization'] = `Bearer ${token}`;
-    }
-
-    const response = await fetch(`${API_URL}/users/search?email=${encodeURIComponent(email)}`, {
+    const response = await fetch(`${API_URL}/users`, {
       method: 'GET',
       credentials: 'include',
       headers: headers,
     });
     
-    if (!response.ok) {
-      throw new Error(`Error: ${response.status} ${response.statusText}`);
-    }
-    
-    const userData = await response.json();
-    return userData;
+    if (!response.ok) throw new Error(`Error: ${response.status} ${response.statusText}`);
+    return await response.json();
   } catch (error) {
-    console.error('Error buscando usuario:', error);
+    console.error('Error obteniendo usuarios:', error);
     throw error;
   }
 };
 
-// Función para eliminar usuario - CORREGIDA
-const deleteUser = async (email) => {
+const searchUsers = async (searchTerm, searchType) => {
   try {
     const token = localStorage.getItem('authToken') || sessionStorage.getItem('authToken');
-    
     const headers = {
       'Content-Type': 'application/json',
     };
+    if (token) headers['Authorization'] = `Bearer ${token}`;
 
-    if (token) {
-      headers['Authorization'] = `Bearer ${token}`;
+    const queryParams = new URLSearchParams();
+    if (searchType === 'email') {
+      queryParams.append('email', searchTerm);
+    } else if (searchType === 'name') {
+      queryParams.append('name', searchTerm);
+    } else if (searchType === 'Identification') {
+      queryParams.append('Identification', searchTerm);
     }
 
-    // Usar el endpoint correcto con el email como query parameter
-    const url = `${API_URL}/users/delete?email=${encodeURIComponent(email)}`;
-    console.log('🌐 URL de DELETE:', url);
+    const response = await fetch(`${API_URL}/users/search?${queryParams}`, {
+      method: 'GET',
+      credentials: 'include',
+      headers: headers,
+    });
+    
+    if (!response.ok) throw new Error(`Error: ${response.status} ${response.statusText}`);
+    return await response.json();
+  } catch (error) {
+    console.error('Error buscando usuarios:', error);
+    throw error;
+  }
+};
 
-    const response = await fetch(url, {
+const updateUserRole = async (email, role) => {
+  try {
+    const token = localStorage.getItem('authToken') || sessionStorage.getItem('authToken');
+    const headers = {
+      'Content-Type': 'application/json',
+    };
+    if (token) headers['Authorization'] = `Bearer ${token}`;
+
+    const response = await fetch(`${API_URL}/users/update-role`, {
+      method: 'PATCH',
+      credentials: 'include',
+      headers: headers,
+      body: JSON.stringify({ email, role }),
+    });
+    
+    if (!response.ok) throw new Error(`Error: ${response.status} ${response.statusText}`);
+    return await response.json();
+  } catch (error) {
+    console.error('Error actualizando rol:', error);
+    throw error;
+  }
+};
+
+const deleteUser = async (email) => {
+  try {
+    const token = localStorage.getItem('authToken') || sessionStorage.getItem('authToken');
+    const headers = {
+      'Content-Type': 'application/json',
+    };
+    if (token) headers['Authorization'] = `Bearer ${token}`;
+
+    const response = await fetch(`${API_URL}/users/delete?email=${encodeURIComponent(email)}`, {
       method: 'DELETE',
       credentials: 'include',
       headers: headers,
     });
     
-    console.log('📡 Respuesta del servidor - Status:', response.status, response.statusText);
-    
-    if (!response.ok) {
-      if (response.status === 403) {
-        throw new Error('No tienes permisos para eliminar usuarios');
-      }
-      if (response.status === 404) {
-        throw new Error('Usuario no encontrado');
-      }
-      throw new Error(`Error: ${response.status} ${response.statusText}`);
-    }
-    
+    if (!response.ok) throw new Error(`Error: ${response.status} ${response.statusText}`);
     return { success: true, message: 'Usuario eliminado correctamente' };
   } catch (error) {
     console.error('Error eliminando usuario:', error);
@@ -78,97 +104,107 @@ const deleteUser = async (email) => {
 
 // Componente Users
 export const Users = () => {
-  const [email, setEmail] = useState('');
-  const [user, setUser] = useState(null);
+  const [users, setUsers] = useState([]);
+  const [filteredUsers, setFilteredUsers] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [deleteLoading, setDeleteLoading] = useState(false);
+  const [searchLoading, setSearchLoading] = useState(false);
+  const [actionLoading, setActionLoading] = useState(false);
   const [message, setMessage] = useState('');
+  const [activeTab, setActiveTab] = useState('list'); // 'list', 'search'
+  
+  // Estados para búsqueda minimalista
+  const [searchTerm, setSearchTerm] = useState('');
+  const [searchType, setSearchType] = useState('email'); // 'email', 'name', 'Identification'
 
-  // Buscar usuario
-  const handleSearch = async () => {
-    if (!email) {
-      setMessage('Por favor ingresa un email');
-      return;
-    }
+  // Cargar usuarios al montar el componente
+  useEffect(() => {
+    loadAllUsers();
+  }, []);
 
+  const loadAllUsers = async () => {
     setLoading(true);
     setMessage('');
-    setUser(null);
-    
     try {
-      const userData = await searchUserByEmail(email);
-      
-      if (!userData) {
-        setMessage('No se recibieron datos del servidor');
-        return;
-      }
-
-      // Manejar diferentes estructuras de respuesta
-      let userToShow = userData;
-      
-      if (Array.isArray(userData) && userData.length > 0) {
-        userToShow = userData[0];
-      } else if (userData.data) {
-        userToShow = userData.data;
-      }
-
-      console.log('Usuario recibido:', userToShow);
-      setUser(userToShow);
-      setMessage(`✅ Usuario encontrado: ${userToShow.email}`);
-      
+      const usersData = await getAllUsers();
+      setUsers(usersData.data || []);
+      setFilteredUsers(usersData.data || []);
     } catch (error) {
-      if (error.message.includes('403')) {
-        setMessage('Error de permisos: No tienes acceso para realizar esta acción');
-      } else if (error.message.includes('404')) {
-        setMessage('Usuario no encontrado');
-      } else {
-        setMessage('Error al buscar usuario: ' + error.message);
-      }
-      setUser(null);
+      setMessage(`Error al cargar usuarios: ${error.message}`);
     } finally {
       setLoading(false);
     }
   };
 
-  // Eliminar usuario - SIMPLIFICADA
-  const handleDelete = async () => {
-    if (!user || !user.email) {
-      setMessage('No hay usuario seleccionado para eliminar');
+  const handleSearch = async () => {
+    if (!searchTerm.trim()) {
+      setMessage('Por favor ingresa un término de búsqueda');
       return;
     }
 
-    console.log('🗑️ Eliminando usuario con email:', user.email);
-
-    // Confirmación de eliminación
-    if (!window.confirm(`¿Estás seguro de que quieres eliminar al usuario ${user.email}?\n\nEsta acción no se puede deshacer.`)) {
-      return;
-    }
-
-    setDeleteLoading(true);
+    setSearchLoading(true);
     setMessage('');
-    
     try {
-      await deleteUser(user.email);
-      setMessage('✅ Usuario eliminado correctamente');
-      setUser(null);
-      setEmail('');
+      const searchResult = await searchUsers(searchTerm, searchType);
+      setFilteredUsers(searchResult.data || []);
+      setMessage(`✅ ${searchResult.count || searchResult.data.length} usuario(s) encontrado(s)`);
     } catch (error) {
-      setMessage(`❌ Error al eliminar usuario: ${error.message}`);
+      if (error.message.includes('404')) {
+        setMessage('No se encontraron usuarios con los criterios especificados');
+        setFilteredUsers([]);
+      } else {
+        setMessage(`Error al buscar usuarios: ${error.message}`);
+      }
     } finally {
-      setDeleteLoading(false);
+      setSearchLoading(false);
     }
   };
 
-  // Función para obtener el valor de diferentes nombres de campo posibles
-  const getFieldValue = (fieldNames) => {
-    if (!user) return 'No disponible';
-    
-    for (let fieldName of fieldNames) {
-      if (user[fieldName] !== undefined && user[fieldName] !== null && user[fieldName] !== '') {
-        return user[fieldName];
-      }
+  const handleUpdateRole = async (email, newRole) => {
+    if (!window.confirm(`¿Estás seguro de cambiar el rol de este usuario a ${newRole}?`)) {
+      return;
     }
-    return 'No disponible';
+
+    setActionLoading(true);
+    setMessage('');
+    try {
+      await updateUserRole(email, newRole);
+      setMessage(`✅ Rol actualizado correctamente a ${newRole}`);
+      // Actualizar la lista local
+      const updatedUsers = users.map(user => 
+        user.email === email ? { ...user, role: newRole } : user
+      );
+      setUsers(updatedUsers);
+      setFilteredUsers(updatedUsers);
+    } catch (error) {
+      setMessage(`❌ Error al actualizar rol: ${error.message}`);
+    } finally {
+      setActionLoading(false);
+    }
+  };
+
+  const handleDeleteUser = async (email, name) => {
+    if (!window.confirm(`¿Estás seguro de eliminar al usuario ${name}?`)) {
+      return;
+    }
+
+    setActionLoading(true);
+    setMessage('');
+    try {
+      await deleteUser(email);
+      setMessage('✅ Usuario eliminado correctamente');
+      // Recargar la lista
+      loadAllUsers();
+    } catch (error) {
+      setMessage(`❌ Error al eliminar usuario: ${error.message}`);
+    } finally {
+      setActionLoading(false);
+    }
+  };
+
+  const clearSearch = () => {
+    setSearchTerm('');
+    setFilteredUsers(users);
+    setMessage('');
   };
 
   const handleKeyPress = (e) => {
@@ -177,143 +213,258 @@ export const Users = () => {
     }
   };
 
-  // Función para obtener clase de mensaje
+  const formatDate = (dateString) => {
+    return new Date(dateString).toLocaleDateString('es-ES', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+  };
+
+  const getStatusClass = (isActive) => {
+    return isActive ? 'status-active' : 'status-inactive';
+  };
+
+  const getRoleClass = (role) => {
+    return role === 'ADMINISTRADOR' ? 'role-admin' : 
+           role === 'TRABAJADOR' ? 'role-worker' : 'role-user';
+  };
+
   const getMessageClass = () => {
-    if (message.includes('Error')) return 'message-error';
-    if (message.includes('eliminado')) return 'message-success';
+    if (message.includes('Error') || message.includes('❌')) return 'message-error';
+    if (message.includes('actualizado') || message.includes('eliminado') || message.includes('✅')) return 'message-success';
     return 'message-warning';
+  };
+
+  const getSearchPlaceholder = () => {
+    switch (searchType) {
+      case 'email': return '📧 Buscar por email...';
+      case 'name': return '👤 Buscar por nombre...';
+      case 'Identification': return '🆔 Buscar por cédula...';
+      default: return 'Buscar usuarios...';
+    }
   };
 
   return (
     <div className="users-page">
       <h2>👥 Gestión de Usuarios</h2>
       
-      {/* Panel de búsqueda */}
-      <div className="search-panel">
-        <h3>🔍 Buscar Usuario</h3>
-        <p className="search-description">
-          Ingresa el email del usuario que deseas buscar en el sistema
-        </p>
-        
-        <div className="search-input-group">
-          <input
-            type="email"
-            placeholder="ejemplo@correo.com"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            onKeyPress={handleKeyPress}
-          />
-          <button 
-            onClick={handleSearch}
-            disabled={loading}
-            className="search-btn"
-          >
-            {loading ? '⏳ Buscando...' : '🔍 Buscar Usuario'}
-          </button>
-        </div>
+      {/* Tabs de navegación */}
+      <div className="tabs">
+        <button 
+          className={`tab-button ${activeTab === 'list' ? 'active' : ''}`}
+          onClick={() => setActiveTab('list')}
+        >
+          📋 Lista de Usuarios
+        </button>
+        <button 
+          className={`tab-button ${activeTab === 'search' ? 'active' : ''}`}
+          onClick={() => setActiveTab('search')}
+        >
+          🔍 Buscar Usuarios
+        </button>
       </div>
-
-      {/* Mostrar información del usuario */}
-      {user && (
-        <div className="user-card">
-          <h3 className="user-header">
-            📋 Información del Usuario
-          </h3>
-          
-          <div className="user-grid">
-            {/* Columna 1 - Información básica */}
-            <div className="info-section">
-              <h4>Información Básica</h4>
-              
-              <div className="info-field">
-                <strong>📧 Email:</strong>
-                <div className="field-value">
-                  {user.email || 'No disponible'}
-                </div>
-              </div>
-              
-              <div className="info-field">
-                <strong>👤 Nombre Completo:</strong>
-                <div className="field-value">
-                  {user.name || 'No disponible'}
-                </div>
-              </div>
-              
-              <div className="info-field">
-                <strong>🆔 Cédula de Identidad:</strong>
-                <div className="field-value identification">
-                  {getFieldValue(['identification', 'cedula', 'dni', 'document', 'documentNumber'])}
-                </div>
-              </div>
-            </div>
-
-            {/* Columna 2 - Información de contacto */}
-            <div className="info-section">
-              <h4>Información de Contacto</h4>
-              
-              <div className="info-field">
-                <strong>📞 Teléfono:</strong>
-                <div className="field-value phone">
-                  {getFieldValue(['phoneNumber', 'phone', 'telefono', 'telephone', 'cellphone', 'mobile'])}
-                </div>
-              </div>
-              
-              <div className="info-field">
-                <strong>🔐 Estado de Cuenta:</strong>
-                <div className={`field-value ${user.isActive === false ? 'status-inactive' : 'status-active'}`}>
-                  {user.isActive === false ? '❌ Inactiva' : '✅ Activa'}
-                </div>
-              </div>
-              
-              <div className="info-field">
-                <strong>👑 Rol:</strong>
-                <div className={`field-value ${user.role === 'admin' ? 'role-admin' : 'role-user'}`}>
-                  {user.role ? user.role.toUpperCase() : 'USER'}
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Información adicional */}
-          <div className="additional-info">
-            <h4>Información Adicional</h4>
-            
-            {/* Mostrar todos los campos disponibles para debug */}
-            <details className="debug-section">
-              <summary className="debug-summary">
-                🔍 Ver todos los campos disponibles (Debug)
-              </summary>
-              <div className="debug-content">
-                {Object.entries(user).map(([key, value]) => (
-                  <div key={key}>
-                    <strong>{key}:</strong> {JSON.stringify(value)}
-                  </div>
-                ))}
-              </div>
-            </details>
-          </div>
-
-          {/* Botón de eliminar */}
-          <div className="danger-zone">
-            <h4>🚨 Zona de Peligro</h4>
-            <button 
-              onClick={handleDelete}
-              disabled={deleteLoading}
-              className="delete-btn"
-            >
-              {deleteLoading ? '⏳ Eliminando...' : '🗑️ Eliminar Usuario Permanentemente'}
-            </button>
-            <p className="delete-warning">
-              Esta acción no se puede deshacer. El usuario será eliminado permanentemente del sistema.
-            </p>
-          </div>
-        </div>
-      )}
 
       {/* Mensajes del sistema */}
       {message && (
         <div className={`system-message ${getMessageClass()}`}>
           {message}
+        </div>
+      )}
+
+      {/* Panel de Lista */}
+      {activeTab === 'list' && (
+        <div className="list-panel">
+          <div className="panel-header">
+            <h3>📋 Todos los Usuarios ({users.length})</h3>
+            <button 
+              onClick={loadAllUsers}
+              disabled={loading}
+              className="refresh-btn"
+            >
+              {loading ? '⏳ Actualizando...' : '🔄 Actualizar Lista'}
+            </button>
+          </div>
+
+          {loading ? (
+            <div className="loading-state">⏳ Cargando usuarios...</div>
+          ) : filteredUsers.length === 0 ? (
+            <div className="empty-state">
+              <p>📭 No hay usuarios registrados</p>
+            </div>
+          ) : (
+            <div className="users-grid">
+              {filteredUsers.map((user) => (
+                <div key={user.id} className="user-card">
+                  <div className="user-header">
+                    <h4>👤 {user.name}</h4>
+                    <span className={`status-badge ${getStatusClass(user.isActive)}`}>
+                      {user.isActive ? '✅ Activo' : '❌ Inactivo'}
+                    </span>
+                  </div>
+                  
+                  <div className="user-details">
+                    <div className="detail-row">
+                      <strong>📧 Email:</strong> {user.email}
+                    </div>
+                    <div className="detail-row">
+                      <strong>🆔 Cédula:</strong> {user.Identification}
+                    </div>
+                    <div className="detail-row">
+                      <strong>📞 Teléfono:</strong> {user.phoneNumber}
+                    </div>
+                    <div className="detail-row">
+                      <strong>👑 Rol:</strong>
+                      <span className={`role-badge ${getRoleClass(user.role)}`}>
+                        {user.role}
+                      </span>
+                    </div>
+                    <div className="detail-row">
+                      <strong>📅 Registro:</strong> {formatDate(user.createdAt)}
+                    </div>
+                  </div>
+
+                  <div className="user-actions">
+                    <select
+                      value={user.role}
+                      onChange={(e) => handleUpdateRole(user.email, e.target.value)}
+                      disabled={actionLoading}
+                      className="role-select"
+                    >
+                      <option value="USUARIO">Usuario</option>
+                      <option value="TRABAJADOR">Trabajador</option>
+                      <option value="ADMINISTRADOR">Administrador</option>
+                    </select>
+                    
+                    <button
+                      onClick={() => handleDeleteUser(user.email, user.name)}
+                      disabled={actionLoading}
+                      className="delete-btn"
+                    >
+                      🗑️ Eliminar
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Panel de Búsqueda Minimalista */}
+      {activeTab === 'search' && (
+        <div className="search-panel">
+          <h3>🔍 Buscar Usuarios</h3>
+          
+          {/* Búsqueda minimalista */}
+          <div className="minimal-search">
+            <div className="search-controls">
+              <select
+                value={searchType}
+                onChange={(e) => setSearchType(e.target.value)}
+                className="search-type-select"
+              >
+                <option value="email">📧 Email</option>
+                <option value="name">👤 Nombre</option>
+                <option value="Identification">🆔 Cédula</option>
+              </select>
+              
+              <div className="search-input-wrapper">
+                <input
+                  type={searchType === 'Identification' ? 'number' : 'text'}
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  onKeyPress={handleKeyPress}
+                  placeholder={getSearchPlaceholder()}
+                  className="search-input"
+                />
+                {searchTerm && (
+                  <button 
+                    onClick={clearSearch}
+                    className="clear-search-btn"
+                    title="Limpiar búsqueda"
+                  >
+                    ✕
+                  </button>
+                )}
+              </div>
+              
+              <button 
+                onClick={handleSearch}
+                disabled={searchLoading}
+                className="search-btn"
+              >
+                {searchLoading ? '⏳' : '🔍'}
+              </button>
+            </div>
+          </div>
+
+          {/* Resultados de búsqueda */}
+          {filteredUsers.length > 0 ? (
+            <div className="search-results">
+              <div className="results-header">
+                <h4>📊 Resultados encontrados: {filteredUsers.length}</h4>
+                <button 
+                  onClick={clearSearch}
+                  className="clear-results-btn"
+                >
+                  🔄 Mostrar todos
+                </button>
+              </div>
+              
+              <div className="users-grid">
+                {filteredUsers.map((user) => (
+                  <div key={user.id} className="user-card">
+                    <div className="user-header">
+                      <h4>👤 {user.name}</h4>
+                      <span className={`status-badge ${getStatusClass(user.isActive)}`}>
+                        {user.isActive ? '✅ Activo' : '❌ Inactivo'}
+                      </span>
+                    </div>
+                    
+                    <div className="user-details">
+                      <div className="detail-row">
+                        <strong>📧 Email:</strong> {user.email}
+                      </div>
+                      <div className="detail-row">
+                        <strong>🆔 Cédula:</strong> {user.Identification}
+                      </div>
+                      <div className="detail-row">
+                        <strong>👑 Rol:</strong>
+                        <span className={`role-badge ${getRoleClass(user.role)}`}>
+                          {user.role}
+                        </span>
+                      </div>
+                    </div>
+
+                    <div className="user-actions">
+                      <select
+                        value={user.role}
+                        onChange={(e) => handleUpdateRole(user.email, e.target.value)}
+                        disabled={actionLoading}
+                        className="role-select"
+                      >
+                        <option value="USUARIO">Usuario</option>
+                        <option value="TRABAJADOR">Trabajador</option>
+                        <option value="ADMINISTRADOR">Administrador</option>
+                      </select>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          ) : searchTerm && !searchLoading ? (
+            <div className="no-results">
+              <p>🔍 No se encontraron usuarios</p>
+              <p>Intenta con otros términos de búsqueda</p>
+            </div>
+          ) : (
+            <div className="search-info">
+              <p>💡 Selecciona un tipo de búsqueda e ingresa el término para buscar usuarios</p>
+            </div>
+          )}
         </div>
       )}
     </div>

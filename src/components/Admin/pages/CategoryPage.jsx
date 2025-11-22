@@ -1,19 +1,45 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import "./CategoryPage.css";
 
 export function Category() {
   const [categories, setCategories] = useState([]);
+  const [filteredCategories, setFilteredCategories] = useState([]);
   const [loading, setLoading] = useState(false);
   const [newCategory, setNewCategory] = useState("");
+  const [searchTerm, setSearchTerm] = useState("");
+  const [searchType, setSearchType] = useState("name"); // 'name' o 'id'
+  const [activeTab, setActiveTab] = useState('list'); // 'list' o 'create'
 
   const API_URL = import.meta.env.VITE_API_URL;
- 
+
+  // Cargar categorías al montar el componente
+  useEffect(() => {
+    getCategories();
+  }, []);
+
+  // Filtrar categorías cuando cambia el término de búsqueda
+  useEffect(() => {
+    if (!searchTerm.trim()) {
+      setFilteredCategories(categories);
+    } else {
+      const filtered = categories.filter(category => {
+        if (searchType === 'name') {
+          return category.name.toLowerCase().includes(searchTerm.toLowerCase());
+        } else { // search by id
+          return category.id.toString().includes(searchTerm);
+        }
+      });
+      setFilteredCategories(filtered);
+    }
+  }, [searchTerm, searchType, categories]);
+
   const getCategories = async () => {
     setLoading(true);
     try {
       const request = await fetch(`${API_URL}/category`);
       const response = await request.json();
       setCategories(response);
+      setFilteredCategories(response);
     } catch (error) {
       console.error("Error fetching categories:", error);
       alert("Error al cargar las categorías");
@@ -37,6 +63,11 @@ export function Category() {
         },
         body: JSON.stringify({ name }),
       });
+      
+      if (!request.ok) {
+        throw new Error('Error al crear la categoría');
+      }
+      
       const response = await request.json();
       setCategories([...categories, response]);
       setNewCategory("");
@@ -70,6 +101,19 @@ export function Category() {
     createCategory(newCategory);
   };
 
+  const handleSearch = (e) => {
+    setSearchTerm(e.target.value);
+  };
+
+  const handleSearchTypeChange = (e) => {
+    setSearchType(e.target.value);
+    setSearchTerm(""); // Limpiar búsqueda al cambiar tipo
+  };
+
+  const clearSearch = () => {
+    setSearchTerm("");
+  };
+
   return (
     <div className="category-page">
       <div className="category-header">
@@ -77,61 +121,176 @@ export function Category() {
         <p>Administra las categorías de productos de la repostería</p>
       </div>
 
-      <div className="category-actions">
+      {/* Tabs de navegación */}
+      <div className="tabs">
         <button 
-          onClick={getCategories} 
-          className="load-btn"
-          disabled={loading}
+          className={`tab-button ${activeTab === 'list' ? 'active' : ''}`}
+          onClick={() => setActiveTab('list')}
         >
-          {loading ? "⏳ Cargando..." : "📥 Cargar Categorías"}
+          📋 Lista de Categorías
+        </button>
+        <button 
+          className={`tab-button ${activeTab === 'create' ? 'active' : ''}`}
+          onClick={() => setActiveTab('create')}
+        >
+          ➕ Crear Categoría
         </button>
       </div>
 
-      {/* Formulario para agregar categoría */}
-      <form onSubmit={handleSubmit} className="category-form">
-        <div className="form-group">
-          <input
-            type="text"
-            value={newCategory}
-            onChange={(e) => setNewCategory(e.target.value)}
-            placeholder="📝 Nombre de la nueva categoría"
-            className="category-input"
-          />
-          <button type="submit" className="add-btn">
-            ➕ Agregar Categoría
-          </button>
-        </div>
-      </form>
-
-      {/* Lista de categorías */}
-      <div className="categories-list">
-        {categories.length === 0 ? (
-          <div className="empty-state">
-            <p>📭 No hay categorías cargadas</p>
-            <p>Haz clic en "Cargar Categorías" para ver las existentes</p>
-          </div>
-        ) : (
-          <>
-            <h3>📂 Categorías Existentes ({categories.length})</h3>
-            <div className="categories-grid">
-              {categories.map((category) => (
-                <div key={category.name} className="category-card">
-                  <div className="category-info">
-                    <span className="category-name">🏷️ {category.name}</span>
-                  </div>
-                  <button
-                    onClick={() => handleDelete(category.name)}
-                    className="delete-btn"
-                    title="Eliminar categoría"
+      {/* Panel de Lista y Búsqueda */}
+      {activeTab === 'list' && (
+        <div className="list-panel">
+          {/* Panel de búsqueda */}
+          <div className="search-panel">
+            <h3>🔍 Buscar Categorías</h3>
+            <div className="search-controls">
+              <div className="search-type-selector">
+                <label htmlFor="searchType">Buscar por:</label>
+                <select 
+                  id="searchType"
+                  value={searchType} 
+                  onChange={handleSearchTypeChange}
+                  className="search-type-select"
+                >
+                  <option value="name">Nombre</option>
+                  <option value="id">ID</option>
+                </select>
+              </div>
+              
+              <div className="search-input-group">
+                <input
+                  type="text"
+                  value={searchTerm}
+                  onChange={handleSearch}
+                  placeholder={searchType === 'name' ? "🔍 Buscar por nombre..." : "🔍 Buscar por ID..."}
+                  className="search-input"
+                />
+                {searchTerm && (
+                  <button 
+                    onClick={clearSearch}
+                    className="clear-search-btn"
+                    title="Limpiar búsqueda"
                   >
-                    🗑️ Eliminar
+                    ✕
                   </button>
-                </div>
-              ))}
+                )}
+              </div>
             </div>
-          </>
-        )}
-      </div>
+            
+            <div className="search-info">
+              <p>
+                Mostrando {filteredCategories.length} de {categories.length} categorías
+                {searchTerm && ` - Filtrado por: "${searchTerm}"`}
+              </p>
+            </div>
+          </div>
+
+          {/* Botón para recargar categorías */}
+          <div className="category-actions">
+            <button 
+              onClick={getCategories} 
+              className="load-btn"
+              disabled={loading}
+            >
+              {loading ? "⏳ Cargando..." : "🔄 Actualizar Lista"}
+            </button>
+          </div>
+
+          {/* Lista de categorías */}
+          <div className="categories-list">
+            {loading ? (
+              <div className="loading-state">
+                <p>⏳ Cargando categorías...</p>
+              </div>
+            ) : filteredCategories.length === 0 ? (
+              <div className="empty-state">
+                {searchTerm ? (
+                  <>
+                    <p>🔍 No se encontraron categorías</p>
+                    <p>No hay resultados para "{searchTerm}"</p>
+                    <button onClick={clearSearch} className="load-btn">
+                      🔄 Mostrar todas
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    <p>📭 No hay categorías cargadas</p>
+                    <p>Haz clic en "Actualizar Lista" para cargar las categorías</p>
+                  </>
+                )}
+              </div>
+            ) : (
+              <>
+                <h3>📂 Categorías Existentes ({filteredCategories.length})</h3>
+                <div className="categories-grid">
+                  {filteredCategories.map((category) => (
+                    <div key={category.id} className="category-card">
+                      <div className="category-info">
+                        <div className="category-id">ID: {category.id}</div>
+                        <span className="category-name">🏷️ {category.name}</span>
+                      </div>
+                      <button
+                        onClick={() => handleDelete(category.name)}
+                        className="delete-btn"
+                        title="Eliminar categoría"
+                      >
+                        🗑️ Eliminar
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              </>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* Panel de Creación */}
+      {activeTab === 'create' && (
+        <div className="create-panel">
+          <div className="category-form">
+            <h3>➕ Crear Nueva Categoría</h3>
+            <form onSubmit={handleSubmit}>
+              <div className="form-group">
+                <input
+                  type="text"
+                  value={newCategory}
+                  onChange={(e) => setNewCategory(e.target.value)}
+                  placeholder="📝 Nombre de la nueva categoría"
+                  className="category-input"
+                />
+                <button type="submit" className="add-btn">
+                  ➕ Crear Categoría
+                </button>
+              </div>
+            </form>
+            <p className="form-description">
+              Las categorías se crearán en minúsculas automáticamente
+            </p>
+          </div>
+
+          {/* Vista previa de categorías existentes */}
+          <div className="existing-categories-preview">
+            <h4>📋 Categorías Existentes ({categories.length})</h4>
+            {categories.length > 0 ? (
+              <div className="categories-preview-list">
+                {categories.slice(0, 5).map((category) => (
+                  <div key={category.id} className="category-preview-item">
+                    <span>#{category.id} - {category.name}</span>
+                  </div>
+                ))}
+                {categories.length > 5 && (
+                  <div className="preview-more">
+                    ... y {categories.length - 5} más
+                  </div>
+                )}
+              </div>
+            ) : (
+              <p className="no-categories">No hay categorías cargadas</p>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 }

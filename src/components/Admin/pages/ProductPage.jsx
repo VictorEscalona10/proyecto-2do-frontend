@@ -1,8 +1,10 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import "./ProductPage.css";
 
 export function ProductPage() {
   const [products, setProducts] = useState([]);
+  const [groupedProducts, setGroupedProducts] = useState({});
+  const [categories, setCategories] = useState([]);
   const [formData, setFormData] = useState({
     name: "",
     description: "",
@@ -12,10 +14,67 @@ export function ProductPage() {
   });
   const [uploadResult, setUploadResult] = useState("");
   const [loading, setLoading] = useState(false);
-  const [searchType, setSearchType] = useState("name"); // 'name' o 'category'
+  const [searchType, setSearchType] = useState("name");
   const [searchTerm, setSearchTerm] = useState("");
 
   const API_URL = import.meta.env.VITE_API_URL;
+
+  // Cargar todos los productos al inicio
+  useEffect(() => {
+    getAllProducts();
+  }, []);
+
+  // Agrupar productos por categoría cuando cambia la lista de productos
+  useEffect(() => {
+    groupProductsByCategory();
+  }, [products]);
+
+  // Función para agrupar productos por categoría
+  const groupProductsByCategory = () => {
+    const grouped = {};
+    const categoryList = [];
+    
+    products.forEach(product => {
+      const categoryName = product.category?.name || 'Sin Categoría';
+      
+      if (!grouped[categoryName]) {
+        grouped[categoryName] = [];
+        categoryList.push(categoryName);
+      }
+      
+      grouped[categoryName].push(product);
+    });
+    
+    setGroupedProducts(grouped);
+    setCategories(categoryList.sort());
+  };
+
+  // Obtener todos los productos
+  const getAllProducts = async () => {
+    try {
+      const response = await fetch(`${API_URL}/products`);
+      if (!response.ok) {
+        // Si el endpoint /products no existe, usar búsqueda vacía como fallback
+        const fallbackResponse = await fetch(`${API_URL}/products/search/name?name=`);
+        const fallbackResult = await fallbackResponse.json();
+        setProducts(fallbackResult.data || []);
+        return;
+      }
+      const result = await response.json();
+      setProducts(result.data || []);
+    } catch (error) {
+      console.error("Error fetching products:", error);
+      // Fallback: intentar obtener productos mediante búsqueda vacía
+      try {
+        const fallbackResponse = await fetch(`${API_URL}/products/search/name?name=`);
+        const fallbackResult = await fallbackResponse.json();
+        setProducts(fallbackResult.data || []);
+      } catch (fallbackError) {
+        console.error("Fallback also failed:", fallbackError);
+        setProducts([]);
+      }
+    }
+  };
 
   // Función para buscar productos por nombre
   const getProductByName = async (name) => {
@@ -47,7 +106,10 @@ export function ProductPage() {
 
   // Función unificada de búsqueda
   const handleSearch = () => {
-    if (!searchTerm.trim()) return;
+    if (!searchTerm.trim()) {
+      getAllProducts();
+      return;
+    }
     
     if (searchType === "name") {
       getProductByName(searchTerm);
@@ -115,6 +177,8 @@ export function ProductPage() {
           imagen: null
         });
         document.getElementById("imagen").value = "";
+        // Recargar la lista de productos
+        getAllProducts();
       }
     } catch (error) {
       setUploadResult("Error de red: " + error.message);
@@ -129,6 +193,15 @@ export function ProductPage() {
       handleSearch();
     }
   };
+
+  // Función para limpiar búsqueda y mostrar todos los productos
+  const clearSearch = () => {
+    setSearchTerm("");
+    getAllProducts();
+  };
+
+  // Calcular el total de productos
+  const totalProducts = products.length;
 
   return (
     <div className="product-page">
@@ -179,6 +252,15 @@ export function ProductPage() {
               >
                 {searchType === 'name' ? '🔍 Buscar' : '🗂️ Buscar por Categoría'}
               </button>
+              {searchTerm && (
+                <button 
+                  className="clear-results"
+                  onClick={clearSearch}
+                  style={{ marginLeft: '10px', padding: '10px 15px' }}
+                >
+                  ✕ Limpiar
+                </button>
+              )}
             </div>
             
             <div className="search-examples">
@@ -196,51 +278,68 @@ export function ProductPage() {
         <section className="results-section">
           <div className="results-header">
             <h3>
-              {searchType === 'name' ? 'Resultados por Nombre' : 'Resultados por Categoría'}
-              {products.length > 0 && <span className="results-count"> ({products.length} productos)</span>}
+              {searchTerm 
+                ? `Resultados de búsqueda` 
+                : 'Todos los Productos'
+              }
+              {totalProducts > 0 && <span className="results-count"> ({totalProducts} productos)</span>}
             </h3>
-            {products.length > 0 && (
+            {totalProducts > 0 && (
               <button 
                 className="clear-results"
-                onClick={() => setProducts([])}
+                onClick={() => {
+                  setProducts([]);
+                  setSearchTerm("");
+                }}
               >
                 ✕ Limpiar resultados
               </button>
             )}
           </div>
           
-          <div className="products-grid">
-            {products.map((product) => (
-              <div key={product.id} className="product-card">
-                <div className="product-image">
-                  {product.imageUrl ? (
-                    <img src={product.imageUrl} alt={product.name} />
-                  ) : (
-                    <div className="no-image">📷 No Image</div>
-                  )}
-                </div>
-                <div className="product-info">
-                  <h4>{product.name}</h4>
-                  <p className="product-description">{product.description}</p>
-                  <p className="product-price">${product.price}</p>
-                  <div className="product-meta">
-                    <span className="product-category">{product.category?.name}</span>
-                    <span className="product-id">ID: {product.id}</span>
+          {/* Mostrar productos agrupados por categoría */}
+          {totalProducts > 0 ? (
+            <div className="categories-container">
+              {categories.map(categoryName => (
+                <div key={categoryName} className="category-section">
+                  <div className="category-header">
+                    <h4 className="category-title">{categoryName}</h4>
+                    <span className="category-count">
+                      {groupedProducts[categoryName].length} producto{groupedProducts[categoryName].length !== 1 ? 's' : ''}
+                    </span>
+                  </div>
+                  <div className="products-grid">
+                    {groupedProducts[categoryName].map((product) => (
+                      <div key={product.id} className="product-card">
+                        <div className="product-image">
+                          {product.imageUrl ? (
+                            <img src={product.imageUrl} alt={product.name} />
+                          ) : (
+                            <div className="no-image">📷 No Image</div>
+                          )}
+                        </div>
+                        <div className="product-info">
+                          <h4>{product.name}</h4>
+                          <p className="product-description">{product.description}</p>
+                          <p className="product-price">${product.price}</p>
+                          <div className="product-meta">
+                            <span className="product-category">{product.category?.name}</span>
+                            <span className="product-id">ID: {String(product.id).slice(0, 8)}</span>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
                   </div>
                 </div>
-              </div>
-            ))}
-          </div>
-          
-          {products.length === 0 && searchTerm && (
-            <div className="no-products">
-              <p>No se encontraron productos {searchType === 'name' ? 'con ese nombre' : 'en esa categoría'}</p>
+              ))}
             </div>
-          )}
-          
-          {products.length === 0 && !searchTerm && (
-            <div className="no-search">
-              <p>Ingresa un término de búsqueda para encontrar productos</p>
+          ) : (
+            <div className="no-products">
+              {searchTerm ? (
+                <p>No se encontraron productos {searchType === 'name' ? 'con ese nombre' : 'en esa categoría'}</p>
+              ) : (
+                <p>No hay productos disponibles en este momento</p>
+              )}
             </div>
           )}
         </section>
