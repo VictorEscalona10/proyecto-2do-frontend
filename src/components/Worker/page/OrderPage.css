@@ -1,0 +1,498 @@
+/* OrderPage.css - Estilo Repostería Migdalis Tortas */
+.order-page {
+  min-height: 100vh;
+  background-color: #fff9fb;
+  font-family: 'Comic Sans MS', cursive, sans-serif;
+  padding: 20px;
+}
+
+.order-page h1 {
+  color: #8b008b;
+  font-size: 2.8rem;
+  margin-bottom: 10px;
+  font-family: 'Georgia', serif;
+  text-align: center;
+  text-shadow: 2px 2px 4px rgba(214, 93, 177, 0.2);
+}
+
+/* Panel de búsqueda */
+.search-panel {
+  background: #ffffff;
+  padding: 30px;
+  border-radius: 20px;
+  border: 2px solid #f0e6f5;
+  box-shadow: 0 5px 20px rgba(155, 22, 155, 0.08);
+  margin-bottom: 30px;
+}
+
+.search-panel h3 {
+  color: #8b008b;
+  margin: 0 0 15px 0;
+  font-size: 1.5rem;
+  font-family: 'Georgia', serif;
+}
+
+.search-controls {
+  display: flex;
+  gap: 15px;
+  align-items: center;
+  flex-wrap: wrap;
+  margin-bottom: 15px;
+}
+
+.search-type-selector {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  white-space: nowrap;
+}
+
+.search-type-selector label {
+  font-weight: 600;
+  color: #510138;
+  font-size: 14px;
+}
+
+.search-type-select {
+  padding: 8px 12px;
+  border: 2px solid #d9a3df;
+  border-radius: 6px;
+  background: white;
+  color: #510138;
+  font-family: 'Comic Sans MS', cursive;
+  font-size: 14px;
+}
+
+.search-input-group {
+  flex: 1;
+  display: flex;
+  position: relative;
+  min-width: 250px;
+}
+
+.search-input {
+  flex: 1;
+  padding: 12px 16px;
+  padding-right: 40px;
+  border: 2px solid #d9a3df;
+  border-radius: 8px;
+  font-size: 16px;
+  background: white;
+  color: #510138;
+  font-family: 'Comic Sans MS', cursive;
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: #8b008b;
+  box-shadow: 0 0 0 3px rgba(139, 0, 139, 0.1);
+}
+
+.clear-search-btn {
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: #dc3545;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 12px;
+  transition: all 0.3s ease;
+}
+
+.clear-search-btn:hover {
+  background: #c82333;
+  transform: translateY(-50%) scale(1.1);
+}
+
+.search-btn {
+  padding: 12px 24px;
+  background: linear-gradient(135deg, #8b008b, #9b169b);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-family: 'Comic Sans MS', cursive;
+  white-space: nowrap;
+}
+
+.search-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(139, 0, 139, 0.3);
+}
+
+.search-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.all-orders-btn {
+  padding: 12px 24px;
+  background: linear-gradient(135deg, #28a745, #20c997);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-family: 'Comic Sans MS', cursive;
+  white-space: nowrap;
+}
+
+.all-orders-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
+}
+
+.all-orders-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.search-info {
+  text-align: center;
+  color: #666;
+  font-size: 14px;
+  margin-top: 10px;
+}
+
+.search-info p {
+  margin: 0;
+}
+
+/* Estados */
+.empty-state, .loading-state, .no-results {
+  text-align: center;
+  padding: 60px 40px;
+  color: #9b169b;
+  background: #f8f0f5;
+  border-radius: 15px;
+  border: 2px dashed #d9a3df;
+  font-size: 1.1rem;
+  margin-bottom: 20px;
+}
+
+.error-message {
+  color: #721c24;
+  background-color: #f8d7da;
+  padding: 15px;
+  border-radius: 12px;
+  margin-bottom: 20px;
+  border: 1px solid #f5c6cb;
+  font-weight: 600;
+}
+
+/* Lista de órdenes */
+.orders-list {
+  background: #ffffff;
+  padding: 30px;
+  border-radius: 20px;
+  border: 2px solid #f0e6f5;
+  box-shadow: 0 5px 20px rgba(155, 22, 155, 0.08);
+}
+
+.orders-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 25px;
+  flex-wrap: wrap;
+  gap: 15px;
+}
+
+.orders-header h2 {
+  color: #8b008b;
+  font-size: 2rem;
+  margin: 0;
+  font-family: 'Georgia', serif;
+}
+
+.orders-meta {
+  text-align: right;
+}
+
+.orders-description {
+  color: #666;
+  font-size: 14px;
+  margin: 0 0 5px 0;
+}
+
+.last-updated {
+  color: #999;
+  font-size: 12px;
+  margin: 0;
+}
+
+.user-email {
+  color: #9b169b;
+  font-weight: 600;
+  background: #f8f0f5;
+  padding: 8px 16px;
+  border-radius: 20px;
+}
+
+/* Tarjeta de orden */
+.order-card {
+  background: white;
+  border: 2px solid #f0e6f5;
+  border-radius: 15px;
+  padding: 25px;
+  margin-bottom: 25px;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(139, 0, 139, 0.1);
+}
+
+.order-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(139, 0, 139, 0.15);
+  border-color: #d9a3df;
+}
+
+.order-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 20px;
+  padding-bottom: 20px;
+  border-bottom: 2px solid #f8f0f5;
+  flex-wrap: wrap;
+  gap: 15px;
+}
+
+.order-info h3 {
+  color: #8b008b;
+  margin: 0 0 12px 0;
+  font-size: 1.4rem;
+  font-family: 'Georgia', serif;
+}
+
+.order-meta {
+  color: #666;
+  margin: 8px 0;
+  font-size: 0.95rem;
+}
+
+.order-meta strong {
+  color: #510138;
+}
+
+.order-total {
+  font-size: 1.4rem;
+  font-weight: bold;
+  color: #28a745;
+  margin: 0 0 15px 0;
+}
+
+/* Control de estado */
+.status-control {
+  text-align: right;
+}
+
+.status-control label {
+  display: block;
+  font-weight: 600;
+  color: #510138;
+  margin-bottom: 8px;
+  font-size: 14px;
+}
+
+.status-control select {
+  padding: 10px 15px;
+  border: 2px solid #d9a3df;
+  border-radius: 8px;
+  background: white;
+  color: #510138;
+  font-family: 'Comic Sans MS', cursive;
+  min-width: 140px;
+  transition: all 0.3s ease;
+}
+
+.status-control select:focus {
+  outline: none;
+  border-color: #8b008b;
+  box-shadow: 0 0 0 3px rgba(139, 0, 139, 0.1);
+}
+
+/* Badge de estado */
+.status-badge-container {
+  margin-bottom: 15px;
+}
+
+.status-badge {
+  padding: 8px 20px;
+  border-radius: 20px;
+  font-size: 0.9rem;
+  font-weight: bold;
+  display: inline-block;
+}
+
+.status-pending {
+  background-color: #fff3cd;
+  color: #856404;
+  border: 1px solid #ffeaa7;
+}
+
+.status-processed {
+  background-color: #d1ecf1;
+  color: #0c5460;
+  border: 1px solid #bee5eb;
+}
+
+.status-cancelled {
+  background-color: #f8d7da;
+  color: #721c24;
+  border: 1px solid #f5c6cb;
+}
+
+/* Detalles de la orden */
+.order-details-section h4 {
+  color: #8b008b;
+  margin: 0 0 15px 0;
+  font-size: 1.2rem;
+  font-family: 'Georgia', serif;
+}
+
+.order-details {
+  background: #f8f0f5;
+  padding: 20px;
+  border-radius: 12px;
+  border: 1px solid #e9e5e0;
+}
+
+.order-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 0;
+  border-bottom: 1px solid #e9e5e0;
+  transition: all 0.3s ease;
+}
+
+.order-item:last-child {
+  border-bottom: none;
+}
+
+.order-item:hover {
+  background: white;
+  border-radius: 8px;
+  padding: 15px;
+  margin: 0 -15px;
+}
+
+.item-info {
+  flex: 1;
+}
+
+.item-name {
+  font-weight: bold;
+  color: #510138;
+  margin-bottom: 5px;
+}
+
+.item-description {
+  color: #666;
+  font-size: 0.9rem;
+  margin: 0;
+}
+
+.item-pricing {
+  text-align: right;
+}
+
+.item-quantity {
+  color: #666;
+  margin: 0 0 5px 0;
+}
+
+.item-total {
+  font-weight: bold;
+  color: #28a745;
+  margin: 0;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .order-page {
+    padding: 15px;
+  }
+  
+  .order-page h1 {
+    font-size: 2.2rem;
+  }
+  
+  .search-controls {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .search-type-selector {
+    justify-content: center;
+  }
+  
+  .search-input-group {
+    min-width: auto;
+  }
+  
+  .search-btn, .all-orders-btn {
+    width: 100%;
+  }
+  
+  .order-header {
+    flex-direction: column;
+    text-align: center;
+  }
+  
+  .status-control {
+    text-align: center;
+  }
+  
+  .orders-header {
+    flex-direction: column;
+    text-align: center;
+  }
+  
+  .orders-meta {
+    text-align: center;
+  }
+  
+  .order-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+  
+  .item-pricing {
+    text-align: left;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+  }
+}
+
+@media (max-width: 480px) {
+  .order-page h1 {
+    font-size: 1.8rem;
+  }
+  
+  .search-panel,
+  .orders-list {
+    padding: 20px 15px;
+  }
+  
+  .order-card {
+    padding: 20px;
+  }
+}
