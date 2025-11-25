@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import "./OrderPage.css";
 
 export function OrderPage() {
@@ -6,10 +6,43 @@ export function OrderPage() {
     const [orders, setOrders] = useState([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
-    const [userEmail, setUserEmail] = useState("victorescalona2006@gmail.com");
+    const [searchTerm, setSearchTerm] = useState("");
+    const [searchType, setSearchType] = useState("email"); // 'email' o 'identification'
     const [hasSearched, setHasSearched] = useState(false);
+    const [showAllOrders, setShowAllOrders] = useState(false);
 
-    const getOrdersByUser = async (email) => {
+    // Cargar todas las órdenes al montar el componente
+    useEffect(() => {
+        getAllOrders();
+    }, []);
+
+    const getAllOrders = async () => {
+        try {
+            setLoading(true);
+            setError("");
+            const request = await fetch(`${API_URL}/orders`, {
+                method: "GET",
+                credentials: "include",
+            });
+            
+            if (!request.ok) {
+                throw new Error(`Error: ${request.status}`);
+            }
+            
+            const response = await request.json();
+            setOrders(response);
+            setShowAllOrders(true);
+            setHasSearched(true);
+        } catch (error) {
+            console.error("Error fetching all orders:", error);
+            setError("No se pudieron cargar las órdenes");
+            setOrders([]);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const getOrdersByEmail = async (email) => {
         if (!email.trim()) {
             setError("Por favor ingresa un email válido");
             return;
@@ -29,13 +62,71 @@ export function OrderPage() {
             
             const response = await request.json();
             setOrders(response);
+            setShowAllOrders(false);
             setHasSearched(true);
         } catch (error) {
-            console.error("Error fetching orders:", error);
-            setError("No se pudieron cargar las órdenes");
+            console.error("Error fetching orders by email:", error);
+            setError("No se pudieron cargar las órdenes para este email");
             setOrders([]);
         } finally {
             setLoading(false);
+        }
+    };
+
+    const getOrdersByIdentification = async (identification) => {
+        if (!identification.trim()) {
+            setError("Por favor ingresa una cédula válida");
+            return;
+        }
+
+        try {
+            setLoading(true);
+            setError("");
+            
+            // SOLUCIÓN: Cargar todas las órdenes y filtrar localmente por cédula
+            console.log("🔍 Buscando órdenes por cédula:", identification);
+            
+            const allOrdersRequest = await fetch(`${API_URL}/orders`, {
+                method: "GET",
+                credentials: "include",
+            });
+            
+            if (!allOrdersRequest.ok) {
+                throw new Error(`Error: ${allOrdersRequest.status}`);
+            }
+            
+            const allOrders = await allOrdersRequest.json();
+            
+            // Filtrar órdenes por cédula localmente
+            const filteredOrders = allOrders.filter(order => {
+                const userIdentification = order.user?.Identification;
+                return userIdentification && userIdentification.toString() === identification;
+            });
+            
+            console.log(`✅ Encontradas ${filteredOrders.length} órdenes para cédula: ${identification}`);
+            setOrders(filteredOrders);
+            setShowAllOrders(false);
+            setHasSearched(true);
+            
+        } catch (error) {
+            console.error("Error fetching orders by identification:", error);
+            setError("No se pudieron cargar las órdenes para esta cédula");
+            setOrders([]);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const searchOrders = () => {
+        if (!searchTerm.trim()) {
+            setError(`Por favor ingresa un ${searchType === 'email' ? 'email' : 'cédula'} válido`);
+            return;
+        }
+
+        if (searchType === 'email') {
+            getOrdersByEmail(searchTerm);
+        } else {
+            getOrdersByIdentification(searchTerm);
         }
     };
 
@@ -72,7 +163,7 @@ export function OrderPage() {
                 )
             );
             
-            console.log("Estado actualizado:", response);
+            console.log("✅ Estado actualizado:", response);
         } catch (error) {
             console.error("Error updating order status:", error);
             setError("No se pudo actualizar el estado de la orden");
@@ -121,8 +212,14 @@ export function OrderPage() {
     // Función para manejar la búsqueda al presionar Enter
     const handleKeyPress = (e) => {
         if (e.key === 'Enter') {
-            getOrdersByUser(userEmail);
+            searchOrders();
         }
+    };
+
+    // Función para limpiar búsqueda y mostrar todas las órdenes
+    const clearSearch = () => {
+        setSearchTerm("");
+        getAllOrders();
     };
 
     return (
@@ -131,28 +228,72 @@ export function OrderPage() {
             
             {/* Panel de búsqueda */}
             <div className="search-panel">
-                <h3>🔍 Buscar Órdenes por Email</h3>
-                <div className="search-input-group">
-                    <input
-                        type="email"
-                        value={userEmail}
-                        onChange={(e) => setUserEmail(e.target.value)}
-                        onKeyPress={handleKeyPress}
-                        placeholder="Ingresa el email del usuario"
-                    />
+                <h3>🔍 Buscar Órdenes</h3>
+                <div className="search-controls">
+                    <div className="search-type-selector">
+                        <label htmlFor="searchType">Buscar por:</label>
+                        <select 
+                            id="searchType"
+                            value={searchType} 
+                            onChange={(e) => setSearchType(e.target.value)}
+                            className="search-type-select"
+                        >
+                            <option value="email">Email</option>
+                            <option value="identification">Cédula</option>
+                        </select>
+                    </div>
+                    
+                    <div className="search-input-group">
+                        <input
+                            type="text"
+                            value={searchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value)}
+                            onKeyPress={handleKeyPress}
+                            placeholder={
+                                searchType === 'email' 
+                                    ? "📧 Ingresa el email del usuario..." 
+                                    : "🆔 Ingresa la cédula del usuario..."
+                            }
+                            className="search-input"
+                        />
+                        {searchTerm && (
+                            <button 
+                                onClick={clearSearch}
+                                className="clear-search-btn"
+                                title="Limpiar búsqueda"
+                            >
+                                ✕
+                            </button>
+                        )}
+                    </div>
+                    
                     <button 
-                        onClick={() => getOrdersByUser(userEmail)}
-                        disabled={loading}
+                        onClick={searchOrders}
+                        disabled={loading || !searchTerm.trim()}
                         className="search-btn"
                     >
-                        {loading ? "⏳ Buscando..." : "🔍 Buscar Órdenes"}
+                        {loading ? "⏳ Buscando..." : "🔍 Buscar"}
+                    </button>
+                    
+                    <button 
+                        onClick={getAllOrders}
+                        disabled={loading}
+                        className="all-orders-btn"
+                    >
+                        {loading ? "⏳ Cargando..." : "📋 Ver Todas"}
                     </button>
                 </div>
-                {!hasSearched && (
-                    <p className="search-description">
-                        Ingresa un email y presiona el botón para buscar las órdenes
+                
+                <div className="search-info">
+                    <p>
+                        {showAllOrders 
+                            ? `📊 Mostrando todas las órdenes (${orders.length} total)`
+                            : searchTerm 
+                                ? `🔍 Búsqueda por ${searchType}: "${searchTerm}" - ${orders.length} órdenes encontradas`
+                                : "👆 Selecciona un tipo de búsqueda e ingresa el término"
+                        }
                     </p>
-                )}
+                </div>
             </div>
 
             {/* Mensajes de estado */}
@@ -162,18 +303,10 @@ export function OrderPage() {
                 </div>
             )}
 
-            {/* Estado inicial - sin búsqueda */}
-            {!hasSearched && !loading && (
-                <div className="empty-state">
-                    <h3>📭 No se ha realizado ninguna búsqueda</h3>
-                    <p>Ingresa un email arriba y presiona "Buscar Órdenes" para ver las órdenes del usuario.</p>
-                </div>
-            )}
-
             {/* Loading */}
             {loading && (
                 <div className="loading-state">
-                    <p>⏳ Buscando órdenes...</p>
+                    <p>⏳ Cargando órdenes...</p>
                 </div>
             )}
 
@@ -181,7 +314,12 @@ export function OrderPage() {
             {hasSearched && !loading && orders.length === 0 && !error && (
                 <div className="no-results">
                     <h3>📭 No se encontraron órdenes</h3>
-                    <p>No hay órdenes registradas para el email: <strong>{userEmail}</strong></p>
+                    <p>
+                        {showAllOrders 
+                            ? "No hay órdenes registradas en el sistema"
+                            : `No hay órdenes registradas para ${searchType === 'email' ? 'el email' : 'la cédula'}: ${searchTerm}`
+                        }
+                    </p>
                 </div>
             )}
 
@@ -190,11 +328,20 @@ export function OrderPage() {
                 <div className="orders-list">
                     <div className="orders-header">
                         <h2>
-                            📋 Órdenes Encontradas: <span className="results-count">{orders.length}</span>
+                            {showAllOrders ? "📋 Todas las Órdenes" : "📋 Órdenes Encontradas"}: 
+                            <span className="results-count"> {orders.length}</span>
                         </h2>
-                        <p className="user-email">
-                            📧 Email: {userEmail}
-                        </p>
+                        <div className="orders-meta">
+                            <p className="orders-description">
+                                {showAllOrders 
+                                    ? "Órdenes ordenadas por fecha de llegada (más recientes primero)"
+                                    : `Mostrando órdenes ${searchType === 'email' ? 'del email' : 'de la cédula'}: ${searchTerm}`
+                                }
+                            </p>
+                            <p className="last-updated">
+                                📅 Actualizado: {new Date().toLocaleDateString('es-ES')}
+                            </p>
+                        </div>
                     </div>
 
                     {orders.map((order) => (
@@ -209,11 +356,19 @@ export function OrderPage() {
                                     <p className="order-meta">
                                         <strong>👤 Cliente:</strong> {order.user.name}
                                     </p>
+                                    <p className="order-meta">
+                                        <strong>📧 Email:</strong> {order.user.email}
+                                    </p>
+                                    {order.user.Identification && (
+                                        <p className="order-meta">
+                                            <strong>🆔 Cédula:</strong> {order.user.Identification}
+                                        </p>
+                                    )}
                                 </div>
                                 
                                 <div className="order-summary">
                                     <p className="order-total">
-                                        💰 Total: ${order.total}
+                                        💰 Total: ${order.total.toFixed(2)}
                                     </p>
                                     <div className="status-control">
                                         <label htmlFor={`status-${order.id}`}>
@@ -258,7 +413,7 @@ export function OrderPage() {
                                             </div>
                                             <div className="item-pricing">
                                                 <p className="item-quantity">
-                                                    {detail.quantity} x ${detail.unitPrice}
+                                                    {detail.quantity} x ${detail.unitPrice.toFixed(2)}
                                                 </p>
                                                 <p className="item-total">
                                                     ${(detail.quantity * detail.unitPrice).toFixed(2)}
