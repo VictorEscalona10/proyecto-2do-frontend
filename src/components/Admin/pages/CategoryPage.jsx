@@ -7,17 +7,24 @@ export function Category() {
   const [loading, setLoading] = useState(false);
   const [newCategory, setNewCategory] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
-  const [searchType, setSearchType] = useState("name"); // 'name' o 'id'
-  const [activeTab, setActiveTab] = useState('list'); // 'list' o 'create'
+  const [searchType, setSearchType] = useState("name");
+  const [activeTab, setActiveTab] = useState('list');
+  const [modal, setModal] = useState({ show: false, message: "", type: "" });
 
   const API_URL = import.meta.env.VITE_API_URL;
 
-  // Cargar categorías al montar el componente
+  const showModal = (message, type = "info") => {
+    setModal({ show: true, message, type });
+  };
+
+  const closeModal = () => {
+    setModal({ show: false, message: "", type: "" });
+  };
+
   useEffect(() => {
     getCategories();
   }, []);
 
-  // Filtrar categorías cuando cambia el término de búsqueda
   useEffect(() => {
     if (!searchTerm.trim()) {
       setFilteredCategories(categories);
@@ -25,7 +32,7 @@ export function Category() {
       const filtered = categories.filter(category => {
         if (searchType === 'name') {
           return category.name.toLowerCase().includes(searchTerm.toLowerCase());
-        } else { // search by id
+        } else {
           return category.id.toString().includes(searchTerm);
         }
       });
@@ -42,7 +49,7 @@ export function Category() {
       setFilteredCategories(response);
     } catch (error) {
       console.error("Error fetching categories:", error);
-      alert("Error al cargar las categorías");
+      showModal("Error al cargar las categorías", "error");
     } finally {
       setLoading(false);
     }
@@ -50,7 +57,7 @@ export function Category() {
 
   const createCategory = async (name) => {
     if (!name.trim()) {
-      alert("Por favor ingresa un nombre para la categoría");
+      showModal("Por favor ingresa un nombre para la categoría", "warning");
       return;
     }
 
@@ -71,29 +78,31 @@ export function Category() {
       const response = await request.json();
       setCategories([...categories, response]);
       setNewCategory("");
-      alert("✅ Categoría creada con éxito");
+      showModal("✅ Categoría creada con éxito", "success");
     } catch (error) {
       console.error("Error creating category:", error);
-      alert("Error al crear la categoría");
+      showModal("Error al crear la categoría", "error");
     }
   };
 
   const handleDelete = async (name) => {
-    if (!window.confirm(`¿Estás seguro de eliminar la categoría "${name}"?`)) {
-      return;
-    }
-
-    try {
-      await fetch(`${API_URL}/category/delete/${name}`, {
-        method: "DELETE",
-        credentials: "include",
-      });
-      setCategories(categories.filter((category) => category.name !== name));
-      alert("✅ Categoría eliminada con éxito");
-    } catch (error) {
-      console.error("Error deleting category:", error);
-      alert("Error al eliminar la categoría");
-    }
+    showModal(
+      `¿Estás seguro de eliminar la categoría "${name}"?`,
+      "confirm",
+      async () => {
+        try {
+          await fetch(`${API_URL}/category/delete/${name}`, {
+            method: "DELETE",
+            credentials: "include",
+          });
+          setCategories(categories.filter((category) => category.name !== name));
+          showModal("✅ Categoría eliminada con éxito", "success");
+        } catch (error) {
+          console.error("Error deleting category:", error);
+          showModal("Error al eliminar la categoría", "error");
+        }
+      }
+    );
   };
 
   const handleSubmit = (e) => {
@@ -107,7 +116,7 @@ export function Category() {
 
   const handleSearchTypeChange = (e) => {
     setSearchType(e.target.value);
-    setSearchTerm(""); // Limpiar búsqueda al cambiar tipo
+    setSearchTerm("");
   };
 
   const clearSearch = () => {
@@ -117,11 +126,10 @@ export function Category() {
   return (
     <div className="category-page">
       <div className="category-header">
-        <h1>🎯 Gestión de Categorías</h1>
+        <h1>Gestión de Categorías</h1>
         <p>Administra las categorías de productos de la repostería</p>
       </div>
 
-      {/* Tabs de navegación */}
       <div className="tabs">
         <button 
           className={`tab-button ${activeTab === 'list' ? 'active' : ''}`}
@@ -137,10 +145,8 @@ export function Category() {
         </button>
       </div>
 
-      {/* Panel de Lista y Búsqueda */}
       {activeTab === 'list' && (
         <div className="list-panel">
-          {/* Panel de búsqueda */}
           <div className="search-panel">
             <h3>🔍 Buscar Categorías</h3>
             <div className="search-controls">
@@ -185,7 +191,6 @@ export function Category() {
             </div>
           </div>
 
-          {/* Botón para recargar categorías */}
           <div className="category-actions">
             <button 
               onClick={getCategories} 
@@ -196,7 +201,6 @@ export function Category() {
             </button>
           </div>
 
-          {/* Lista de categorías */}
           <div className="categories-list">
             {loading ? (
               <div className="loading-state">
@@ -245,7 +249,6 @@ export function Category() {
         </div>
       )}
 
-      {/* Panel de Creación */}
       {activeTab === 'create' && (
         <div className="create-panel">
           <div className="category-form">
@@ -269,7 +272,6 @@ export function Category() {
             </p>
           </div>
 
-          {/* Vista previa de categorías existentes */}
           <div className="existing-categories-preview">
             <h4>📋 Categorías Existentes ({categories.length})</h4>
             {categories.length > 0 ? (
@@ -288,6 +290,55 @@ export function Category() {
             ) : (
               <p className="no-categories">No hay categorías cargadas</p>
             )}
+          </div>
+        </div>
+      )}
+
+      {/* Modal Personalizado */}
+      {modal.show && (
+        <div className="modal-overlay" onClick={closeModal}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <div className={`modal-header ${modal.type}`}>
+              <h3>
+                {modal.type === 'success' && '✅ '}
+                {modal.type === 'error' && '❌ '}
+                {modal.type === 'warning' && '⚠️ '}
+                {modal.type === 'confirm' && '❓ '}
+                Mensaje del Sistema
+              </h3>
+              <button className="close-btn" onClick={closeModal}>×</button>
+            </div>
+            <div className="modal-body">
+              <p>{modal.message}</p>
+            </div>
+            <div className="modal-footer">
+              {modal.type === 'confirm' ? (
+                <>
+                  <button 
+                    className="modal-btn confirm-btn"
+                    onClick={() => {
+                      modal.onConfirm?.();
+                      closeModal();
+                    }}
+                  >
+                    ✅ Sí
+                  </button>
+                  <button 
+                    className="modal-btn cancel-btn"
+                    onClick={closeModal}
+                  >
+                    ❌ No
+                  </button>
+                </>
+              ) : (
+                <button 
+                  className="modal-btn ok-btn"
+                  onClick={closeModal}
+                >
+                  Aceptar
+                </button>
+              )}
+            </div>
           </div>
         </div>
       )}

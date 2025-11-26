@@ -2,9 +2,9 @@ import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from '../../../hooks/AuthContext.jsx';
 import styles from "./login.module.css";
-import logo from '../../../assest/img/logo.jpg'; // Importar el logo
+import logo from '../../../assest/img/logo.jpg';
 
-export default function Login() {
+export default function Login({ onShowModal }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errors, setErrors] = useState({});
@@ -26,6 +26,17 @@ export default function Login() {
       newErrors.password = "Contraseña muy corta (mínimo 8 caracteres)";
     }
     return newErrors;
+  };
+
+  // Función segura para mostrar modales
+  const showModalSafe = (modalData) => {
+    if (typeof onShowModal === 'function') {
+      onShowModal(modalData);
+    } else {
+      // Fallback a alert si onShowModal no está disponible
+      console.warn('onShowModal no está disponible, usando alert como fallback');
+      alert(modalData.message);
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -56,19 +67,17 @@ export default function Login() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({ email, password }),
-        credentials: 'include' // Importante para cookies de autenticación
+        credentials: 'include'
       });
-        
 
       console.log("Response status:", response.status);
-      console.log("Response headers:", Object.fromEntries([...response.headers]));
 
-      const responseData = await response.text(); // Primero leer como texto
+      const responseData = await response.text();
       console.log("Response data:", responseData);
 
       let data;
       try {
-        data = JSON.parse(responseData); // Intentar parsear como JSON
+        data = JSON.parse(responseData);
       } catch (parseError) {
         console.error("Error parsing JSON:", parseError);
         throw new Error("Respuesta del servidor no es JSON válido");
@@ -76,21 +85,33 @@ export default function Login() {
 
       if (response.ok) {
         console.log("Login exitoso:", data);
-        alert("Login exitoso");
-        // Actualizar el estado de autenticación global y redirigir
+        showModalSafe({
+          type: 'success',
+          message: '¡Inicio de sesión exitoso!'
+        });
+        
         try {
           await checkAuth();
         } catch (err) {
           console.warn('No se pudo refrescar auth después del login:', err);
         }
-        navigate('/');
+        
+        setTimeout(() => {
+          navigate('/');
+        }, 1500);
       } else {
         console.error("Error en el login:", data.message || response.statusText);
-        setErrors({ submit: data.message || "Error en el login" });
+        showModalSafe({
+          type: 'error',
+          message: data.message || "Error en el login"
+        });
       }
     } catch (error) {
       console.error("Error en la petición:", error);
-      setErrors({ submit: error.message || "Error de conexión" });
+      showModalSafe({
+        type: 'error',
+        message: error.message || "Error de conexión"
+      });
     } finally {
       setIsLoading(false);
     }

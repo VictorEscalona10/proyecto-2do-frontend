@@ -2,12 +2,23 @@ import { useState, useEffect } from "react";
 import { useCart } from "../../../context/CartContext";
 import styles from "./ProductsComponent.module.css";
 
-export function ProductsComponent({ categoria }) {
+export function ProductsComponent({ categoria, onShowModal }) {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [quantities, setQuantities] = useState({});
   const { addToCart } = useCart();
+
+  // Función segura para mostrar modales
+  const showModalSafe = (modalData) => {
+    if (typeof onShowModal === 'function') {
+      onShowModal(modalData);
+    } else {
+      // Fallback a alert si onShowModal no está disponible
+      console.warn('onShowModal no está disponible, usando alert como fallback');
+      alert(modalData.message);
+    }
+  };
 
   const getProductsByCategory = async () => {
     try {
@@ -33,6 +44,10 @@ export function ProductsComponent({ categoria }) {
     } catch (error) {
       console.log(error);
       setError("Error al cargar los productos");
+      showModalSafe({
+        type: 'error',
+        message: 'Error al cargar los productos'
+      });
     } finally {
       setLoading(false);
     }
@@ -49,8 +64,6 @@ export function ProductsComponent({ categoria }) {
     const quantity = quantities[product.id] || 1;
     addToCart(product, quantity);
 
-    
-    
     // Feedback visual
     const button = document.getElementById(`add-to-cart-${product.id}`);
     if (button) {
@@ -61,6 +74,12 @@ export function ProductsComponent({ categoria }) {
         button.style.background = '#f700ff43';
       }, 1500);
     }
+
+    // Mostrar modal de confirmación
+    showModalSafe({
+      type: 'success',
+      message: `¡${product.name} agregado al carrito!`
+    });
   };
 
   useEffect(() => {

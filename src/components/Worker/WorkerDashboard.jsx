@@ -4,33 +4,117 @@ import { ProductPage } from "./page/ProductPage";
 import { OrderPage } from "./page/OrderPage";
 import "./WorkerDashboard.css";
 
+// Componente Modal (copiado del Users)
+const Modal = ({ show, type, message, onConfirm, onClose }) => {
+  if (!show) return null;
+
+  const getModalTitle = () => {
+    switch (type) {
+      case 'success': return '✅ Operación Exitosa';
+      case 'error': return '❌ Error';
+      case 'warning': return '⚠️ Advertencia';
+      case 'confirm': return '❓ Confirmación';
+      default: return 'Mensaje del Sistema';
+    }
+  };
+
+  return (
+    <div className="modal-overlay" onClick={onClose}>
+      <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+        <div className={`modal-header ${type}`}>
+          <h3>{getModalTitle()}</h3>
+          <button className="close-btn" onClick={onClose}>×</button>
+        </div>
+        <div className="modal-body">
+          <p>{message}</p>
+        </div>
+        <div className="modal-footer">
+          {type === 'confirm' ? (
+            <>
+              <button 
+                className="modal-btn confirm-btn"
+                onClick={() => {
+                  onConfirm?.();
+                  onClose();
+                }}
+              >
+                ✅ Sí
+              </button>
+              <button 
+                className="modal-btn cancel-btn"
+                onClick={onClose}
+              >
+                ❌ No
+              </button>
+            </>
+          ) : (
+            <button 
+              className="modal-btn ok-btn"
+              onClick={onClose}
+            >
+              Aceptar
+            </button>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+};
+
 export const WorkerDashboard = () => {
   const [tab, setTab] = useState("orders");
   const [logoutLoading, setLogoutLoading] = useState(false);
+  
+  // Estado para el modal
+  const [modal, setModal] = useState({
+    show: false,
+    type: 'info',
+    message: '',
+    onConfirm: null
+  });
+
+  const showModal = (modalConfig) => {
+    setModal({
+      show: true,
+      type: modalConfig.type || 'info',
+      message: modalConfig.message,
+      onConfirm: modalConfig.onConfirm
+    });
+  };
+
+  const closeModal = () => {
+    setModal({
+      show: false,
+      type: 'info',
+      message: '',
+      onConfirm: null
+    });
+  };
 
   const handleLogout = async () => {
-    if (!window.confirm('¿Estás seguro de que quieres cerrar sesión?')) {
-      return;
-    }
+    showModal({
+      type: 'confirm',
+      message: '¿Estás seguro de que quieres cerrar sesión?',
+      onConfirm: async () => {
+        setLogoutLoading(true);
+        try {
+          await fetch('http://localhost:3000/auth/logout', {
+            method: 'POST',
+            credentials: 'include',
+          });
 
-    setLogoutLoading(true);
-
-    try {
-      await fetch('http://localhost:3000/auth/logout', {
-        method: 'POST',
-        credentials: 'include',
-      });
-
-      localStorage.clear();
-      sessionStorage.clear();
-      window.location.href = '/login';
-      
-    } catch (error) {
-      console.error('Error cerrando sesión:', error);
-      localStorage.clear();
-      sessionStorage.clear();
-      window.location.href = '/login';
-    }
+          localStorage.clear();
+          sessionStorage.clear();
+          window.location.href = '/login';
+          
+        } catch (error) {
+          console.error('Error cerrando sesión:', error);
+          localStorage.clear();
+          sessionStorage.clear();
+          window.location.href = '/login';
+        }
+      }
+    });
   };
 
   const navItems = [
@@ -77,11 +161,20 @@ export const WorkerDashboard = () => {
       {/* Content */}
       <main className="worker-main">
         <div className="worker-content">
-          {tab === "orders" && <OrderPage />}
-          {tab === "category" && <Category />}
-          {tab === "products" && <ProductPage />}
+          {tab === "orders" && <OrderPage onShowModal={showModal} />}
+          {tab === "category" && <Category onShowModal={showModal} />}
+          {tab === "products" && <ProductPage onShowModal={showModal} />}
         </div>
       </main>
+
+      {/* Modal */}
+      <Modal
+        show={modal.show}
+        type={modal.type}
+        message={modal.message}
+        onConfirm={modal.onConfirm}
+        onClose={closeModal}
+      />
     </div>
   );
 };

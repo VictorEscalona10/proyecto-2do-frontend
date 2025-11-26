@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import "./CategoryPage.css";
 
-export function Category() {
+export function Category({ onShowModal }) {
   const [categories, setCategories] = useState([]);
   const [filteredCategories, setFilteredCategories] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -42,7 +42,10 @@ export function Category() {
       setFilteredCategories(response);
     } catch (error) {
       console.error("Error fetching categories:", error);
-      alert("Error al cargar las categorías");
+      onShowModal({
+        type: 'error',
+        message: 'Error al cargar las categorías'
+      });
     } finally {
       setLoading(false);
     }
@@ -50,7 +53,10 @@ export function Category() {
 
   const createCategory = async (name) => {
     if (!name.trim()) {
-      alert("Por favor ingresa un nombre para la categoría");
+      onShowModal({
+        type: 'warning',
+        message: 'Por favor ingresa un nombre para la categoría'
+      });
       return;
     }
 
@@ -71,16 +77,26 @@ export function Category() {
       const response = await request.json();
       setCategories([...categories, response]);
       setNewCategory("");
-      alert("✅ Categoría creada con éxito");
+      onShowModal({
+        type: 'success',
+        message: '✅ Categoría creada con éxito'
+      });
     } catch (error) {
       console.error("Error creating category:", error);
-      alert("Error al crear la categoría");
+      onShowModal({
+        type: 'error',
+        message: 'Error al crear la categoría'
+      });
     }
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    createCategory(newCategory);
+    onShowModal({
+      type: 'confirm',
+      message: `¿Estás seguro de crear la categoría "${newCategory}"?`,
+      onConfirm: () => createCategory(newCategory)
+    });
   };
 
   const handleSearch = (e) => {
