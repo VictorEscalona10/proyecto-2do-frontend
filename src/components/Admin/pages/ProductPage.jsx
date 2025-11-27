@@ -95,7 +95,7 @@ export function ProductPage() {
   const getProductsByCategory = async (categoryName) => {
     try {
       const response = await fetch(
-        `${API_URL}/products/search/category?name=${encodeURIComponent(categoryName)}`
+        `${API_URL}/products/search/category?name=${categoryName}`
       );
       const result = await response.json();
       console.log("Category search result:", result); // Para debugging
