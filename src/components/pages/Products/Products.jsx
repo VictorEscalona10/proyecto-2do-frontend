@@ -1,7 +1,7 @@
 import styles from './Products.module.css';
 import { ProductsComponent } from "../ProductsComponent/ProductsComponent.jsx";
 import { useRef, useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 
 export default function Products({ onShowModal }) {
   const location = useLocation();

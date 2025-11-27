@@ -14,6 +14,7 @@ import Reset_Password from "./components/pages/Reset_Password/Reset_Password.jsx
 import Products from "./components/pages/Products/Products.jsx";
 import { AdminDashboard } from "./components/Admin/AdminDashboard.jsx";
 import { WorkerDashboard } from "./components/Worker/WorkerDashboard.jsx";
+import {ProductDetail} from "./components/pages/Products/ProductDetail.jsx";
 
 function App() {
   const { isAuthenticated, isLoading, user } = useAuth();
@@ -77,6 +78,7 @@ function App() {
           <Route path="/reset-password" element={<Reset_Password onShowModal={showModal} />} />
           <Route path="/products" element={<Products onShowModal={showModal} />} />
           <Route path="/About" element={<About onShowModal={showModal} />} />
+          <Route path="/product/:name" element={<ProductDetail />} />
         </Routes>
         
         {/* Modal global */}

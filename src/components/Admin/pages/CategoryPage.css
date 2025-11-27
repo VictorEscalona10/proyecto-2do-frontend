@@ -1,14 +1,13 @@
-/* CategoryPage.css - Completo corregido */
-.category-page {
+.admin-category-page {
   min-height: 100vh;
   background-color: #f8f0f5;
   font-family: 'Comic Sans MS', cursive, sans-serif;
   padding: 20px;
 }
 
-.category-header {
+.admin-category-header {
   text-align: center;
-  margin-bottom: 40px;
+  margin-bottom: 10px;
   padding: 40px 20px;
   border-radius: 20px;
   box-shadow: 0 8px 25px rgba(139, 0, 139, 0.1);
@@ -19,7 +18,7 @@
   justify-content: center;
 }
 
-.category-header h1 {
+.admin-category-header h1 {
   color: #8b008b;
   font-size: 2.8rem;
   margin-bottom: 15px;
@@ -439,74 +438,74 @@
 
 /* Responsive */
 @media (max-width: 768px) {
-  .category-header h1 {
+  .admin-category-header h1 {
     font-size: 2.2rem;
   }
-  
+
   .tabs {
     flex-direction: column;
     gap: 10px;
   }
-  
+
   .tab-button {
     width: 100%;
     margin: 0;
   }
-  
+
   .search-controls {
     flex-direction: column;
     align-items: stretch;
   }
-  
+
   .search-type-selector {
     justify-content: center;
   }
-  
+
   .search-input-group {
     min-width: auto;
   }
-  
+
   .category-card {
     flex-direction: column;
     gap: 15px;
     text-align: center;
   }
-  
+
   .category-actions {
     text-align: center;
   }
-  
+
   .form-group {
     flex-direction: column;
   }
-  
+
   .categories-grid {
     grid-template-columns: 1fr;
   }
 }
 
 @media (max-width: 480px) {
-  .category-page {
+  .admin-category-page {
     padding: 15px;
   }
-  
-  .category-header h1 {
+
+  .admin-category-header h1 {
     font-size: 1.8rem;
   }
-  
-  .category-header p {
+
+  .admin-category-header p {
     font-size: 1rem;
   }
-  
+
   .list-panel,
   .create-panel {
     padding: 20px 15px;
   }
-  
+
   .search-panel {
     padding: 20px 15px;
   }
-  
+
   .create-panel .category-form {
     padding: 20px 15px;
   }
