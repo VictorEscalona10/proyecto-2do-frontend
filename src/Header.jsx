@@ -4,7 +4,7 @@ import { useCart } from './context/CartContext';
 import CartDropdown from './components/pages/CartDropdown';
 import styles from './Header.module.css';
 
-export default function Header() {
+export default function Header({ onShowModal }) {
   const [isCartOpen, setIsCartOpen] = useState(false);
   const { getTotalItems } = useCart();
 
@@ -60,10 +60,11 @@ export default function Header() {
         </div>
       </div>
 
-      {/* Dropdown del Carrito */}
+      {/* Dropdown del Carrito - Ahora con onShowModal */}
       <CartDropdown 
         isOpen={isCartOpen} 
-        onClose={() => setIsCartOpen(false)} 
+        onClose={() => setIsCartOpen(false)}
+        onShowModal={onShowModal}
       />
     </header>
   );

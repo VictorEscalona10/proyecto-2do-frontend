@@ -1,7 +1,9 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { CartProvider } from "./context/CartContext.jsx";
+import { useState } from "react";
 import Header from "./Header.jsx";
 import { useAuth } from "./hooks/useAuth.jsx";
+import Modal from "./components/pages/Modal/Modal.jsx"; // Asegúrate de crear este componente
 
 import Home from "./components/pages/Home/Home.jsx";
 import Login from "./components/pages/Login/Login.jsx";
@@ -15,14 +17,30 @@ import { WorkerDashboard } from "./components/Worker/WorkerDashboard.jsx";
 
 function App() {
   const { isAuthenticated, isLoading, user } = useAuth();
+  const [modal, setModal] = useState(null);
+
+  const showModal = (modalData) => {
+    setModal(modalData);
+  };
+
+  const closeModal = () => {
+    setModal(null);
+  };
 
   // proteger acceso a role si user es undefined/null
   if (user?.role === 'ADMINISTRADOR') {
-    // envolver en providers/router si quieres mantener contexto y routing para admin
     return (
       <CartProvider>
         <Router>
-          <AdminDashboard />
+          <AdminDashboard onShowModal={showModal} />
+          {modal && (
+            <Modal
+              type={modal.type}
+              message={modal.message}
+              onConfirm={modal.onConfirm}
+              onClose={closeModal}
+            />
+          )}
         </Router>
       </CartProvider>
     );
@@ -32,7 +50,15 @@ function App() {
     return (
       <CartProvider>
         <Router>
-          <WorkerDashboard />
+          <WorkerDashboard onShowModal={showModal} />
+          {modal && (
+            <Modal
+              type={modal.type}
+              message={modal.message}
+              onConfirm={modal.onConfirm}
+              onClose={closeModal}
+            />
+          )}
         </Router>
       </CartProvider>
     );
@@ -41,20 +67,30 @@ function App() {
   return (
     <CartProvider>
       <Router>
-        <Header />
+        <Header onShowModal={showModal} />
         <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
-          <Route path="/forgot_password" element={<Forgot_Password />} />
-          <Route path="/reset_password" element={<Reset_Password />} />
-          <Route path="/reset-password" element={<Reset_Password />} />
-          <Route path="/products" element={<Products />} />
-          <Route path="/About" element={<About />} />
+          <Route path="/" element={<Home onShowModal={showModal} />} />
+          <Route path="/login" element={<Login onShowModal={showModal} />} />
+          <Route path="/register" element={<Register onShowModal={showModal} />} />
+          <Route path="/forgot_password" element={<Forgot_Password onShowModal={showModal} />} />
+          <Route path="/reset_password" element={<Reset_Password onShowModal={showModal} />} />
+          <Route path="/reset-password" element={<Reset_Password onShowModal={showModal} />} />
+          <Route path="/products" element={<Products onShowModal={showModal} />} />
+          <Route path="/About" element={<About onShowModal={showModal} />} />
         </Routes>
+        
+        {/* Modal global */}
+        {modal && (
+          <Modal
+            type={modal.type}
+            message={modal.message}
+            onConfirm={modal.onConfirm}
+            onClose={closeModal}
+          />
+        )}
       </Router>
     </CartProvider>
   );
 }
-// ...existing code...
+
 export default App;

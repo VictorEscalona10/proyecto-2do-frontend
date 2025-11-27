@@ -3,7 +3,7 @@ import { ProductsComponent } from "../ProductsComponent/ProductsComponent.jsx";
 import { useRef, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 
-export default function Products() {
+export default function Products({ onShowModal }) {
   const location = useLocation();
   
   // Refs para cada sección de categoría
@@ -92,37 +92,37 @@ export default function Products() {
             {/* Sección de Tortas */}
             <div ref={tortasRef} className={styles.categorySection}>
               <h2 className={styles.categoria}>Tortas</h2>
-              <ProductsComponent categoria='tortas'/>
+              <ProductsComponent categoria='tortas' onShowModal={onShowModal}/>
             </div>
 
             {/* Sección de Galletas */}
             <div ref={galletasRef} className={styles.categorySection}>
               <h2 className={styles.categoria}>Galletas</h2>
-              <ProductsComponent categoria='galletas'/>
+              <ProductsComponent categoria='galletas' onShowModal={onShowModal}/>
             </div>
 
             {/* Sección de Donas */}
             <div ref={donasRef} className={styles.categorySection}>
               <h2 className={styles.categoria}>Donas</h2>
-              <ProductsComponent categoria='donas'/>
+              <ProductsComponent categoria='donas' onShowModal={onShowModal}/>
             </div>
 
             {/* Sección de Ponques */}
             <div ref={ponquesRef} className={styles.categorySection}>
               <h2 className={styles.categoria}>Ponques</h2>
-              <ProductsComponent categoria='ponques'/>
+              <ProductsComponent categoria='ponques' onShowModal={onShowModal}/>
             </div>
 
             {/* Sección de Pasapalos Dulces */}
             <div ref={pasapalosDulcesRef} className={styles.categorySection}>
               <h2 className={styles.categoria}>Pasapalos Dulces</h2>
-              <ProductsComponent categoria='pasapalos dulces'/>
+              <ProductsComponent categoria='pasapalos dulces' onShowModal={onShowModal}/>
             </div>
 
             {/* Sección de Pasapalos Salados */}
             <div ref={pasapalosSaladosRef} className={styles.categorySection}>
               <h2 className={styles.categoria}>Pasapalos Salados</h2>
-              <ProductsComponent categoria='pasapalos salados'/>
+              <ProductsComponent categoria='pasapalos salados' onShowModal={onShowModal}/>
             </div>
           </div>
         </div>

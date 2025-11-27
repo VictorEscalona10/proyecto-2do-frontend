@@ -16,6 +16,7 @@ export function ProductPage() {
   const [loading, setLoading] = useState(false);
   const [searchType, setSearchType] = useState("name");
   const [searchTerm, setSearchTerm] = useState("");
+  const [showModal, setShowModal] = useState(false);
 
   const API_URL = import.meta.env.VITE_API_URL;
 
@@ -80,7 +81,7 @@ export function ProductPage() {
   const getProductByName = async (name) => {
     try {
       const response = await fetch(
-        `${API_URL}/products/search/name?name=${name}`
+        `${API_URL}/products/search/name?name=${encodeURIComponent(name)}`
       );
       const result = await response.json();
       setProducts(result.data || []);
@@ -90,13 +91,14 @@ export function ProductPage() {
     }
   };
 
-  // Función para buscar productos por categoría
+  // Función para buscar productos por categoría - CORREGIDA
   const getProductsByCategory = async (categoryName) => {
     try {
       const response = await fetch(
-        `${API_URL}/products/search/category?name=${categoryName}`
+        `${API_URL}/products/search/category?name=${encodeURIComponent(categoryName)}`
       );
       const result = await response.json();
+      console.log("Category search result:", result); // Para debugging
       setProducts(result.data || []);
     } catch (error) {
       console.error("Error fetching products by category:", error);
@@ -104,7 +106,7 @@ export function ProductPage() {
     }
   };
 
-  // Función unificada de búsqueda
+  // Función unificada de búsqueda - MEJORADA
   const handleSearch = () => {
     if (!searchTerm.trim()) {
       getAllProducts();
@@ -180,6 +182,11 @@ export function ProductPage() {
         document.getElementById("imagen").value = "";
         // Recargar la lista de productos
         getAllProducts();
+        // Cerrar el modal después de 2 segundos si fue exitoso
+        setTimeout(() => {
+          setShowModal(false);
+          setUploadResult("");
+        }, 2000);
       }
     } catch (error) {
       setUploadResult("Error de red: " + error.message);
@@ -201,6 +208,28 @@ export function ProductPage() {
     getAllProducts();
   };
 
+  // Función para abrir el modal
+  const openModal = () => {
+    setShowModal(true);
+    setUploadResult("");
+  };
+
+  // Función para cerrar el modal
+  const closeModal = () => {
+    setShowModal(false);
+    setFormData({
+      name: "",
+      description: "",
+      price: "",
+      categoryName: "",
+      imagen: null
+    });
+    setUploadResult("");
+    // Limpiar el input de archivo
+    const fileInput = document.getElementById("imagen");
+    if (fileInput) fileInput.value = "";
+  };
+
   // Calcular el total de productos
   const totalProducts = products.length;
 
@@ -208,11 +237,11 @@ export function ProductPage() {
     <div className="product-page">
       <header className="page-header">
         <h1>Gestión de Productos</h1>
-        <p>Busca productos por nombre o categoría, y agrega nuevos productos</p>
+        <p>Busca productos por nombre o categoría</p>
       </header>
 
       <div className="page-content">
-        {/* Sección de búsqueda unificada */}
+        {/* Sección de búsqueda unificada - MEJORADA */}
         <section className="search-section">
           <h2>Buscar Productos</h2>
           <div className="search-controls">
@@ -238,39 +267,31 @@ export function ProductPage() {
                 type="text" 
                 placeholder={
                   searchType === 'name' 
-                    ? 'Nombre del producto...' 
-                    : 'Nombre de la categoría...'
+                    ? 'Ejemplo: tequeños, hamburguesa, pizza...' 
+                    : 'Ejemplo: pasapalos salados, bebidas, postres...'
                 }
                 className="search-input"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 onKeyPress={handleKeyPress}
               />
-              <button 
-                className="search-btn"
-                onClick={handleSearch}
-                disabled={!searchTerm.trim()}
-              >
-                {searchType === 'name' ? '🔍 Buscar' : '🗂️ Buscar por Categoría'}
-              </button>
-              {searchTerm && (
+              <div className="search-buttons-container">
                 <button 
-                  className="clear-results"
-                  onClick={clearSearch}
-                  style={{ marginLeft: '10px', padding: '10px 15px' }}
+                  className="search-btn"
+                  onClick={handleSearch}
+                  disabled={!searchTerm.trim()}
                 >
-                  ✕ Limpiar
+                  🔍 Buscar
                 </button>
-              )}
-            </div>
-            
-            <div className="search-examples">
-              <small>
-                {searchType === 'name' 
-                  ? 'Ejemplo: tequeños, hamburguesa, pizza...' 
-                  : 'Ejemplo: pasapalos salados, bebidas, postres...'
-                }
-              </small>
+                {searchTerm && (
+                  <button 
+                    className="clear-search-btn"
+                    onClick={clearSearch}
+                  >
+                    ✕ Limpiar
+                  </button>
+                )}
+              </div>
             </div>
           </div>
         </section>
@@ -280,7 +301,7 @@ export function ProductPage() {
           <div className="results-header">
             <h3>
               {searchTerm 
-                ? `Resultados de búsqueda` 
+                ? `Resultados de búsqueda ${searchType === 'name' ? 'por nombre' : 'por categoría'}` 
                 : 'Todos los Productos'
               }
               {totalProducts > 0 && <span className="results-count"> ({totalProducts} productos)</span>}
@@ -344,92 +365,112 @@ export function ProductPage() {
             </div>
           )}
         </section>
-
-        {/* Sección de subida de productos */}
-        <section className="upload-section">
-          <h2>Agregar Nuevo Producto</h2>
-          <form className="product-form" onSubmit={handleSubmit}>
-            <div className="form-group">
-              <label htmlFor="name">Nombre *</label>
-              <input
-                type="text"
-                id="name"
-                name="name"
-                value={formData.name}
-                onChange={handleInputChange}
-                required
-                placeholder="Ingresa el nombre del producto"
-              />
-            </div>
-
-            <div className="form-group">
-              <label htmlFor="description">Descripción</label>
-              <textarea
-                id="description"
-                name="description"
-                value={formData.description}
-                onChange={handleInputChange}
-                rows="3"
-                placeholder="Describe el producto"
-              />
-            </div>
-
-            <div className="form-row">
-              <div className="form-group">
-                <label htmlFor="price">Precio</label>
-                <input
-                  type="number"
-                  id="price"
-                  name="price"
-                  value={formData.price}
-                  onChange={handleInputChange}
-                  step="0.01"
-                  placeholder="0.00"
-                />
-              </div>
-
-              <div className="form-group">
-                <label htmlFor="categoryName">Categoría (ID o Nombre)</label>
-                <input
-                  type="text"
-                  id="categoryName"
-                  name="categoryName"
-                  value={formData.categoryName}
-                  onChange={handleInputChange}
-                  placeholder="Ej: 6 o 'pasapalos salados'"
-                />
-              </div>
-            </div>
-
-            <div className="form-group">
-              <label htmlFor="imagen">Imagen *</label>
-              <input
-                type="file"
-                id="imagen"
-                name="imagen"
-                onChange={handleFileChange}
-                accept="image/*"
-                required
-              />
-            </div>
-
-            <button 
-              type="submit" 
-              className="submit-btn"
-              disabled={loading}
-            >
-              {loading ? "⏳ Enviando..." : "📤 Subir Producto"}
-            </button>
-          </form>
-
-          {uploadResult && (
-            <div className="result-box">
-              <h4>Respuesta del servidor:</h4>
-              <pre>{uploadResult}</pre>
-            </div>
-          )}
-        </section>
       </div>
+
+      {/* Botón flotante para agregar producto */}
+      <button 
+        className="floating-add-btn"
+        onClick={openModal}
+        title="Agregar nuevo producto"
+      >
+        +
+      </button>
+
+      {/* Modal para agregar producto */}
+      {showModal && (
+        <div className="modal-overlay" onClick={closeModal}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header">
+              <h2>Agregar Nuevo Producto</h2>
+              <button className="close-btn" onClick={closeModal}>
+                ×
+              </button>
+            </div>
+            <div className="modal-body">
+              <form className="product-form" onSubmit={handleSubmit}>
+                <div className="form-group">
+                  <label htmlFor="name">Nombre *</label>
+                  <input
+                    type="text"
+                    id="name"
+                    name="name"
+                    value={formData.name}
+                    onChange={handleInputChange}
+                    required
+                    placeholder="Ingresa el nombre del producto"
+                  />
+                </div>
+
+                <div className="form-group">
+                  <label htmlFor="description">Descripción</label>
+                  <textarea
+                    id="description"
+                    name="description"
+                    value={formData.description}
+                    onChange={handleInputChange}
+                    rows="3"
+                    placeholder="Describe el producto"
+                  />
+                </div>
+
+                <div className="form-row">
+                  <div className="form-group">
+                    <label htmlFor="price">Precio</label>
+                    <input
+                      type="number"
+                      id="price"
+                      name="price"
+                      value={formData.price}
+                      onChange={handleInputChange}
+                      step="0.01"
+                      placeholder="0.00"
+                    />
+                  </div>
+
+                  <div className="form-group">
+                    <label htmlFor="categoryName">Categoría (ID o Nombre)</label>
+                    <input
+                      type="text"
+                      id="categoryName"
+                      name="categoryName"
+                      value={formData.categoryName}
+                      onChange={handleInputChange}
+                      placeholder="Ej: 6 o 'pasapalos salados'"
+                    />
+                  </div>
+                </div>
+
+                <div className="form-group">
+                  <label htmlFor="imagen">Imagen *</label>
+                  <input
+                    type="file"
+                    id="imagen"
+                    name="imagen"
+                    onChange={handleFileChange}
+                    accept="image/*"
+                    required
+                  />
+                </div>
+
+                <button 
+                  type="submit" 
+                  className="submit-btn"
+                  disabled={loading}
+                >
+                  {loading ? "⏳ Enviando..." : "📤 Subir Producto"}
+                </button>
+              </form>
+
+              {uploadResult && (
+                <div className="result-box">
+                  <h4>Respuesta del servidor:</h4>
+                  <pre>{uploadResult}</pre>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

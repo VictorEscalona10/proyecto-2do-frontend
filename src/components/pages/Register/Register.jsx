@@ -3,7 +3,7 @@ import { useNavigate, Link } from "react-router-dom";
 import styles from "./register.module.css";
 import logo from '../../../assest/img/logo.jpg';
 
-export default function Register() {
+export default function Register({ onShowModal }) {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -65,7 +65,6 @@ export default function Register() {
     e.preventDefault();
     console.log("Submitting form with name:", name, "email:", email, "phone:", phoneNumber, "identification:", identification, "and password:", password);
     
-    // Marcar todos los campos como tocados
     setTouched({
       name: true,
       email: true,
@@ -117,15 +116,27 @@ export default function Register() {
 
       if (response.ok) {
         console.log("Registro exitoso:", data);
-        alert("Registro exitoso! Por favor inicia sesión.");
+        onShowModal({
+          type: 'success',
+          message: '¡Registro exitoso! Serás redirigido al login.'
+        });
+        
+        setTimeout(() => {
           navigate('/login');
+        }, 2000);
       } else {
         console.error("Error en el registro:", data.message || response.statusText);
-        setErrors({ submit: data.message || "Error en el registro" });
+        onShowModal({
+          type: 'error',
+          message: data.message || "Error en el registro"
+        });
       }
     } catch (error) {
       console.error("Error en la petición:", error);
-      setErrors({ submit: error.message || "Error de conexión" });
+      onShowModal({
+        type: 'error',
+        message: error.message || "Error de conexión"
+      });
     } finally {
       setIsLoading(false);
     }

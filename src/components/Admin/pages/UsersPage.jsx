@@ -3,7 +3,7 @@ import "./UsersPage.css";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
-// Funciones de API
+// Funciones de API (mantener igual)
 const getAllUsers = async () => {
   try {
     const token = localStorage.getItem('authToken') || sessionStorage.getItem('authToken');
@@ -102,7 +102,171 @@ const deleteUser = async (email) => {
   }
 };
 
-// Componente Users
+// Componente UserCard individual
+const UserCard = ({ user, onUpdateRole, onDeleteUser, actionLoading, onShowModal }) => {
+  const [isExpanded, setIsExpanded] = useState(false);
+
+  const formatDate = (dateString) => {
+    return new Date(dateString).toLocaleDateString('es-ES', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+  };
+
+  const getStatusClass = (isActive) => {
+    return isActive ? 'active' : 'inactive';
+  };
+
+  const getRoleClass = (role) => {
+    return role === 'ADMINISTRADOR' ? 'role-admin' : 
+           role === 'TRABAJADOR' ? 'role-worker' : 'role-user';
+  };
+
+  const handleRoleChange = (email, newRole) => {
+    onShowModal({
+      type: 'confirm',
+      message: `¿Estás seguro de cambiar el rol de ${user.name} a ${newRole}?`,
+      onConfirm: () => onUpdateRole(email, newRole)
+    });
+  };
+
+  const handleDeleteClick = (email, name) => {
+    onShowModal({
+      type: 'confirm',
+      message: `¿Estás seguro de eliminar al usuario ${name}? Esta acción no se puede deshacer.`,
+      onConfirm: () => onDeleteUser(email, name)
+    });
+  };
+
+  return (
+    <div className={`user-card ${isExpanded ? 'expanded' : ''}`}>
+      {/* Header desplegable */}
+      <div 
+        className="user-header"
+        onClick={() => setIsExpanded(!isExpanded)}
+      >
+        <div className="user-header-main">
+          <h4>👤 {user.name}</h4>
+          <span className={`status-badge ${getStatusClass(user.isActive)}`}>
+            {user.isActive ? '✅ Activo' : '❌ Inactivo'}
+          </span>
+        </div>
+        <div className={`expand-arrow ${isExpanded ? 'expanded' : ''}`}>
+          {isExpanded ? '▲' : '▼'}
+        </div>
+      </div>
+
+      {/* Contenido desplegable */}
+      {isExpanded && (
+        <div className="user-content">
+          <div className="user-details">
+            <div className="detail-row">
+              <strong>📧 Email:</strong> {user.email}
+            </div>
+            <div className="detail-row">
+              <strong>🆔 Cédula:</strong> {user.Identification}
+            </div>
+            <div className="detail-row">
+              <strong>📞 Teléfono:</strong> {user.phoneNumber}
+            </div>
+            <div className="detail-row">
+              <strong>👑 Rol:</strong>
+              <span className={`role-badge ${getRoleClass(user.role)}`}>
+                {user.role}
+              </span>
+            </div>
+            <div className="detail-row">
+              <strong>📅 Registro:</strong> {formatDate(user.createdAt)}
+            </div>
+          </div>
+
+          <div className="user-actions">
+            <select
+              value={user.role}
+              onChange={(e) => handleRoleChange(user.email, e.target.value)}
+              disabled={actionLoading}
+              className="role-select"
+            >
+              <option value="USUARIO">Usuario</option>
+              <option value="TRABAJADOR">Trabajador</option>
+              <option value="ADMINISTRADOR">Administrador</option>
+            </select>
+            
+            <button
+              onClick={() => handleDeleteClick(user.email, user.name)}
+              disabled={actionLoading}
+              className="delete-btn"
+            >
+              🗑️ Eliminar
+            </button>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
+// Componente Modal
+const Modal = ({ show, type, message, onConfirm, onClose }) => {
+  if (!show) return null;
+
+  const getModalTitle = () => {
+    switch (type) {
+      case 'success': return '✅ Operación Exitosa';
+      case 'error': return '❌ Error';
+      case 'warning': return '⚠️ Advertencia';
+      case 'confirm': return '❓ Confirmación';
+      default: return 'Mensaje del Sistema';
+    }
+  };
+
+  return (
+    <div className="modal-overlay" onClick={onClose}>
+      <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+        <div className={`modal-header ${type}`}>
+          <h3>{getModalTitle()}</h3>
+          <button className="close-btn" onClick={onClose}>×</button>
+        </div>
+        <div className="modal-body">
+          <p>{message}</p>
+        </div>
+        <div className="modal-footer">
+          {type === 'confirm' ? (
+            <>
+              <button 
+                className="modal-btn confirm-btn"
+                onClick={() => {
+                  onConfirm?.();
+                  onClose();
+                }}
+              >
+                ✅ Sí
+              </button>
+              <button 
+                className="modal-btn cancel-btn"
+                onClick={onClose}
+              >
+                ❌ No
+              </button>
+            </>
+          ) : (
+            <button 
+              className="modal-btn ok-btn"
+              onClick={onClose}
+            >
+              Aceptar
+            </button>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// Componente Users principal
 export const Users = () => {
   const [users, setUsers] = useState([]);
   const [filteredUsers, setFilteredUsers] = useState([]);
@@ -111,6 +275,14 @@ export const Users = () => {
   const [actionLoading, setActionLoading] = useState(false);
   const [message, setMessage] = useState('');
   const [activeTab, setActiveTab] = useState('list'); // 'list', 'search'
+  
+  // Estados para modal
+  const [modal, setModal] = useState({
+    show: false,
+    type: 'info', // 'success', 'error', 'warning', 'confirm'
+    message: '',
+    onConfirm: null
+  });
   
   // Estados para búsqueda minimalista
   const [searchTerm, setSearchTerm] = useState('');
@@ -121,6 +293,32 @@ export const Users = () => {
     loadAllUsers();
   }, []);
 
+  const showModal = (modalConfig) => {
+    setModal({
+      show: true,
+      type: modalConfig.type || 'info',
+      message: modalConfig.message,
+      onConfirm: modalConfig.onConfirm
+    });
+  };
+
+  const closeModal = () => {
+    setModal({
+      show: false,
+      type: 'info',
+      message: '',
+      onConfirm: null
+    });
+  };
+
+  const showMessage = (msg, type = 'info') => {
+    setMessage(msg);
+    // Auto-ocultar mensajes después de 5 segundos
+    setTimeout(() => {
+      setMessage('');
+    }, 5000);
+  };
+
   const loadAllUsers = async () => {
     setLoading(true);
     setMessage('');
@@ -129,7 +327,7 @@ export const Users = () => {
       setUsers(usersData.data || []);
       setFilteredUsers(usersData.data || []);
     } catch (error) {
-      setMessage(`Error al cargar usuarios: ${error.message}`);
+      showMessage(`Error al cargar usuarios: ${error.message}`, 'error');
     } finally {
       setLoading(false);
     }
@@ -137,7 +335,7 @@ export const Users = () => {
 
   const handleSearch = async () => {
     if (!searchTerm.trim()) {
-      setMessage('Por favor ingresa un término de búsqueda');
+      showMessage('Por favor ingresa un término de búsqueda', 'warning');
       return;
     }
 
@@ -146,13 +344,13 @@ export const Users = () => {
     try {
       const searchResult = await searchUsers(searchTerm, searchType);
       setFilteredUsers(searchResult.data || []);
-      setMessage(`✅ ${searchResult.count || searchResult.data.length} usuario(s) encontrado(s)`);
+      showMessage(`✅ ${searchResult.count || searchResult.data.length} usuario(s) encontrado(s)`, 'success');
     } catch (error) {
       if (error.message.includes('404')) {
-        setMessage('No se encontraron usuarios con los criterios especificados');
+        showMessage('No se encontraron usuarios con los criterios especificados', 'warning');
         setFilteredUsers([]);
       } else {
-        setMessage(`Error al buscar usuarios: ${error.message}`);
+        showMessage(`Error al buscar usuarios: ${error.message}`, 'error');
       }
     } finally {
       setSearchLoading(false);
@@ -160,15 +358,11 @@ export const Users = () => {
   };
 
   const handleUpdateRole = async (email, newRole) => {
-    if (!window.confirm(`¿Estás seguro de cambiar el rol de este usuario a ${newRole}?`)) {
-      return;
-    }
-
     setActionLoading(true);
     setMessage('');
     try {
       await updateUserRole(email, newRole);
-      setMessage(`✅ Rol actualizado correctamente a ${newRole}`);
+      showMessage(`✅ Rol actualizado correctamente a ${newRole}`, 'success');
       // Actualizar la lista local
       const updatedUsers = users.map(user => 
         user.email === email ? { ...user, role: newRole } : user
@@ -176,26 +370,22 @@ export const Users = () => {
       setUsers(updatedUsers);
       setFilteredUsers(updatedUsers);
     } catch (error) {
-      setMessage(`❌ Error al actualizar rol: ${error.message}`);
+      showMessage(`❌ Error al actualizar rol: ${error.message}`, 'error');
     } finally {
       setActionLoading(false);
     }
   };
 
   const handleDeleteUser = async (email, name) => {
-    if (!window.confirm(`¿Estás seguro de eliminar al usuario ${name}?`)) {
-      return;
-    }
-
     setActionLoading(true);
     setMessage('');
     try {
       await deleteUser(email);
-      setMessage('✅ Usuario eliminado correctamente');
+      showMessage('✅ Usuario eliminado correctamente', 'success');
       // Recargar la lista
       loadAllUsers();
     } catch (error) {
-      setMessage(`❌ Error al eliminar usuario: ${error.message}`);
+      showMessage(`❌ Error al eliminar usuario: ${error.message}`, 'error');
     } finally {
       setActionLoading(false);
     }
@@ -211,25 +401,6 @@ export const Users = () => {
     if (e.key === 'Enter') {
       handleSearch();
     }
-  };
-
-  const formatDate = (dateString) => {
-    return new Date(dateString).toLocaleDateString('es-ES', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
-    });
-  };
-
-  const getStatusClass = (isActive) => {
-    return isActive ? 'status-active' : 'status-inactive';
-  };
-
-  const getRoleClass = (role) => {
-    return role === 'ADMINISTRADOR' ? 'role-admin' : 
-           role === 'TRABAJADOR' ? 'role-worker' : 'role-user';
   };
 
   const getMessageClass = () => {
@@ -284,8 +455,8 @@ export const Users = () => {
               disabled={loading}
               className="refresh-btn"
             >
-              {loading ? '⏳ Actualizando...' : '🔄 Actualizar Lista'}
-            </button>
+              {loading ? '⏳ Cargando...' : '🔄 Actualizar Lista'}
+            </button> 
           </div>
 
           {loading ? (
@@ -297,56 +468,14 @@ export const Users = () => {
           ) : (
             <div className="users-grid">
               {filteredUsers.map((user) => (
-                <div key={user.id} className="user-card">
-                  <div className="user-header">
-                    <h4>👤 {user.name}</h4>
-                    <span className={`status-badge ${getStatusClass(user.isActive)}`}>
-                      {user.isActive ? '✅ Activo' : '❌ Inactivo'}
-                    </span>
-                  </div>
-                  
-                  <div className="user-details">
-                    <div className="detail-row">
-                      <strong>📧 Email:</strong> {user.email}
-                    </div>
-                    <div className="detail-row">
-                      <strong>🆔 Cédula:</strong> {user.Identification}
-                    </div>
-                    <div className="detail-row">
-                      <strong>📞 Teléfono:</strong> {user.phoneNumber}
-                    </div>
-                    <div className="detail-row">
-                      <strong>👑 Rol:</strong>
-                      <span className={`role-badge ${getRoleClass(user.role)}`}>
-                        {user.role}
-                      </span>
-                    </div>
-                    <div className="detail-row">
-                      <strong>📅 Registro:</strong> {formatDate(user.createdAt)}
-                    </div>
-                  </div>
-
-                  <div className="user-actions">
-                    <select
-                      value={user.role}
-                      onChange={(e) => handleUpdateRole(user.email, e.target.value)}
-                      disabled={actionLoading}
-                      className="role-select"
-                    >
-                      <option value="USUARIO">Usuario</option>
-                      <option value="TRABAJADOR">Trabajador</option>
-                      <option value="ADMINISTRADOR">Administrador</option>
-                    </select>
-                    
-                    <button
-                      onClick={() => handleDeleteUser(user.email, user.name)}
-                      disabled={actionLoading}
-                      className="delete-btn"
-                    >
-                      🗑️ Eliminar
-                    </button>
-                  </div>
-                </div>
+                <UserCard
+                  key={user.id}
+                  user={user}
+                  onUpdateRole={handleUpdateRole}
+                  onDeleteUser={handleDeleteUser}
+                  actionLoading={actionLoading}
+                  onShowModal={showModal}
+                />
               ))}
             </div>
           )}
@@ -416,42 +545,14 @@ export const Users = () => {
               
               <div className="users-grid">
                 {filteredUsers.map((user) => (
-                  <div key={user.id} className="user-card">
-                    <div className="user-header">
-                      <h4>👤 {user.name}</h4>
-                      <span className={`status-badge ${getStatusClass(user.isActive)}`}>
-                        {user.isActive ? '✅ Activo' : '❌ Inactivo'}
-                      </span>
-                    </div>
-                    
-                    <div className="user-details">
-                      <div className="detail-row">
-                        <strong>📧 Email:</strong> {user.email}
-                      </div>
-                      <div className="detail-row">
-                        <strong>🆔 Cédula:</strong> {user.Identification}
-                      </div>
-                      <div className="detail-row">
-                        <strong>👑 Rol:</strong>
-                        <span className={`role-badge ${getRoleClass(user.role)}`}>
-                          {user.role}
-                        </span>
-                      </div>
-                    </div>
-
-                    <div className="user-actions">
-                      <select
-                        value={user.role}
-                        onChange={(e) => handleUpdateRole(user.email, e.target.value)}
-                        disabled={actionLoading}
-                        className="role-select"
-                      >
-                        <option value="USUARIO">Usuario</option>
-                        <option value="TRABAJADOR">Trabajador</option>
-                        <option value="ADMINISTRADOR">Administrador</option>
-                      </select>
-                    </div>
-                  </div>
+                  <UserCard
+                    key={user.id}
+                    user={user}
+                    onUpdateRole={handleUpdateRole}
+                    onDeleteUser={handleDeleteUser}
+                    actionLoading={actionLoading}
+                    onShowModal={showModal}
+                  />
                 ))}
               </div>
             </div>
@@ -467,6 +568,15 @@ export const Users = () => {
           )}
         </div>
       )}
+
+      {/* Modal Personalizado */}
+      <Modal
+        show={modal.show}
+        type={modal.type}
+        message={modal.message}
+        onConfirm={modal.onConfirm}
+        onClose={closeModal}
+      />
     </div>
   );
 };

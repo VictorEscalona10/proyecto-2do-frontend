@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import styles from './Reset.password.module.css';
 
-export default function ResetPassword() {
+export default function ResetPassword({ onShowModal }) {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [errors, setErrors] = useState({});
@@ -37,11 +37,14 @@ export default function ResetPassword() {
     return newErrors;
   };
 
-  const handleSubmit = async (e) => {
+   const handleSubmit = async (e) => {
     e.preventDefault();
     
     if (!token) {
-      setErrors({ submit: 'Token no válido' });
+      onShowModal({
+        type: 'error',
+        message: 'Token de recuperación no válido'
+      });
       return;
     }
 
@@ -64,7 +67,7 @@ export default function ResetPassword() {
         },
         body: JSON.stringify({ 
           token,
-          newPassword: password ,
+          newPassword: password,
           confirmPassword: confirmPassword
         }),
       });
@@ -74,16 +77,26 @@ export default function ResetPassword() {
       const data = await response.json();
 
       if (response.ok) {
-        setMessage('¡Contraseña restablecida exitosamente!');
+        onShowModal({
+          type: 'success',
+          message: '¡Contraseña restablecida exitosamente! Serás redirigido al login.'
+        });
+        
         setTimeout(() => {
           navigate('/login');
         }, 3000);
       } else {
-        setErrors({ submit: data.message || 'Error al restablecer la contraseña' });
+        onShowModal({
+          type: 'error',
+          message: data.message || 'Error al restablecer la contraseña'
+        });
       }
     } catch (error) {
       console.error("Error:", error);
-      setErrors({ submit: 'Error de conexión. Intenta nuevamente.' });
+      onShowModal({
+        type: 'error',
+        message: 'Error de conexión. Intenta nuevamente.'
+      });
     } finally {
       setIsLoading(false);
     }

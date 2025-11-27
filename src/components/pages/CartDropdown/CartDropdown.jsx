@@ -2,86 +2,122 @@ import { useCart } from "../../../context/CartContext";
 import { useAuth } from "../../../hooks/AuthContext.jsx";
 import styles from "./CartDropdown.module.css";
 
-export default function CartDropdown({ isOpen, onClose }) {
+export default function CartDropdown({ isOpen, onClose, onShowModal }) {
   const { items, removeFromCart, updateQuantity, getTotalPrice, clearCart } =
     useCart();
   const { isAuthenticated, isLoading: authLoading } = useAuth();
 
+  // Función segura para mostrar modales
+  const showModalSafe = (modalData) => {
+    if (typeof onShowModal === 'function') {
+      onShowModal(modalData);
+    } else {
+      // Fallback a alert si onShowModal no está disponible
+      console.warn('onShowModal no está disponible, usando alert como fallback');
+      alert(modalData.message);
+    }
+  };
+
   if (!isOpen) return null;
 
   const handleOrder = async () => {
-  try {
-    if (!isAuthenticated) {
-      alert('Debes iniciar sesión para realizar un pedido');
-      onClose();
-      window.location.href = '/login';
-      return;
-    }
-
-    // Obtener información del usuario actual
-    const userResponse = await fetch('http://localhost:3000/auth/me', {
-      method: 'GET',
-      credentials: 'include'
-    });
-
-    const userData = await userResponse.json();
-    
-    if (!userData.authenticated || !userData.user) {
-      alert('No se pudo obtener la información del usuario');
-      return;
-    }
-
-    // Preparar los datos en el formato que espera el backend
-    const orderData = {
-      userId: userData.user.id,
-      items: items.map(item => ({
-        id: Number(item.id),
-        name: String(item.name),
-        price: Number(parseFloat(item.price).toFixed(2)), // Asegurar que sea número con 2 decimales
-        categoryId: Number(item.categoryId || item.category?.id || 1), // Asegurar categoryId como número
-        count: Number(item.quantity)
-      }))
-    };
-
-    console.log('Enviando orden:', orderData);
-    console.log('Tipos de datos:', orderData.items.map(item => ({
-      id: typeof item.id,
-      price: typeof item.price,
-      categoryId: typeof item.categoryId,
-      count: typeof item.count
-    })));
-
-    const response = await fetch('http://localhost:3000/orders', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(orderData),
-      credentials: 'include'
-    });
-
-    if (response.ok) {
-      const orderResult = await response.json();
-      alert(`¡Pedido realizado exitosamente! Número de orden: ${orderResult.order?.id || orderResult.orderNumber}`);
-      clearCart();
-      onClose();
-      
-      window.location.href = '/pedidos';
-    } else {
-      const error = await response.json();
-      
-      if (response.status === 401) {
-        alert('Sesión expirada. Por favor inicia sesión nuevamente.');
-        window.location.href = '/login';
-      } else {
-        alert(error.message || 'Error al realizar el pedido');
+    try {
+      if (!isAuthenticated) {
+        showModalSafe({
+          type: 'warning',
+          message: 'Debes iniciar sesión para realizar un pedido',
+          onConfirm: () => {
+            onClose();
+            window.location.href = '/login';
+          }
+        });
+        return;
       }
+
+      // Obtener información del usuario actual
+      const userResponse = await fetch('http://localhost:3000/auth/me', {
+        method: 'GET',
+        credentials: 'include'
+      });
+
+      const userData = await userResponse.json();
+      
+      if (!userData.authenticated || !userData.user) {
+        showModalSafe({
+          type: 'error',
+          message: 'No se pudo obtener la información del usuario'
+        });
+        return;
+      }
+
+      // Preparar los datos en el formato que espera el backend
+      const orderData = {
+        userId: userData.user.id,
+        items: items.map(item => ({
+          id: Number(item.id),
+          name: String(item.name),
+          price: Number(parseFloat(item.price).toFixed(2)),
+          categoryId: Number(item.categoryId || item.category?.id || 1),
+          count: Number(item.quantity)
+        }))
+      };
+
+      console.log('Enviando orden:', orderData);
+
+      showModalSafe({
+        type: 'confirm',
+        message: `¿Estás seguro de realizar el pedido por un total de $${getTotalPrice().toFixed(2)}?`,
+        onConfirm: async () => {
+          const response = await fetch('http://localhost:3000/orders', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(orderData),
+            credentials: 'include'
+          });
+
+          if (response.ok) {
+            const orderResult = await response.json();
+            showModalSafe({
+              type: 'success',
+              message: `¡Pedido realizado exitosamente! Número de orden: ${orderResult.order?.id || orderResult.orderNumber}`
+            });
+            clearCart();
+            onClose();
+            
+            setTimeout(() => {
+              window.location.href = '/pedidos';
+            }, 2000);
+          } else {
+            const error = await response.json();
+            
+            if (response.status === 401) {
+              showModalSafe({
+                type: 'warning',
+                message: 'Sesión expirada. Por favor inicia sesión nuevamente.',
+                onConfirm: () => {
+                  window.location.href = '/login';
+                }
+              });
+            } else {
+              showModalSafe({
+                type: 'error',
+                message: error.message || 'Error al realizar el pedido'
+              });
+            }
+          }
+        }
+      });
+    } catch (error) {
+      console.error('Error:', error);
+      showModalSafe({
+        type: 'error',
+        message: 'Error de conexión. Verifica tu conexión a internet.'
+      });
     }
-  } catch (error) {
-    console.error('Error:', error);
-    alert('Error de conexión. Verifica tu conexión a internet.');
-  }
-};
+  };
+
   const handleIncrement = (itemId) => {
     const item = items.find((i) => i.id === itemId);
      if (item) {

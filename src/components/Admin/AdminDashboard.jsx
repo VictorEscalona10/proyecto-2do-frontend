@@ -8,12 +8,9 @@ import "./AdminDashboard.css";
 export const AdminDashboard = () => {
   const [tab, setTab] = useState("category");
   const [logoutLoading, setLogoutLoading] = useState(false);
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
 
   const handleLogout = async () => {
-    if (!window.confirm('¿Estás seguro de que quieres cerrar sesión?')) {
-      return;
-    }
-
     setLogoutLoading(true);
     try {
       await fetch('http://localhost:3000/auth/logout', {
@@ -31,6 +28,10 @@ export const AdminDashboard = () => {
     }
   };
 
+  const confirmLogout = () => {
+    setShowLogoutModal(true);
+  };
+
   const navItems = [
     { id: "category", label: "🏠 Inicio", icon: "🏠" },
     { id: "users", label: "👥 Usuarios", icon: "👥" },
@@ -40,7 +41,6 @@ export const AdminDashboard = () => {
 
   return (
     <div className="admin-dashboard">
-      {/* Header */}
       <header className="admin-header">
         <div className="admin-header-content">
           <div className="admin-title-section">
@@ -48,7 +48,7 @@ export const AdminDashboard = () => {
             <p className="admin-subtitle">Migdalis Tortas - Gestión Integral</p>
           </div>
           <button 
-            onClick={handleLogout}
+            onClick={confirmLogout}
             disabled={logoutLoading}
             className="logout-btn"
           >
@@ -57,7 +57,6 @@ export const AdminDashboard = () => {
         </div>
       </header>
 
-      {/* Navigation */}
       <nav className="admin-nav">
         {navItems.map((item) => (
           <button
@@ -71,7 +70,6 @@ export const AdminDashboard = () => {
         ))}
       </nav>
 
-      {/* Content */}
       <main className="admin-main">
         <div className="admin-content">
           {tab === "category" && <Category />}
@@ -80,6 +78,37 @@ export const AdminDashboard = () => {
           {tab === "orders" && <OrderPage />}
         </div>
       </main>
+
+      {/* Modal de Confirmación de Logout */}
+      {showLogoutModal && (
+        <div className="modal-overlay" onClick={() => setShowLogoutModal(false)}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header warning">
+              <h3>⚠️ Confirmar Cierre de Sesión</h3>
+              <button className="close-btn" onClick={() => setShowLogoutModal(false)}>×</button>
+            </div>
+            <div className="modal-body">
+              <p>¿Estás seguro de que quieres cerrar sesión?</p>
+            </div>
+            <div className="modal-footer">
+              <button 
+                className="modal-btn confirm-btn"
+                onClick={handleLogout}
+                disabled={logoutLoading}
+              >
+                {logoutLoading ? "⏳ Cerrando..." : "✅ Sí, Cerrar Sesión"}
+              </button>
+              <button 
+                className="modal-btn cancel-btn"
+                onClick={() => setShowLogoutModal(false)}
+                disabled={logoutLoading}
+              >
+                ❌ Cancelar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
