@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useCart } from "../../../context/CartContext";
 import styles from "./ProductsComponent.module.css";
+import { Link } from "react-router-dom";
 
 export function ProductsComponent({ categoria, onShowModal }) {
   const [products, setProducts] = useState([]);
@@ -118,9 +119,11 @@ export function ProductsComponent({ categoria, onShowModal }) {
                 </div>
               )}
 
-              <h3 className={styles.productName}>
-                {product.name}
-              </h3>
+              <Link to={`/product/${product.name}`}>
+                <h3 className={styles.productName}>
+                  {product.name}
+                </h3>
+              </Link>
 
               <p className={styles.productPrice}>
                 Precio: ${product.price} 
