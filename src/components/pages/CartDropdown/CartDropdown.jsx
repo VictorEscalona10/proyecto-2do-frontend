@@ -55,10 +55,13 @@ export default function CartDropdown({ isOpen, onClose, onShowModal }) {
         userId: userData.user.id,
         items: items.map(item => ({
           id: Number(item.id),
-          name: String(item.name),
+          count: Number(item.quantity), // Asegúrate que se llame 'count' como en el DTO
           price: Number(parseFloat(item.price).toFixed(2)),
-          categoryId: Number(item.categoryId || item.category?.id || 1),
-          count: Number(item.quantity)
+          
+          // AGREGADO IMPORTANTE: 
+          // Pasamos las personalizaciones si existen, si no, null.
+          // Esto arregla el error y además permite guardar los toppings.
+          customizations: item.customizations || null 
         }))
       };
 

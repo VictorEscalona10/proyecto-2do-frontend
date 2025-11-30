@@ -75,12 +75,6 @@ export function ProductsComponent({ categoria, onShowModal }) {
         button.style.background = '#f700ff43';
       }, 1500);
     }
-
-    // Mostrar modal de confirmación
-    showModalSafe({
-      type: 'success',
-      message: `¡${product.name} agregado al carrito!`
-    });
   };
 
   useEffect(() => {
