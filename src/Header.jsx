@@ -32,6 +32,7 @@ export default function Header({ onShowModal }) {
           <Link to="/pedidos" className={styles.navLink}>PEDIDOS</Link>
           <Link to="/Products" className={styles.navLink}>PRODUCTOS</Link>
           <Link to="/About" className={styles.navLink}>NOSOTROS</Link>
+          <Link to="/custom-cake" className={styles.navLink}>TORTA PERSONALIZADA</Link>
         </nav>
 
         <div className={styles.rightSection}>
