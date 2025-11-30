@@ -3,6 +3,7 @@ import { Category } from "./pages/CategoryPage";
 import { ProductPage } from "./pages/ProductPage";
 import { Users } from "./pages/UsersPage";
 import { OrderPage } from "./pages/OrderPage";
+import AdminCustomization from "./pages/Customization";
 import "./AdminDashboard.css";
 
 export const AdminDashboard = () => {
@@ -33,10 +34,11 @@ export const AdminDashboard = () => {
   };
 
   const navItems = [
-    { id: "category", label: "🏠 Inicio", icon: "🏠" },
-    { id: "users", label: "👥 Usuarios", icon: "👥" },
-    { id: "products", label: "📦 Productos", icon: "📦" },
-    { id: "orders", label: "📋 Órdenes", icon: "📋" }
+    { id: "category", label: "Inicio", icon: "🏠" },
+    { id: "users", label: "Usuarios", icon: "👥" },
+    { id: "products", label: "Productos", icon: "📦" },
+    { id: "orders", label: "Órdenes", icon: "📋" }
+    , { id: "customization", label: "Personalización", icon: "🎨" }
   ];
 
   return (
@@ -76,6 +78,7 @@ export const AdminDashboard = () => {
           {tab === "users" && <Users />}
           {tab === "products" && <ProductPage />}
           {tab === "orders" && <OrderPage />}
+          {tab === "customization" && <AdminCustomization />}
         </div>
       </main>
 

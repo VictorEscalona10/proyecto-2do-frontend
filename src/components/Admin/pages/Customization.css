@@ -1,0 +1,316 @@
+/* AdminCustomization.css - Estilo Repostería Migdalis Tortas */
+
+.admin-custom-page {
+  min-height: 100vh;
+  background-color: #fff9fb;
+  font-family: 'Comic Sans MS', cursive, sans-serif;
+  padding: 20px;
+}
+
+.page-header {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.page-header h1 {
+  color: #8b008b;
+  font-size: 2.8rem;
+  margin-bottom: 10px;
+  font-family: 'Georgia', serif;
+  text-shadow: 2px 2px 4px rgba(214, 93, 177, 0.2);
+}
+
+.page-header p {
+  color: #510138;
+  font-size: 1.2rem;
+}
+
+/* Sección de Crear Grupo (Estilo similar a Search Section) */
+.create-section {
+  background: #ffffff;
+  padding: 30px;
+  border-radius: 20px;
+  border: 2px solid #f0e6f5;
+  box-shadow: 0 5px 20px rgba(155, 22, 155, 0.08);
+  margin-bottom: 40px;
+  max-width: 800px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.create-section h2 {
+  color: #8b008b;
+  font-size: 1.8rem;
+  margin-bottom: 20px;
+  font-family: 'Georgia', serif;
+  border-bottom: 2px solid #f0e6f5;
+  padding-bottom: 10px;
+}
+
+.admin-form {
+  background: #f8f0f5;
+  padding: 25px;
+  border-radius: 15px;
+  border: 2px solid #e9e5e0;
+}
+
+.form-row {
+  display: flex;
+  gap: 15px;
+  margin-bottom: 15px;
+}
+
+.form-group {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.form-group label {
+  margin-bottom: 8px;
+  color: #510138;
+  font-weight: bold;
+  font-size: 0.9rem;
+}
+
+.admin-input {
+  padding: 12px 15px;
+  border: 2px solid #d9a3df;
+  border-radius: 12px;
+  font-size: 14px;
+  background: white;
+  color: #510138;
+  font-family: 'Comic Sans MS', cursive;
+  transition: all 0.3s ease;
+}
+
+.admin-input:focus {
+  outline: none;
+  border-color: #8b008b;
+  box-shadow: 0 0 0 3px rgba(139, 0, 139, 0.1);
+}
+
+.primary-btn {
+  padding: 12px 25px;
+  background: linear-gradient(135deg, #8b008b, #9b169b);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-family: 'Comic Sans MS', cursive;
+  width: 100%;
+  margin-top: 10px;
+}
+
+.primary-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(139, 0, 139, 0.3);
+}
+
+.primary-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Lista de Grupos (Estilo Cards) */
+.groups-container {
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.group-card {
+  background: white;
+  border-radius: 15px;
+  border: 2px solid #f0e6f5;
+  box-shadow: 0 3px 10px rgba(155, 22, 155, 0.05);
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.group-card:hover {
+  border-color: #d9a3df;
+  box-shadow: 0 5px 15px rgba(139, 0, 139, 0.1);
+}
+
+.group-header {
+  background: linear-gradient(135deg, #fff9fb 0%, #f8f0f5 100%);
+  padding: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #f0e6f5;
+}
+
+.group-header h3 {
+  margin: 0;
+  color: #8b008b;
+  font-family: 'Georgia', serif;
+  font-size: 1.4rem;
+}
+
+.group-rules {
+  background: #e91e63;
+  color: white;
+  padding: 5px 12px;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: bold;
+}
+
+.group-content {
+  padding: 20px;
+}
+
+/* Tabla de Opciones dentro de la Card */
+.options-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 20px;
+}
+
+.options-table th {
+  text-align: left;
+  color: #8b008b;
+  padding: 10px;
+  border-bottom: 2px solid #f0e6f5;
+}
+
+.options-table td {
+  padding: 10px;
+  border-bottom: 1px solid #f8f0f5;
+  color: #510138;
+}
+
+.price-badge {
+  color: #28a745;
+  font-weight: bold;
+  background: #d4edda;
+  padding: 3px 8px;
+  border-radius: 8px;
+  font-size: 0.9rem;
+}
+
+/* Formulario pequeño para agregar opción */
+.add-option-form {
+  display: flex;
+  gap: 10px;
+  background: #f8f9fa;
+  padding: 15px;
+  border-radius: 10px;
+  align-items: center;
+}
+
+.secondary-btn {
+  background: linear-gradient(135deg, #28a745, #20c997);
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 10px;
+  font-weight: bold;
+  cursor: pointer;
+  font-family: 'Comic Sans MS', cursive;
+  white-space: nowrap;
+  transition: all 0.3s ease;
+}
+
+.secondary-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
+}
+
+/* Mensajes y Estados */
+.loading-container, .error-container {
+  text-align: center;
+  padding: 50px;
+  font-size: 1.2rem;
+  color: #8b008b;
+}
+
+.no-groups {
+  text-align: center;
+  padding: 40px;
+  background: #fff;
+  border-radius: 15px;
+  color: #666;
+  font-style: italic;
+  border: 2px dashed #d9a3df;
+}
+
+/* Estilos para Modales (Copiados de tu UsersPage.css para consistencia) */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(139, 0, 139, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  backdrop-filter: blur(5px);
+}
+
+.modal-content {
+  background: white;
+  border-radius: 20px;
+  padding: 0;
+  max-width: 500px;
+  width: 90%;
+  box-shadow: 0 10px 30px rgba(139, 0, 139, 0.3);
+  border: 2px solid #8b008b;
+  animation: modalSlideIn 0.3s ease-out;
+}
+
+@keyframes modalSlideIn {
+  from { opacity: 0; transform: translateY(-50px) scale(0.9); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.modal-header {
+  padding: 20px;
+  border-bottom: 2px solid #f0e6f5;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: linear-gradient(135deg, #fff9fb 0%, #f8f0f5 100%);
+  border-radius: 20px 20px 0 0;
+}
+
+.modal-header h3 { margin: 0; color: #8b008b; font-family: 'Georgia', serif; }
+.modal-header.success { background: #d4edda; border-color: #28a745; }
+.modal-header.error { background: #f8d7da; border-color: #dc3545; }
+
+.modal-body { padding: 30px 20px; text-align: center; color: #510138; font-family: 'Comic Sans MS'; }
+
+.modal-footer {
+  padding: 20px;
+  border-top: 2px solid #f0e6f5;
+  display: flex;
+  justify-content: center;
+}
+
+.modal-btn {
+  padding: 10px 25px;
+  border-radius: 10px;
+  border: none;
+  font-weight: bold;
+  cursor: pointer;
+  color: white;
+  font-family: 'Comic Sans MS';
+}
+.ok-btn { background: #8b008b; }
+.close-btn { background: none; border: none; font-size: 24px; color: #8b008b; cursor: pointer; }
+
+/* Responsive */
+@media (max-width: 768px) {
+  .form-row { flex-direction: column; gap: 10px; }
+  .add-option-form { flex-direction: column; align-items: stretch; }
+  .secondary-btn { width: 100%; margin-top: 5px; }
+}
