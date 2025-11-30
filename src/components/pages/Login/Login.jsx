@@ -85,10 +85,7 @@ export default function Login({ onShowModal }) {
 
       if (response.ok) {
         console.log("Login exitoso:", data);
-        showModalSafe({
-          type: 'success',
-          message: '¡Inicio de sesión exitoso!'
-        });
+        
         
         try {
           await checkAuth();
