@@ -3,6 +3,7 @@ import { Category } from "./pages/CategoryPage";
 import { ProductPage } from "./pages/ProductPage";
 import { Users } from "./pages/UsersPage";
 import { OrderPage } from "./pages/OrderPage";
+import { PDFTester } from "./pages/PDFTester"; // Nuevo componente
 import AdminCustomization from "./pages/Customization";
 import "./AdminDashboard.css";
 
@@ -37,8 +38,9 @@ export const AdminDashboard = () => {
     { id: "category", label: "Inicio", icon: "🏠" },
     { id: "users", label: "Usuarios", icon: "👥" },
     { id: "products", label: "Productos", icon: "📦" },
-    { id: "orders", label: "Órdenes", icon: "📋" }
-    , { id: "customization", label: "Personalización", icon: "🎨" }
+    { id: "orders", label: "Órdenes", icon: "📋" },
+    { id: "customization", label: "Personalización", icon: "🎨" },
+    { id: "pdf-tester", label: "Exportar PDFs", icon: "📄" }
   ];
 
   return (
@@ -78,6 +80,7 @@ export const AdminDashboard = () => {
           {tab === "users" && <Users />}
           {tab === "products" && <ProductPage />}
           {tab === "orders" && <OrderPage />}
+          {tab === "pdf-tester" && <PDFTester />} {/* Nuevo componente */}
           {tab === "customization" && <AdminCustomization />}
         </div>
       </main>
