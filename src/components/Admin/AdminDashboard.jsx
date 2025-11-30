@@ -3,6 +3,7 @@ import { Category } from "./pages/CategoryPage";
 import { ProductPage } from "./pages/ProductPage";
 import { Users } from "./pages/UsersPage";
 import { OrderPage } from "./pages/OrderPage";
+import { PDFTester } from "./pages/PDFTester"; // Nuevo componente
 import "./AdminDashboard.css";
 
 export const AdminDashboard = () => {
@@ -36,7 +37,8 @@ export const AdminDashboard = () => {
     { id: "category", label: "🏠 Inicio", icon: "🏠" },
     { id: "users", label: "👥 Usuarios", icon: "👥" },
     { id: "products", label: "📦 Productos", icon: "📦" },
-    { id: "orders", label: "📋 Órdenes", icon: "📋" }
+    { id: "orders", label: "📋 Órdenes", icon: "📋" },
+    { id: "pdf-tester", label: "📄 Exportar PDFs", icon: "📄" } // Nuevo item
   ];
 
   return (
@@ -76,6 +78,7 @@ export const AdminDashboard = () => {
           {tab === "users" && <Users />}
           {tab === "products" && <ProductPage />}
           {tab === "orders" && <OrderPage />}
+          {tab === "pdf-tester" && <PDFTester />} {/* Nuevo componente */}
         </div>
       </main>
 
