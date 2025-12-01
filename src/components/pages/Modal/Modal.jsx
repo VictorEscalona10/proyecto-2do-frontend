@@ -1,4 +1,4 @@
-import './Modal.module.css'; // Cambia esto - sin el 'default'
+import './Modal.Module.css'; // Cambia esto - sin el 'default'
 
 export default function Modal({ type = 'info', message, onConfirm, onClose }) {
   const handleConfirm = () => {
