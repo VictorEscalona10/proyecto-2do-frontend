@@ -7,6 +7,7 @@ export default function RecuperarContraseña() {
   const [errors, setErrors] = useState({});
   const [isLoading, setIsLoading] = useState(false);
   const [message, setMessage] = useState('');
+  const API_URL = import.meta.env.VITE_API_URL;
 
   const validate = () => {
     const newErrors = {};
@@ -29,7 +30,7 @@ export default function RecuperarContraseña() {
     setIsLoading(true);
 
     try {
-      const response = await fetch('http://localhost:3000/password-reset/forgot-password', {
+      const response = await fetch(`${API_URL}/password-reset/forgot-password`, {
         method: 'POST',
         headers: { 
           'Content-Type': 'application/json',

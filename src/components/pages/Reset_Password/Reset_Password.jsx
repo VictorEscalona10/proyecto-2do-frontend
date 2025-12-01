@@ -9,6 +9,7 @@ export default function ResetPassword({ onShowModal }) {
   const [isLoading, setIsLoading] = useState(false);
   const [token, setToken] = useState('');
   const [message, setMessage] = useState('');
+  const API_URL = import.meta.env.VITE_API_URL;
 
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
@@ -60,7 +61,7 @@ export default function ResetPassword({ onShowModal }) {
     try {
       console.log("Enviando nueva contraseña...");
       
-      const response = await fetch('http://localhost:3000/password-reset/reset-password', {
+      const response = await fetch(`${API_URL}/password-reset/reset-password`, {
         method: 'POST',
         headers: { 
           'Content-Type': 'application/json',

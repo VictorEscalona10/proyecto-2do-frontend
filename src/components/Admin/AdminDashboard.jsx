@@ -12,10 +12,12 @@ export const AdminDashboard = () => {
   const [logoutLoading, setLogoutLoading] = useState(false);
   const [showLogoutModal, setShowLogoutModal] = useState(false);
 
+  const API_URL = import.meta.env.VITE_API_URL;
+
   const handleLogout = async () => {
     setLogoutLoading(true);
     try {
-      await fetch('http://localhost:3000/auth/logout', {
+      await fetch(`${API_URL}/auth/logout`, {
         method: 'POST',
         credentials: 'include',
       });

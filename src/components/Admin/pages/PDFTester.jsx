@@ -66,7 +66,6 @@ const Modal = ({ show, type, message, onConfirm, onClose, autoHide }) => {
 };
 
 export const PDFTester = () => {
-  const API_URL = 'http://localhost:3000';
   const [loading, setLoading] = useState(false);
   const [modal, setModal] = useState({
     show: false,
