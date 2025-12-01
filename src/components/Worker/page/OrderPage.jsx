@@ -49,7 +49,8 @@ export function OrderPage({ onShowModal }) {
         if (!email.trim()) {
             onShowModal({
                 type: 'warning',
-                message: 'Por favor ingresa un email válido'
+                message: 'Por favor ingresa un email válido',
+                autoclose: true 
             });
             return;
         }
@@ -179,8 +180,9 @@ export function OrderPage({ onShowModal }) {
             );
             
             onShowModal({
-                type: 'success',
-                message: `✅ Estado de la orden actualizado a: ${getStatusText(newStatus)}`
+            type: 'success',
+            message: `✅ Estado de la orden actualizado a: ${getStatusText(newStatus)}`,
+            autoClose: true
             });
         } catch (error) {
             console.error("Error updating order status:", error);
@@ -287,8 +289,8 @@ export function OrderPage({ onShowModal }) {
                             onKeyPress={handleKeyPress}
                             placeholder={
                                 searchType === 'email' 
-                                    ? "📧 Ingresa el email del usuario..." 
-                                    : "🆔 Ingresa la cédula del usuario..."
+                                    ? "Ingresa el email del usuario..." 
+                                    : "Ingresa la cédula del usuario..."
                             }
                             className="search-input"
                         />
@@ -323,7 +325,7 @@ export function OrderPage({ onShowModal }) {
                 <div className="search-info">
                     <p>
                         {showAllOrders 
-                            ? `📊 Mostrando todas las órdenes (${orders.length} total)`
+                            ? `Mostrando todas las órdenes (${orders.length} total)`
                             : searchTerm 
                                 ? `🔍 Búsqueda por ${searchType}: "${searchTerm}" - ${orders.length} órdenes encontradas`
                                 : "👆 Selecciona un tipo de búsqueda e ingresa el término"
@@ -342,7 +344,7 @@ export function OrderPage({ onShowModal }) {
             {/* Sin resultados */}
             {hasSearched && !loading && orders.length === 0 && (
                 <div className="no-results">
-                    <h3>📭 No se encontraron órdenes</h3>
+                    <h3>No se encontraron órdenes</h3>
                     <p>
                         {showAllOrders 
                             ? "No hay órdenes registradas en el sistema"
@@ -357,7 +359,7 @@ export function OrderPage({ onShowModal }) {
                 <div className="orders-list">
                     <div className="orders-header">
                         <h2>
-                            {showAllOrders ? "📋 Todas las Órdenes" : "📋 Órdenes Encontradas"}: 
+                            {showAllOrders ? "Todas las Órdenes" : "Órdenes Encontradas"}: 
                             <span className="results-count"> {orders.length}</span>
                         </h2>
                         <div className="orders-meta">
@@ -368,7 +370,7 @@ export function OrderPage({ onShowModal }) {
                                 }
                             </p>
                             <p className="last-updated">
-                                📅 Actualizado: {new Date().toLocaleDateString('es-ES')}
+                                Actualizado: {new Date().toLocaleDateString('es-ES')}
                             </p>
                             <button 
                                 onClick={toggleAllOrders}
@@ -446,7 +448,7 @@ export function OrderPage({ onShowModal }) {
                                         {/* Detalles de la orden */}
                                         <div className="order-details-section">
                                             <h4>
-                                                🎁 Productos ({getTotalItems(order.orderDetails)} items)
+                                                Productos ({getTotalItems(order.orderDetails)} items)
                                             </h4>
                                             <div className="order-details">
                                                 {order.orderDetails.map((detail) => (

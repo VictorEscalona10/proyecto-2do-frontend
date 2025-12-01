@@ -44,7 +44,7 @@ export function Category({ onShowModal }) {
       console.error("Error fetching categories:", error);
       onShowModal({
         type: 'error',
-        message: 'Error al cargar las categorías'
+        message: 'Error al cargar las categorías',
       });
     } finally {
       setLoading(false);
@@ -53,10 +53,11 @@ export function Category({ onShowModal }) {
 
   const createCategory = async (name) => {
     if (!name.trim()) {
-      onShowModal({
-        type: 'warning',
-        message: 'Por favor ingresa un nombre para la categoría'
-      });
+  onShowModal({
+  type: 'success',
+  message: '✅ Categoría creada con éxito',
+  autoClose: true
+});
       return;
     }
 
