@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import './PDFTester.module.css';
 
 export const PDFTester = () => {
-  const API_URL = 'http://localhost:3000';
   const [loading, setLoading] = useState(false);
+  const API_URL = import.meta.env.VITE_API_URL;
 
   const handleDownload = async (url, filename) => {
     try {

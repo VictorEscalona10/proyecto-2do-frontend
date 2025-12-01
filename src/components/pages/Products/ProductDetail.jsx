@@ -14,11 +14,13 @@ export function ProductDetail() {
   const [submitting, setSubmitting] = useState(false);
   const [currentUser, setCurrentUser] = useState(null);
 
+  const API_URL = import.meta.env.VITE_API_URL;
+
   // Verificar autenticación del usuario
   useEffect(() => {
     const checkAuth = async () => {
       try {
-        const response = await fetch('http://localhost:3000/auth/me', {
+        const response = await fetch(`${API_URL}/auth/me`, {
           method: 'GET',
           credentials: 'include', // Esto es crucial para enviar cookies
         });
@@ -48,7 +50,7 @@ export function ProductDetail() {
 
       try {
         setLoading(true);
-        const response = await fetch(`http://localhost:3000/products/search/name?name=${encodeURIComponent(name)}`);
+        const response = await fetch(`${API_URL}/products/search/name?name=${encodeURIComponent(name)}`);
         if (!response.ok) {
           throw new Error('Producto no encontrado');
         }
@@ -75,7 +77,7 @@ export function ProductDetail() {
       if (!product || !product.id) return;
 
       try {
-        const response = await fetch(`http://localhost:3000/reviews/product/${product.id}`);
+        const response = await fetch(`${API_URL}/reviews/product/${product.id}`);
         if (response.ok) {
           const data = await response.json();
           setReviews(data || []);
@@ -124,7 +126,7 @@ export function ProductDetail() {
 
       console.log('Enviando reseña:', reviewData);
 
-      const response = await fetch('http://localhost:3000/reviews/create', {
+      const response = await fetch(`${API_URL}/reviews/create`, {
         method: 'POST',
         credentials: 'include', // Esto envía las cookies automáticamente
         headers: {
@@ -137,7 +139,7 @@ export function ProductDetail() {
         const newReview = await response.json();
         
         // Recargar las reseñas
-        const reviewsResponse = await fetch(`http://localhost:3000/reviews/product/${product.id}`);
+        const reviewsResponse = await fetch(`${API_URL}/reviews/product/${product.id}`);
         if (reviewsResponse.ok) {
           const reviewsData = await reviewsResponse.json();
           setReviews(reviewsData || []);

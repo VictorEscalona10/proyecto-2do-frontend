@@ -7,6 +7,8 @@ export default function CartDropdown({ isOpen, onClose, onShowModal }) {
     useCart();
   const { isAuthenticated, isLoading: authLoading } = useAuth();
 
+  const API_URL = import.meta.env.VITE_API_URL;
+
   // Función segura para mostrar modales
   const showModalSafe = (modalData) => {
     if (typeof onShowModal === 'function') {
@@ -35,7 +37,7 @@ export default function CartDropdown({ isOpen, onClose, onShowModal }) {
       }
 
       // Obtener información del usuario actual
-      const userResponse = await fetch('http://localhost:3000/auth/me', {
+      const userResponse = await fetch(`${API_URL}/auth/me`, {
         method: 'GET',
         credentials: 'include'
       });
@@ -71,7 +73,7 @@ export default function CartDropdown({ isOpen, onClose, onShowModal }) {
         type: 'confirm',
         message: `¿Estás seguro de realizar el pedido por un total de $${getTotalPrice().toFixed(2)}?`,
         onConfirm: async () => {
-          const response = await fetch('http://localhost:3000/orders', {
+          const response = await fetch(`${API_URL}/orders`, {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
