@@ -9,6 +9,7 @@ export function ProductsComponent({ categoria, onShowModal }) {
   const [error, setError] = useState(null);
   const [quantities, setQuantities] = useState({});
   const { addToCart } = useCart();
+  const API_URL = import.meta.env.VITE_API_URL;
 
   // Función segura para mostrar modales
   const showModalSafe = (modalData) => {
@@ -26,7 +27,7 @@ export function ProductsComponent({ categoria, onShowModal }) {
       setLoading(true);
       setError(null);
       const response = await fetch(
-        `http://localhost:3000/products/search/category?name=${categoria}`
+        `${API_URL}/products/search/category?name=${categoria}`
       );
 
       if (!response.ok) {
