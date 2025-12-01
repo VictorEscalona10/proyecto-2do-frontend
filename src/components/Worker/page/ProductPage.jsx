@@ -261,37 +261,38 @@ export function ProductPage() {
               </button>
             </div>
             
-            <div className="search-input-group">
-              <input 
-                type="text" 
-                placeholder={
-                  searchType === 'name' 
-                    ? 'Ejemplo: tequeños, hamburguesa, pizza...' 
-                    : 'Ejemplo: pasapalos salados, bebidas, postres...'
-                }
-                className="search-input"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                onKeyPress={handleKeyPress}
-              />
-              <div className="search-buttons-container">
-                <button 
-                  className="search-btn"
-                  onClick={handleSearch}
-                  disabled={!searchTerm.trim()}
-                >
-                  🔍 Buscar
-                </button>
-                {searchTerm && (
-                  <button 
-                    className="clear-search-btn"
-                    onClick={clearSearch}
-                  >
-                    ✕ Limpiar
-                  </button>
-                )}
-              </div>
-            </div>
+<div className="search-input-group">
+  <div className="search-input-wrapper">
+    <input 
+      type="text" 
+      placeholder={
+        searchType === 'name' 
+          ? 'Ejemplo: tequeños, hamburguesa, pizza...' 
+          : 'Ejemplo: pasapalos salados, bebidas, postres...'
+      }
+      className="search-input"
+      value={searchTerm}
+      onChange={(e) => setSearchTerm(e.target.value)}
+      onKeyPress={handleKeyPress}
+    />
+    {searchTerm && (
+      <button 
+        className="clear-search-btn"
+        onClick={clearSearch}
+        type="button"
+      >
+        ✕
+      </button>
+    )}
+  </div>
+  <button 
+    className="search-btn"
+    onClick={handleSearch}
+    disabled={!searchTerm.trim()}
+  >
+    🔍 Buscar
+  </button>
+</div>
           </div>
         </section>
 

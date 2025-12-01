@@ -15,12 +15,18 @@ export function OrderPage() {
 
     const showModal = (message, type = "info", onConfirm = null) => {
         setModal({ show: true, message, type, onConfirm });
+        
+        // Auto-cerrar solo para alertas satisfactorias después de 2 segundos
+        if (type === "success") {
+            setTimeout(() => {
+                closeModal();
+            }, 2000);
+        }
     };
 
     const closeModal = () => {
         setModal({ show: false, message: "", type: "", onConfirm: null });
     };
-
     useEffect(() => {
         getAllOrders();
     }, []);

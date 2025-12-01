@@ -300,6 +300,13 @@ export const Users = () => {
       message: modalConfig.message,
       onConfirm: modalConfig.onConfirm
     });
+    
+    // Auto-cerrar solo para alertas satisfactorias después de 2 segundos
+    if (modalConfig.type === 'success') {
+      setTimeout(() => {
+        closeModal();
+      }, 2000);
+    }
   };
 
   const closeModal = () => {

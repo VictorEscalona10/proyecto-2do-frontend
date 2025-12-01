@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import "./ProductPage.css";
 
-export function ProductPage() {
+export function ProductPage({ onShowModal }) {  // <- Agregar esta prop
   const [products, setProducts] = useState([]);
   const [groupedProducts, setGroupedProducts] = useState({});
   const [categories, setCategories] = useState([]);
@@ -95,7 +95,7 @@ export function ProductPage() {
   const getProductsByCategory = async (categoryName) => {
     try {
       const response = await fetch(
-        `${API_URL}/products/search/category?name=${categoryName}`
+        `${API_URL}/products/search/category?name=${encodeURIComponent(categoryName)}`
       );
       const result = await response.json();
       console.log("Category search result:", result); // Para debugging
@@ -154,7 +154,6 @@ export function ProductPage() {
 
     try {
       const response = await fetch(`${API_URL}/products/create`, {
-        credentials: "include",
         method: "POST",
         credentials: "include",
         body: fd,
@@ -182,14 +181,39 @@ export function ProductPage() {
         document.getElementById("imagen").value = "";
         // Recargar la lista de productos
         getAllProducts();
-        // Cerrar el modal después de 2 segundos si fue exitoso
+        
+        // MOSTRAR ALERTA DE ÉXITO
+        if (onShowModal) {
+          onShowModal({
+            type: 'success',
+            message: '✅ Producto creado con éxito',
+            autoClose: true
+          });
+        }
+        
+        // Cerrar el modal después de 2 segundos
         setTimeout(() => {
           setShowModal(false);
           setUploadResult("");
         }, 2000);
+      } else {
+        // Mostrar error si la respuesta no fue exitosa
+        if (onShowModal) {
+          onShowModal({
+            type: 'error',
+            message: '❌ Error al crear el producto'
+          });
+        }
       }
     } catch (error) {
       setUploadResult("Error de red: " + error.message);
+      // Mostrar error de red
+      if (onShowModal) {
+        onShowModal({
+          type: 'error',
+          message: '❌ Error de red al crear el producto'
+        });
+      }
     } finally {
       setLoading(false);
     }
@@ -263,35 +287,36 @@ export function ProductPage() {
             </div>
             
             <div className="search-input-group">
-              <input 
-                type="text" 
-                placeholder={
-                  searchType === 'name' 
-                    ? 'Ejemplo: tequeños, hamburguesa, pizza...' 
-                    : 'Ejemplo: pasapalos salados, bebidas, postres...'
-                }
-                className="search-input"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                onKeyPress={handleKeyPress}
-              />
-              <div className="search-buttons-container">
-                <button 
-                  className="search-btn"
-                  onClick={handleSearch}
-                  disabled={!searchTerm.trim()}
-                >
-                  🔍 Buscar
-                </button>
+              <div className="search-input-wrapper">
+                <input 
+                  type="text" 
+                  placeholder={
+                    searchType === 'name' 
+                      ? 'Ejemplo: tequeños, hamburguesa, pizza...' 
+                      : 'Ejemplo: pasapalos salados, bebidas, postres...'
+                  }
+                  className="search-input"
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  onKeyPress={handleKeyPress}
+                />
                 {searchTerm && (
                   <button 
                     className="clear-search-btn"
                     onClick={clearSearch}
+                    type="button"
                   >
-                    ✕ Limpiar
+                    ✕
                   </button>
                 )}
               </div>
+              <button 
+                className="search-btn"
+                onClick={handleSearch}
+                disabled={!searchTerm.trim()}
+              >
+                🔍 Buscar
+              </button>
             </div>
           </div>
         </section>
