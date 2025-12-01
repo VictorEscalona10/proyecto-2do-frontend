@@ -54,14 +54,16 @@ export function ProductsComponent({ categoria, onShowModal }) {
     }
   };
 
-  const handleQuantityChange = (productId, change) => {
+  const handleQuantityChange = (productId, change, e) => {
+    e.stopPropagation(); // Prevenir que el click se propague
     setQuantities(prev => ({
       ...prev,
       [productId]: Math.max(1, (prev[productId] || 1) + change)
     }));
   };
 
-  const handleAddToCart = (product) => {
+  const handleAddToCart = (product, e) => {
+    e.stopPropagation(); // Prevenir que el click se propague
     const quantity = quantities[product.id] || 1;
     addToCart(product, quantity);
 
@@ -96,38 +98,38 @@ export function ProductsComponent({ categoria, onShowModal }) {
       ) : (
         <div className={styles.container}>
           {products.map(product => (
-            <div 
-              key={product.id} 
-              className={styles.productCard}
-            >
-            
-              {product.imageUrl ? (
-                <img 
-                  src={product.imageUrl} 
-                  alt={product.name}
-                  className={styles.productImage}
-                />
-              ) : (
-                <div className={styles.imagePlaceholder}>
-                  🎂 Sin imagen
-                </div>
-              )}
+            <div key={product.id} className={styles.productCard}>
+              {/* Link que envuelve solo la parte clickeable */}
+              <Link 
+                to={`/product/${product.name}`}
+                className={styles.productCardLink}
+              >
+                {product.imageUrl ? (
+                  <img 
+                    src={product.imageUrl} 
+                    alt={product.name}
+                    className={styles.productImage}
+                  />
+                ) : (
+                  <div className={styles.imagePlaceholder}>
+                    🎂 Sin imagen
+                  </div>
+                )}
 
-              <Link to={`/product/${product.name}`}>
                 <h3 className={styles.productName}>
                   {product.name}
                 </h3>
-              </Link>
 
-              <p className={styles.productPrice}>
-                Precio: ${product.price} 
-              </p>
+                <p className={styles.productPrice}>
+                  Precio: ${product.price} 
+                </p>
+              </Link>
               
-              {/* Controles de cantidad y botón de ordenar */}
+              {/* Controles de cantidad y botón de ordenar - FUERA del Link */}
               <div className={styles.controlsContainer}>
                 <div className={styles.quantityControls}>
                   <button 
-                    onClick={() => handleQuantityChange(product.id, -1)}
+                    onClick={(e) => handleQuantityChange(product.id, -1, e)}
                     className={styles.quantityButton}
                   >
                     -
@@ -138,7 +140,7 @@ export function ProductsComponent({ categoria, onShowModal }) {
                   </span>
                   
                   <button 
-                    onClick={() => handleQuantityChange(product.id, 1)}
+                    onClick={(e) => handleQuantityChange(product.id, 1, e)}
                     className={styles.quantityButton}
                   >
                     +
@@ -147,7 +149,7 @@ export function ProductsComponent({ categoria, onShowModal }) {
                 
                 <button 
                   id={`add-to-cart-${product.id}`}
-                  onClick={() => handleAddToCart(product)}
+                  onClick={(e) => handleAddToCart(product, e)}
                   className={styles.addToCartButton}
                 >
                   Agregar al Carrito

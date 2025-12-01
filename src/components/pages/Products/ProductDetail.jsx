@@ -1,6 +1,71 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import styles from './ProductDetail.module.css';
+import { useCart } from "../../../context/CartContext";
+
+// Componente Modal (copiado de ProductPage)
+const Modal = ({ show, type, message, onConfirm, onClose, autoHide }) => {
+  if (!show) return null;
+
+  const getModalTitle = () => {
+    switch (type) {
+      case 'success': return '✅ Operación Exitosa';
+      case 'error': return '❌ Error';
+      case 'warning': return '⚠️ Advertencia';
+      case 'confirm': return '❓ Confirmación';
+      default: return 'Mensaje del Sistema';
+    }
+  };
+
+  return (
+    <div className="modal-overlay" onClick={onClose}>
+      <div 
+        className={`modal-content ${autoHide ? 'modal-auto-hide' : ''}`} 
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className={`modal-header ${type}`}>
+          <h3>{getModalTitle()}</h3>
+          {!autoHide && (
+            <button className="close-btn" onClick={onClose}>×</button>
+          )}
+        </div>
+        <div className="modal-body">
+          <p>{message}</p>
+        </div>
+        {!autoHide && (
+          <div className="modal-footer">
+            {type === 'confirm' ? (
+              <>
+                <button 
+                  className="modal-btn confirm-btn"
+                  onClick={() => {
+                    onConfirm?.();
+                    onClose();
+                  }}
+                >
+                  ✅ Sí
+                </button>
+                <button 
+                  className="modal-btn cancel-btn"
+                  onClick={onClose}
+                >
+                  ❌ No
+                </button>
+              </>
+            ) : (
+              <button 
+                className="modal-btn ok-btn"
+                onClick={onClose}
+              >
+                Aceptar
+              </button>
+            )}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
 
 export function ProductDetail() {
   const { name } = useParams();
@@ -10,9 +75,23 @@ export function ProductDetail() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [rating, setRating] = useState(0);
+  const [hoverRating, setHoverRating] = useState(0);
   const [comment, setComment] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [currentUser, setCurrentUser] = useState(null);
+  const { addToCart } = useCart();
+  
+  // Estado para la cantidad del producto
+  const [quantity, setQuantity] = useState(1);
+  
+  // Estado para el modal de notificaciones
+  const [notificationModal, setNotificationModal] = useState({
+    show: false,
+    type: 'info',
+    message: '',
+    onConfirm: null,
+    autoHide: false
+  });
 
   // Verificar autenticación del usuario
   useEffect(() => {
@@ -20,7 +99,7 @@ export function ProductDetail() {
       try {
         const response = await fetch('http://localhost:3000/auth/me', {
           method: 'GET',
-          credentials: 'include', // Esto es crucial para enviar cookies
+          credentials: 'include',
         });
         
         if (response.ok) {
@@ -92,41 +171,114 @@ export function ProductDetail() {
     }
   }, [product]);
 
-  // Manejar envío de reseña - CORREGIDO para usar cookies
+  // Calcular rating promedio
+  const averageRating = reviews.length > 0 
+    ? reviews.reduce((sum, review) => sum + review.rating, 0) / reviews.length 
+    : 0;
+
+  // Función para mostrar modales
+  const showModal = (modalConfig) => {
+    setNotificationModal({
+      show: true,
+      type: modalConfig.type || 'info',
+      message: modalConfig.message,
+      onConfirm: modalConfig.onConfirm,
+      autoHide: modalConfig.autoHide || false
+    });
+
+    // Auto-hide después de 2 segundos si está configurado
+    if (modalConfig.autoHide) {
+      setTimeout(() => {
+        closeNotificationModal();
+      }, 2000);
+    }
+  };
+
+  const closeNotificationModal = () => {
+    setNotificationModal({
+      show: false,
+      type: 'info',
+      message: '',
+      onConfirm: null,
+      autoHide: false
+    });
+  };
+
+  // Manejar cambio de cantidad
+  const handleQuantityChange = (change) => {
+    setQuantity(prev => Math.max(1, prev + change));
+  };
+
+  const handleAddToCart = () => {
+    if (!product) return;
+    
+    // Usar la función addToCart del contexto con la cantidad especificada
+    addToCart(product, quantity);
+    
+    // Feedback visual
+    const button = document.querySelector(`.${styles.addToCartButton}`);
+    if (button) {
+      const originalText = button.textContent;
+      const originalBackground = button.style.background;
+      
+      button.textContent = '✓ Agregado';
+      button.style.background = '#d719da9a';
+      
+      setTimeout(() => {
+        button.textContent = '🛒 Agregar al Carrito';
+        button.style.background = '';
+      }, 1500);
+    }
+  
+    console.log(`Producto agregado al carrito: ${product.name}, Cantidad: ${quantity}`);
+    
+    // No mostrar modal/notificación para agregar al carrito según lo solicitado
+  };
+
+  // Manejar envío de reseña
   const handleSubmitReview = async (e) => {
     e.preventDefault();
     
     if (rating === 0) {
-      alert('Por favor selecciona una calificación');
+      showModal({
+        type: 'warning',
+        message: '⚠️ Por favor selecciona una calificación',
+        autoHide: true
+      });
       return;
     }
 
     if (!product) {
-      alert('Error: Producto no disponible');
+      showModal({
+        type: 'error',
+        message: '❌ Error: Producto no disponible',
+        autoHide: true
+      });
       return;
     }
 
-    // Verificar que el usuario esté autenticado
     if (!currentUser) {
-      alert('Debes iniciar sesión para enviar una reseña');
-      navigate('/login'); // Redirigir al login
+      showModal({
+        type: 'warning',
+        message: '🔒 Debes iniciar sesión para enviar una reseña',
+        autoHide: true
+      });
+      setTimeout(() => navigate('/login'), 2000);
       return;
     }
 
     setSubmitting(true);
     try {
       const reviewData = {
-        userId: currentUser.id, // Usar el ID del usuario autenticado
+        userId: currentUser.id,
         productId: product.id,
         rating: rating,
         comment: comment
       };
 
-      console.log('Enviando reseña:', reviewData);
-
       const response = await fetch('http://localhost:3000/reviews/create', {
         method: 'POST',
-        credentials: 'include', // Esto envía las cookies automáticamente
+        credentials: 'include',
         headers: {
           'Content-Type': 'application/json'
         },
@@ -146,143 +298,301 @@ export function ProductDetail() {
         // Resetear formulario
         setRating(0);
         setComment('');
-        alert('Reseña enviada exitosamente');
+        
+        // Mostrar modal de éxito con nombre de usuario
+        showModal({
+          type: 'success',
+          message: `✅ Reseña enviada exitosamente por ${currentUser.username || currentUser.name || 'usuario'}`,
+          autoHide: true
+        });
       } else {
         const errorData = await response.json();
         throw new Error(errorData.message || 'Error al enviar la reseña');
       }
     } catch (err) {
       console.error('Error completo:', err);
-      alert('Error al enviar la reseña: ' + err.message);
+      showModal({
+        type: 'error',
+        message: `❌ Error al enviar la reseña: ${err.message}`,
+        autoHide: true
+      });
     } finally {
       setSubmitting(false);
     }
   };
 
+  // Renderizar estrellas para el formulario
+  const renderStarRating = () => {
+    return [1, 2, 3, 4, 5].map((star) => (
+      <button
+        key={star}
+        type="button"
+        className={`${styles.starButton} ${
+          star <= (hoverRating || rating) ? styles.filled : ''
+        }`}
+        onClick={() => setRating(star)}
+        onMouseEnter={() => setHoverRating(star)}
+        onMouseLeave={() => setHoverRating(0)}
+      >
+        ★
+      </button>
+    ));
+  };
+
+  // Renderizar estrellas para display
+  const renderDisplayStars = (ratingValue) => {
+    return [1, 2, 3, 4, 5].map((star) => (
+      <span
+        key={star}
+        className={`${styles.displayStar} ${
+          star <= ratingValue ? styles.filled : ''
+        }`}
+      >
+        ★
+      </span>
+    ));
+  };
+
   if (loading) {
-    return <div className={styles.loading}>Cargando producto...</div>;
+    return (
+      <div className={styles.loadingContainer}>
+        <div className={styles.loadingSpinner}></div>
+        <p>Cargando producto...</p>
+      </div>
+    );
   }
 
   if (error) {
     return (
-      <div className={styles.error}>
-        <p>Error: {error}</p>
-        <button onClick={() => navigate('/products')}>Volver a productos</button>
+      <div className={styles.errorContainer}>
+        <div className={styles.errorIcon}>❌</div>
+        <h3>Error</h3>
+        <p>{error}</p>
+        <button 
+          className={styles.backButton}
+          onClick={() => navigate('/products')}
+        >
+          ← Volver a productos
+        </button>
       </div>
     );
   }
 
   if (!product) {
     return (
-      <div className={styles.error}>
-        <p>Producto no encontrado</p>
-        <button onClick={() => navigate('/products')}>Volver a productos</button>
+      <div className={styles.errorContainer}>
+        <div className={styles.errorIcon}>📦</div>
+        <h3>Producto no encontrado</h3>
+        <p>El producto que buscas no está disponible.</p>
+        <button 
+          className={styles.backButton}
+          onClick={() => navigate('/products')}
+        >
+          ← Volver a productos
+        </button>
       </div>
     );
   }
 
   return (
     <div className={styles.pageContainer}>
+      {/* Header de navegación */}
+      <header className={styles.header}>
+        <nav className={styles.nav}>
+          <button 
+            className={styles.backButton}
+            onClick={() => navigate('/products')}
+          >
+            ← Volver a Productos
+          </button>
+          <h1>Detalles del Producto</h1>
+          <div className={styles.navSpacer}></div>
+        </nav>
+      </header>
+
       <main className={styles.main}>
-        <section className={styles.productDetail}>
-          <div className={styles.productInfo}>
+        {/* Sección principal del producto */}
+        <section className={styles.productSection}>
+          <div className={styles.productCard}>
             <div className={styles.productImage}>
               {product.imageUrl ? (
                 <img src={product.imageUrl} alt={product.name} />
               ) : (
                 <div className={styles.placeholderImage}>
-                  <span>Imagen no disponible</span>
+                  <span>🖼️ Imagen no disponible</span>
                 </div>
               )}
             </div>
-            <div className={styles.productText}>
-              <h1>{product.name}</h1>
-              <p><strong>Precio:</strong> ${product.price}</p>
-              <p><strong>Categoría:</strong> {product.category?.name}</p>
-              
-              <div className={styles.productDescription}>
-                <h2>Descripción</h2>
-                <p>{product.description}</p>
+            
+            <div className={styles.productDetails}>
+              <div className={styles.productHeader}>
+                <h1 className={styles.productTitle}>{product.name}</h1>
+                <div className={styles.priceTag}>${product.price}</div>
               </div>
               
-              <button 
-                className={styles.addToCartButton}
-                onClick={() => alert('Funcionalidad de agregar al carrito en desarrollo')}
-              >
-                Agregar al Carrito
-              </button>
+              <div className={styles.ratingSummary}>
+                <div className={styles.stars}>
+                  {renderDisplayStars(Math.round(averageRating))}
+                </div>
+                <span className={styles.ratingText}>
+                  {averageRating > 0 ? averageRating.toFixed(1) : 'Sin'} calificaciones
+                </span>
+                <span className={styles.reviewCount}>({reviews.length} reseñas)</span>
+              </div>
+
+              <div className={styles.category}>
+                <strong>Categoría:</strong> {product.category?.name || 'Sin categoría'}
+              </div>
+
+              <div className={styles.description}>
+                <h3>Descripción</h3>
+                <p>{product.description || 'Este producto no tiene descripción disponible.'}</p>
+              </div>
+
+              {/* Controles de cantidad y botón de agregar al carrito */}
+              <div className={styles.cartControls}>
+                <div className={styles.quantityControls}>
+                  <span className={styles.quantityLabel}>Cantidad:</span>
+                  <div className={styles.quantityButtons}>
+                    <button 
+                      onClick={() => handleQuantityChange(-1)}
+                      className={styles.quantityButton}
+                    >
+                      -
+                    </button>
+                    
+                    <span className={styles.quantityDisplay}>
+                      {quantity}
+                    </span>
+                    
+                    <button 
+                      onClick={() => handleQuantityChange(1)}
+                      className={styles.quantityButton}
+                    >
+                      +
+                    </button>
+                  </div>
+                </div>
+                
+                <button 
+                  className={styles.addToCartButton}
+                  onClick={handleAddToCart}
+                >
+                  🛒 Agregar al Carrito
+                </button>
+              </div>
             </div>
           </div>
         </section>
 
-        <section className={styles.ratingComments}>
-          <h2>Valoración y Comentarios</h2>
-          
+        {/* Sección de valoraciones y comentarios */}
+        <section className={styles.reviewsSection}>
+          <div className={styles.sectionHeader}>
+            <h2>⭐ Valoraciones y Comentarios</h2>
+            <div className={styles.ratingOverview}>
+              <div className={styles.averageRating}>
+                <span className={styles.averageNumber}>{averageRating > 0 ? averageRating.toFixed(1) : '0.0'}</span>
+                <div className={styles.averageStars}>
+                  {renderDisplayStars(Math.round(averageRating))}
+                </div>
+                <span>{reviews.length} reseñas</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Formulario de reseña */}
           {currentUser ? (
             <form onSubmit={handleSubmitReview} className={styles.reviewForm}>
-              <div className={styles.rating}>
-                {[5, 4, 3, 2, 1].map((star) => (
-                  <div key={star}>
-                    <input 
-                      type="radio" 
-                      id={`star${star}`}
-                      name="rating" 
-                      value={star} 
-                      checked={rating === star}
-                      onChange={() => setRating(star)}
-                    />
-                    <label htmlFor={`star${star}`} title={`${star} estrellas`}>★</label>
-                  </div>
-                ))}
+              <h3>Deja tu reseña</h3>
+              
+              <div className={styles.ratingInput}>
+                <label>Tu calificación:</label>
+                <div className={styles.starRating}>
+                  {renderStarRating()}
+                  <span className={styles.ratingText}>
+                    {rating > 0 ? `${rating} estrella${rating !== 1 ? 's' : ''}` : 'Selecciona rating'}
+                  </span>
+                </div>
               </div>
               
               <div className={styles.commentInput}>
-                <label htmlFor="comment">Comentario:</label>
+                <label htmlFor="comment">Tu comentario:</label>
                 <textarea
                   id="comment"
                   name="comment"
                   rows="4"
-                  placeholder="Escribe tu comentario aquí"
+                  placeholder="Comparte tu experiencia con este producto..."
                   value={comment}
                   onChange={(e) => setComment(e.target.value)}
                   required
                 ></textarea>
               </div>
               
-              <button type="submit" disabled={submitting}>
-                {submitting ? 'Enviando...' : 'Enviar Valoración'}
+              <button 
+                type="submit" 
+                className={styles.submitButton}
+                disabled={submitting || rating === 0}
+              >
+                {submitting ? '⏳ Enviando...' : '📤 Enviar Reseña'}
               </button>
             </form>
           ) : (
-            <p>Debes <a href="/login">iniciar sesión</a> para dejar una reseña.</p>
+            <div className={styles.loginPrompt}>
+              <p>🔒 Debes <a href="/login" className={styles.loginLink}>iniciar sesión</a> para dejar una reseña.</p>
+            </div>
           )}
           
-          <div className={styles.commentsList}>
+          {/* Lista de reseñas */}
+          <div className={styles.reviewsList}>
+            <h3>Comentarios de clientes</h3>
+            
             {reviews.length > 0 ? (
               reviews.map((review) => (
-                <div key={review.id} className={styles.comment}>
-                  <div className={styles.commentHeader}>
-                    <span className={styles.commentAuthor}>{review.user?.username || 'Usuario'}</span>
-                    <div className={styles.commentRating}>
-                      {[...Array(5)].map((_, i) => (
-                        <span 
-                          key={i} 
-                          className={`${styles.star} ${i < review.rating ? styles.filled : ''}`}
-                        >
-                          ★
-                        </span>
-                      ))}
+                <div key={review.id} className={styles.reviewCard}>
+                  <div className={styles.reviewHeader}>
+                    <div className={styles.userInfo}>
+                      <span className={styles.userAvatar}>👤</span>
+                      <span className={styles.userName}>
+                        {review.user?.username || 'Usuario Anónimo'}
+                      </span>
+                    </div>
+                    <div className={styles.reviewRating}>
+                      {renderDisplayStars(review.rating)}
+                      <span className={styles.ratingValue}>({review.rating})</span>
                     </div>
                   </div>
-                  <p className={styles.commentText}>{review.comment}</p>
+                  
+                  <p className={styles.reviewComment}>{review.comment}</p>
+                  
+                  <div className={styles.reviewDate}>
+                    {new Date(review.createdAt || Date.now()).toLocaleDateString('es-ES', {
+                      year: 'numeric',
+                      month: 'long',
+                      day: 'numeric'
+                    })}
+                  </div>
                 </div>
               ))
             ) : (
-              <p className={styles.noComments}>Aún no hay comentarios para este producto.</p>
+              <div className={styles.noReviews}>
+                <div className={styles.noReviewsIcon}>💬</div>
+                <p>Aún no hay comentarios para este producto.</p>
+                <p>¡Sé el primero en dejar una reseña!</p>
+              </div>
             )}
           </div>
         </section>
       </main>
+
+      {/* Modal de notificaciones */}
+      <Modal
+        show={notificationModal.show}
+        type={notificationModal.type}
+        message={notificationModal.message}
+        onConfirm={notificationModal.onConfirm}
+        onClose={closeNotificationModal}
+        autoHide={notificationModal.autoHide}
+      />
     </div>
   );
 }

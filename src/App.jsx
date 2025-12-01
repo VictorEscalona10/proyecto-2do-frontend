@@ -3,7 +3,7 @@ import { CartProvider } from "./context/CartContext.jsx";
 import { useState } from "react";
 import Header from "./Header.jsx";
 import { useAuth } from "./hooks/useAuth.jsx";
-import Modal from "./components/pages/Modal/Modal.jsx"; // Asegúrate de crear este componente
+import Modal from "./components/pages/Modal/Modal.jsx";
 
 import Home from "./components/pages/Home/Home.jsx";
 import Login from "./components/pages/Login/Login.jsx";
@@ -16,6 +16,8 @@ import { AdminDashboard } from "./components/Admin/AdminDashboard.jsx";
 import { WorkerDashboard } from "./components/Worker/WorkerDashboard.jsx";
 import {ProductDetail} from "./components/pages/Products/ProductDetail.jsx";
 import { CustomCakeBuilder } from "./components/pages/customCake/CustomCake.jsx";
+// Agregar esta importación
+import { OrderPage } from "./components/pages/Orders/Orders.jsx";
 
 function App() {
   const { isAuthenticated, isLoading, user } = useAuth();
@@ -77,10 +79,13 @@ function App() {
           <Route path="/forgot_password" element={<Forgot_Password onShowModal={showModal} />} />
           <Route path="/reset_password" element={<Reset_Password onShowModal={showModal} />} />
           <Route path="/reset-password" element={<Reset_Password onShowModal={showModal} />} />
+
           <Route path="/products" element={<Products onShowModal={showModal} />} />
           <Route path="/About" element={<About onShowModal={showModal} />} />
-          <Route path="/product/:name" element={<ProductDetail />} />
+          <Route path="/product/:name" element={<ProductDetail onShowModal={showModal} />} />
           <Route path="/custom-cake" element={<CustomCakeBuilder onShowModal={showModal} />} />
+          {/* Agregar esta ruta */}
+          <Route path="/my-orders" element={<OrderPage onShowModal={showModal} />} />
         </Routes>
         
         {/* Modal global */}

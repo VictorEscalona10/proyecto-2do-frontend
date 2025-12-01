@@ -24,15 +24,21 @@ export default function AdminCustomization() {
     onConfirm: null
   });
 
-  // Funciones de Modal
+  // Funciones de Modal modificadas
   const showModal = (message, type = "info", onConfirm = null) => {
     setModal({ show: true, message, type, onConfirm });
+    
+    // Auto-cerrar solo para alertas satisfactorias después de 2 segundos
+    if (type === "success") {
+      setTimeout(() => {
+        closeModal();
+      }, 2000);
+    }
   };
 
   const closeModal = () => {
     setModal({ show: false, message: "", type: "info", onConfirm: null });
   };
-
   // 1. Cargar Datos Automáticamente al Entrar
   useEffect(() => {
     fetchCategoryData();

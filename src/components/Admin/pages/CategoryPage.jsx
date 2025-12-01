@@ -15,6 +15,13 @@ export function Category() {
 
   const showModal = (message, type = "info") => {
     setModal({ show: true, message, type });
+    
+    // Auto-cerrar solo para alertas satisfactorias después de 2 segundos
+    if (type === "success") {
+      setTimeout(() => {
+        closeModal();
+      }, 2000);
+    }
   };
 
   const closeModal = () => {

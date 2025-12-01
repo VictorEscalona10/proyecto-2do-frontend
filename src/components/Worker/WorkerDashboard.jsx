@@ -5,7 +5,7 @@ import { OrderPage } from "./page/OrderPage";
 import "./WorkerDashboard.css";
 
 // Componente Modal (copiado del Users)
-const Modal = ({ show, type, message, onConfirm, onClose }) => {
+const Modal = ({ show, type, message, onConfirm, onClose, autoClose }) => {
   if (!show) return null;
 
   const getModalTitle = () => {
@@ -19,11 +19,13 @@ const Modal = ({ show, type, message, onConfirm, onClose }) => {
   };
 
   return (
-    <div className="modal-overlay" onClick={onClose}>
+    <div className="modal-overlay" onClick={type === 'confirm' || type === 'error' ? onClose : undefined}>
       <div className="modal-content" onClick={(e) => e.stopPropagation()}>
         <div className={`modal-header ${type}`}>
           <h3>{getModalTitle()}</h3>
-          <button className="close-btn" onClick={onClose}>×</button>
+          {(type === 'confirm' || type === 'error') && (
+            <button className="close-btn" onClick={onClose}>×</button>
+          )}
         </div>
         <div className="modal-body">
           <p>{message}</p>
@@ -60,37 +62,45 @@ const Modal = ({ show, type, message, onConfirm, onClose }) => {
     </div>
   );
 };
-
 export const WorkerDashboard = () => {
   const [tab, setTab] = useState("orders");
   const [logoutLoading, setLogoutLoading] = useState(false);
   
   // Estado para el modal
-  const [modal, setModal] = useState({
+const [modal, setModal] = useState({
+  show: false,
+  type: 'info',
+  message: '',
+  onConfirm: null,
+  autoClose: false
+});
+
+const showModal = (modalConfig) => {
+  setModal({
+    show: true,
+    type: modalConfig.type || 'info',
+    message: modalConfig.message,
+    onConfirm: modalConfig.onConfirm,
+    autoClose: modalConfig.autoClose || false
+  });
+
+  // Cierre automático para alertas de éxito después de 2 segundos
+  if (modalConfig.type === 'success' || modalConfig.autoClose) {
+    setTimeout(() => {
+      closeModal();
+    }, 2000);
+  }
+};
+
+const closeModal = () => {
+  setModal({
     show: false,
     type: 'info',
     message: '',
-    onConfirm: null
+    onConfirm: null,
+    autoClose: false
   });
-
-  const showModal = (modalConfig) => {
-    setModal({
-      show: true,
-      type: modalConfig.type || 'info',
-      message: modalConfig.message,
-      onConfirm: modalConfig.onConfirm
-    });
-  };
-
-  const closeModal = () => {
-    setModal({
-      show: false,
-      type: 'info',
-      message: '',
-      onConfirm: null
-    });
-  };
-
+};
   const handleLogout = async () => {
     showModal({
       type: 'confirm',
@@ -118,9 +128,9 @@ export const WorkerDashboard = () => {
   };
 
   const navItems = [
-    { id: "orders", label: "📋 Pedidos", icon: "📋" },
-    { id: "category", label: "🏷️ Categorías", icon: "🏷️" },
-    { id: "products", label: "📦 Productos", icon: "📦" }
+    { id: "orders", label: "Pedidos", icon: "📋" },
+    { id: "category", label: "Categorías", icon: "🏷️" },
+    { id: "products", label: "Productos", icon: "📦" }
   ];
   
   return (

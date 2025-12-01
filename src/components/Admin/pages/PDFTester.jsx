@@ -1,24 +1,150 @@
 import React, { useState } from 'react';
-import './PDFTester.module.css';
+import styles from './PDFTester.module.css';
+
+// Componente Modal
+const Modal = ({ show, type, message, onConfirm, onClose, autoHide }) => {
+  if (!show) return null;
+
+  const getModalTitle = () => {
+    switch (type) {
+      case 'success': return '✅ Operación Exitosa';
+      case 'error': return '❌ Error';
+      case 'warning': return '⚠️ Advertencia';
+      case 'confirm': return '❓ Confirmación';
+      default: return 'Mensaje del Sistema';
+    }
+  };
+
+  return (
+    <div className={styles.modalOverlay} onClick={onClose}>
+      <div 
+        className={`${styles.modalContent} ${autoHide ? styles.modalAutoHide : ''}`} 
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className={`${styles.modalHeader} ${styles[type]}`}>
+          <h3>{getModalTitle()}</h3>
+          {!autoHide && (
+            <button className={styles.closeBtn} onClick={onClose}>×</button>
+          )}
+        </div>
+        <div className={styles.modalBody}>
+          <p>{message}</p>
+        </div>
+        {!autoHide && (
+          <div className={styles.modalFooter}>
+            {type === 'confirm' ? (
+              <>
+                <button 
+                  className={`${styles.modalBtn} ${styles.confirmBtn}`}
+                  onClick={() => {
+                    onConfirm?.();
+                    onClose();
+                  }}
+                >
+                  ✅ Sí
+                </button>
+                <button 
+                  className={`${styles.modalBtn} ${styles.cancelBtn}`}
+                  onClick={onClose}
+                >
+                  ❌ No
+                </button>
+              </>
+            ) : (
+              <button 
+                className={`${styles.modalBtn} ${styles.okBtn}`}
+                onClick={onClose}
+              >
+                Aceptar
+              </button>
+            )}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
 
 export const PDFTester = () => {
   const API_URL = 'http://localhost:3000';
   const [loading, setLoading] = useState(false);
+  const [modal, setModal] = useState({
+    show: false,
+    type: 'info',
+    message: '',
+    onConfirm: null,
+    autoHide: false
+  });
+
+  const showModal = (modalConfig) => {
+    setModal({
+      show: true,
+      type: modalConfig.type || 'info',
+      message: modalConfig.message,
+      onConfirm: modalConfig.onConfirm,
+      autoHide: modalConfig.autoHide || false
+    });
+
+    // Auto-hide después de 1 segundo si está configurado
+    if (modalConfig.autoHide) {
+      setTimeout(() => {
+        closeModal();
+      }, 1000);
+    }
+  };
+
+  const closeModal = () => {
+    setModal({
+      show: false,
+      type: 'info',
+      message: '',
+      onConfirm: null,
+      autoHide: false
+    });
+  };
 
   const handleDownload = async (url, filename) => {
     try {
       setLoading(true);
+      
+      // Mostrar mensaje de inicio
+      showModal({
+        type: 'success',
+        message: '⏳ Generando PDF...',
+        autoHide: false
+      });
+
+      const response = await fetch(url);
+      
+      if (!response.ok) {
+        throw new Error(`Error ${response.status}: ${response.statusText}`);
+      }
+
+      const blob = await response.blob();
+      const downloadUrl = window.URL.createObjectURL(blob);
       const link = document.createElement('a');
-      link.href = url;
+      link.href = downloadUrl;
       link.download = filename;
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
+      window.URL.revokeObjectURL(downloadUrl);
       
-      // Simular un pequeño delay para feedback visual
-      setTimeout(() => setLoading(false), 1000);
+      // Mostrar mensaje de éxito que se auto-cierra
+      showModal({
+        type: 'success',
+        message: `✅ PDF "${filename}" descargado exitosamente`,
+        autoHide: true
+      });
+      
     } catch (error) {
       console.error('Error descargando PDF:', error);
+      showModal({
+        type: 'error',
+        message: `❌ Error al descargar el PDF: ${error.message}`,
+        autoHide: true
+      });
+    } finally {
       setLoading(false);
     }
   };
@@ -33,7 +159,12 @@ export const PDFTester = () => {
     if (action) params.push(`action=${action}`);
     
     url += params.join('&');
-    handleDownload(url, `logs-filtrado-${Date.now()}.pdf`);
+    
+    showModal({
+      type: 'confirm',
+      message: `¿Generar reporte de logs${tableName ? ` de la tabla ${tableName}` : ''}${action ? ` con acción ${action}` : ''}?`,
+      onConfirm: () => handleDownload(url, `logs-filtrado-${Date.now()}.pdf`)
+    });
   };
 
   const downloadFilteredUsers = () => {
@@ -46,42 +177,71 @@ export const PDFTester = () => {
     if (isActive) params.push(`isActive=${isActive}`);
     
     url += params.join('&');
-    handleDownload(url, `usuarios-filtrado-${Date.now()}.pdf`);
+    
+    showModal({
+      type: 'confirm',
+      message: `¿Generar reporte de usuarios${role ? ` con rol ${role}` : ''}${isActive ? ` ${isActive === 'true' ? 'activos' : 'inactivos'}` : ''}?`,
+      onConfirm: () => handleDownload(url, `usuarios-filtrado-${Date.now()}.pdf`)
+    });
+  };
+
+  const downloadSpecificLogs = (table, filename) => {
+    showModal({
+      type: 'confirm',
+      message: `¿Generar reporte de logs de la tabla ${table}?`,
+      onConfirm: () => handleDownload(
+        `${API_URL}/db-logs/export/pdf/table/${table}`,
+        filename
+      )
+    });
+  };
+
+  const downloadSpecificUsers = (role, filename) => {
+    showModal({
+      type: 'confirm',
+      message: `¿Generar reporte de usuarios con rol ${role}?`,
+      onConfirm: () => handleDownload(
+        `${API_URL}/users/export/pdf/role/${role}`,
+        filename
+      )
+    });
   };
 
   return (
-    <div className="pdf-tester">
-      <div className="pdf-tester-header">
-        <h1 className="pdf-tester-title">📊 Exportador de PDFs</h1>
-        <p className="pdf-tester-subtitle">Genera reportes en PDF de la base de datos y usuarios</p>
+    <div className={styles.pdfTester}>
+      <div className={styles.pdfTesterHeader}>
+        <h1 className={styles.pdfTesterTitle}>Exportador de PDFs</h1>
+        <p className={styles.pdfTesterSubtitle}>Genera reportes en PDF de la base de datos y usuarios</p>
       </div>
 
       {loading && (
-        <div className="loading-overlay">
-          <div className="loading-spinner">⏳ Generando PDF...</div>
+        <div className={styles.loadingOverlay}>
+          <div className={styles.loadingSpinner}>⏳ Generando PDF...</div>
         </div>
       )}
 
-      <div className="pdf-tester-content">
-        {/* Información */}
-
+      <div className={styles.pdfTesterContent}>
         {/* Sección 1: Logs de Base de Datos */}
-        <div className="section">
-          <h2 className="section-title">
-            📊 Bitácora de Base de Datos 
-            <span className="status status-active">✓ Listo</span>
+        <div className={styles.section}>
+          <h2 className={styles.sectionTitle}>
+            Bitácora de Base de Datos 
+            <span className={`${styles.status} ${styles.statusActive}`}>✓ Listo</span>
           </h2>
-          <p className="section-description">
+          <p className={styles.sectionDescription}>
             Exporta reportes completos de las operaciones registradas en la base de datos.
           </p>
 
-          <div className="button-grid">
+          <div className={styles.buttonGrid}>
             <button 
-              className="btn btn-primary"
-              onClick={() => handleDownload(
-                `${API_URL}/db-logs/export/pdf`,
-                'todos-los-logs.pdf'
-              )}
+              className={`${styles.btn} ${styles.btnPrimary}`}
+              onClick={() => showModal({
+                type: 'confirm',
+                message: '¿Generar reporte completo de todos los logs?',
+                onConfirm: () => handleDownload(
+                  `${API_URL}/db-logs/export/pdf`,
+                  'todos-los-logs.pdf'
+                )
+              })}
               disabled={loading}
             >
               📄 Descargar Todos los Logs
@@ -89,10 +249,10 @@ export const PDFTester = () => {
           </div>
 
           {/* Filtros */}
-          <div className="filter-section">
+          <div className={styles.filterSection}>
             <h3>Filtrar Logs</h3>
             
-            <div className="filter-group">
+            <div className={styles.filterGroup}>
               <label htmlFor="tableName">Tabla:</label>
               <select id="tableName">
                 <option value="">Todas las tablas</option>
@@ -105,7 +265,7 @@ export const PDFTester = () => {
               </select>
             </div>
 
-            <div className="filter-group">
+            <div className={styles.filterGroup}>
               <label htmlFor="action">Acción:</label>
               <select id="action">
                 <option value="">Todas las acciones</option>
@@ -116,7 +276,7 @@ export const PDFTester = () => {
             </div>
 
             <button 
-              className="btn btn-success"
+              className={`${styles.btn} ${styles.btnSuccess}`}
               onClick={downloadFilteredLogs}
               disabled={loading}
             >
@@ -125,45 +285,33 @@ export const PDFTester = () => {
           </div>
 
           {/* Logs por tabla específica */}
-          <div className="sub-section">
+          <div className={styles.subSection}>
             <h3>Logs por Tabla Específica</h3>
-            <div className="button-grid">
+            <div className={styles.buttonGrid}>
               <button 
-                className="btn"
-                onClick={() => handleDownload(
-                  `${API_URL}/db-logs/export/pdf/table/Product`,
-                  'logs-productos.pdf'
-                )}
+                className={styles.btn}
+                onClick={() => downloadSpecificLogs('Product', 'logs-productos.pdf')}
                 disabled={loading}
               >
                 🛍️ Logs de Productos
               </button>
               <button 
-                className="btn"
-                onClick={() => handleDownload(
-                  `${API_URL}/db-logs/export/pdf/table/Order`,
-                  'logs-ordenes.pdf'
-                )}
+                className={styles.btn}
+                onClick={() => downloadSpecificLogs('Order', 'logs-ordenes.pdf')}
                 disabled={loading}
               >
                 📦 Logs de Órdenes
               </button>
               <button 
-                className="btn"
-                onClick={() => handleDownload(
-                  `${API_URL}/db-logs/export/pdf/table/User`,
-                  'logs-usuarios.pdf'
-                )}
+                className={styles.btn}
+                onClick={() => downloadSpecificLogs('User', 'logs-usuarios.pdf')}
                 disabled={loading}
               >
                 👥 Logs de Usuarios
               </button>
               <button 
-                className="btn"
-                onClick={() => handleDownload(
-                  `${API_URL}/db-logs/export/pdf/table/Category`,
-                  'logs-categorias.pdf'
-                )}
+                className={styles.btn}
+                onClick={() => downloadSpecificLogs('Category', 'logs-categorias.pdf')}
                 disabled={loading}
               >
                 🏷️ Logs de Categorías
@@ -173,22 +321,26 @@ export const PDFTester = () => {
         </div>
 
         {/* Sección 2: Usuarios */}
-        <div className="section">
-          <h2 className="section-title">
+        <div className={styles.section}>
+          <h2 className={styles.sectionTitle}>
             👥 Reportes de Usuarios 
-            <span className="status status-active">✓ Listo</span>
+            <span className={`${styles.status} ${styles.statusActive}`}>✓ Listo</span>
           </h2>
-          <p className="section-description">
+          <p className={styles.sectionDescription}>
             Exporta reportes completos de los usuarios registrados en el sistema.
           </p>
 
-          <div className="button-grid">
+          <div className={styles.buttonGrid}>
             <button 
-              className="btn btn-primary"
-              onClick={() => handleDownload(
-                `${API_URL}/users/export/pdf`,
-                'todos-los-usuarios.pdf'
-              )}
+              className={`${styles.btn} ${styles.btnPrimary}`}
+              onClick={() => showModal({
+                type: 'confirm',
+                message: '¿Generar reporte completo de todos los usuarios?',
+                onConfirm: () => handleDownload(
+                  `${API_URL}/users/export/pdf`,
+                  'todos-los-usuarios.pdf'
+                )
+              })}
               disabled={loading}
             >
               📄 Descargar Todos los Usuarios
@@ -196,35 +348,26 @@ export const PDFTester = () => {
           </div>
 
           {/* Usuarios por rol específico */}
-          <div className="sub-section">
+          <div className={styles.subSection}>
             <h3>Usuarios por Rol Específico</h3>
-            <div className="button-grid">
+            <div className={styles.buttonGrid}>
               <button 
-                className="btn"
-                onClick={() => handleDownload(
-                  `${API_URL}/users/export/pdf/role/ADMINISTRADOR`,
-                  'administradores.pdf'
-                )}
+                className={styles.btn}
+                onClick={() => downloadSpecificUsers('ADMINISTRADOR', 'administradores.pdf')}
                 disabled={loading}
               >
                 👨‍💼 Administradores
               </button>
               <button 
-                className="btn"
-                onClick={() => handleDownload(
-                  `${API_URL}/users/export/pdf/role/USUARIO`,
-                  'usuarios-clientes.pdf'
-                )}
+                className={styles.btn}
+                onClick={() => downloadSpecificUsers('USUARIO', 'usuarios-clientes.pdf')}
                 disabled={loading}
               >
                 👤 Usuarios/Clientes
               </button>
               <button 
-                className="btn"
-                onClick={() => handleDownload(
-                  `${API_URL}/users/export/pdf/role/TRABAJADOR`,
-                  'trabajadores.pdf'
-                )}
+                className={styles.btn}
+                onClick={() => downloadSpecificUsers('TRABAJADOR', 'trabajadores.pdf')}
                 disabled={loading}
               >
                 👷 Trabajadores
@@ -233,10 +376,10 @@ export const PDFTester = () => {
           </div>
 
           {/* Filtros por estado */}
-          <div className="filter-section">
+          <div className={styles.filterSection}>
             <h3>Filtrar Usuarios</h3>
             
-            <div className="filter-group">
+            <div className={styles.filterGroup}>
               <label htmlFor="userRole">Rol:</label>
               <select id="userRole">
                 <option value="">Todos los roles</option>
@@ -246,7 +389,7 @@ export const PDFTester = () => {
               </select>
             </div>
 
-            <div className="filter-group">
+            <div className={styles.filterGroup}>
               <label htmlFor="userStatus">Estado:</label>
               <select id="userStatus">
                 <option value="">Todos</option>
@@ -256,7 +399,7 @@ export const PDFTester = () => {
             </div>
 
             <button 
-              className="btn btn-success"
+              className={`${styles.btn} ${styles.btnSuccess}`}
               onClick={downloadFilteredUsers}
               disabled={loading}
             >
@@ -264,8 +407,17 @@ export const PDFTester = () => {
             </button>
           </div>
         </div>
-
       </div>
+
+      {/* Modal */}
+      <Modal
+        show={modal.show}
+        type={modal.type}
+        message={modal.message}
+        onConfirm={modal.onConfirm}
+        onClose={closeModal}
+        autoHide={modal.autoHide}
+      />
     </div>
   );
 };
