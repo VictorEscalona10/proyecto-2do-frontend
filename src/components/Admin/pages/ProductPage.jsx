@@ -473,7 +473,7 @@ export function ProductPage({ onShowModal }) {  // <- Agregar esta prop
                     name="imagen"
                     onChange={handleFileChange}
                     accept="image/*"
-                    required
+                    
                   />
                 </div>
 
@@ -485,13 +485,6 @@ export function ProductPage({ onShowModal }) {  // <- Agregar esta prop
                   {loading ? "⏳ Enviando..." : "📤 Subir Producto"}
                 </button>
               </form>
-
-              {uploadResult && (
-                <div className="result-box">
-                  <h4>Respuesta del servidor:</h4>
-                  <pre>{uploadResult}</pre>
-                </div>
-              )}
             </div>
           </div>
         </div>
