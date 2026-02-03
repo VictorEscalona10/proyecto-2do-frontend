@@ -100,7 +100,7 @@ export function OrderPage() {
             setLoading(true);
             setError("");
             
-            console.log("🔍 Buscando órdenes por cédula:", identification);
+            console.log("Buscando órdenes por cédula:", identification);
             
             const allOrdersRequest = await fetch(`${API_URL}/orders`, {
                 method: "GET",
@@ -118,7 +118,7 @@ export function OrderPage() {
                 return userIdentification && userIdentification.toString() === identification;
             });
             
-            console.log(`✅ Encontradas ${filteredOrders.length} órdenes para cédula: ${identification}`);
+            console.log(`Encontradas ${filteredOrders.length} órdenes para cédula: ${identification}`);
             setOrders(filteredOrders);
             setShowAllOrders(false);
             setHasSearched(true);
@@ -182,11 +182,11 @@ export function OrderPage() {
                         )
                     );
                     
-                    showModal("✅ Estado de la orden actualizado correctamente", "success");
-                    console.log("✅ Estado actualizado:", response);
+                    showModal("Estado de la orden actualizado correctamente", "success");
+                    console.log("Estado actualizado:", response);
                 } catch (error) {
                     console.error("Error updating order status:", error);
-                    showModal("❌ No se pudo actualizar el estado de la orden", "error");
+                    showModal("No se pudo actualizar el estado de la orden", "error");
                 } finally {
                     setLoading(false);
                 }
@@ -264,7 +264,7 @@ export function OrderPage() {
             <h1>Gestión de Órdenes</h1>
             
             <div className="search-panel">
-                <h3>🔍 Buscar Órdenes</h3>
+                <h3>Buscar Órdenes</h3>
                 <div className="search-controls">
                     <div className="search-type-selector">
                         <label htmlFor="searchType">Buscar por:</label>
@@ -287,8 +287,8 @@ export function OrderPage() {
                             onKeyPress={handleKeyPress}
                             placeholder={
                                 searchType === 'email' 
-                                    ? "📧 Ingresa el email del usuario..." 
-                                    : "🆔 Ingresa la cédula del usuario..."
+                                    ? "Ingresa el email del usuario..." 
+                                    : "Ingresa la cédula del usuario..."
                             }
                             className="search-input"
                         />
@@ -298,7 +298,7 @@ export function OrderPage() {
                                 className="clear-search-btn"
                                 title="Limpiar búsqueda"
                             >
-                                ✕
+                                X
                             </button>
                         )}
                     </div>
@@ -308,7 +308,7 @@ export function OrderPage() {
                         disabled={loading || !searchTerm.trim()}
                         className="search-btn"
                     >
-                        {loading ? "⏳ Buscando..." : "🔍 Buscar"}
+                        {loading ? "Buscando..." : "Buscar"}
                     </button>
                     
                     <button 
@@ -316,17 +316,17 @@ export function OrderPage() {
                         disabled={loading}
                         className="all-orders-btn"
                     >
-                        {loading ? "⏳ Cargando..." : "📋 Ver Todas"}
+                        {loading ? "Cargando..." : "Ver Todas"}
                     </button>
                 </div>
                 
                 <div className="search-info">
                     <p>
                         {showAllOrders 
-                            ? `📊 Mostrando todas las órdenes (${orders.length} total)`
+                            ? `Mostrando todas las órdenes (${orders.length} total)`
                             : searchTerm 
-                                ? `🔍 Búsqueda por ${searchType}: "${searchTerm}" - ${orders.length} órdenes encontradas`
-                                : "👆 Selecciona un tipo de búsqueda e ingresa el término"
+                                ? `Búsqueda por ${searchType}: "${searchTerm}" - ${orders.length} órdenes encontradas`
+                                : "Selecciona un tipo de búsqueda e ingresa el término"
                         }
                     </p>
                 </div>
@@ -346,7 +346,7 @@ export function OrderPage() {
 
             {hasSearched && !loading && orders.length === 0 && !error && (
                 <div className="no-results">
-                    <h3>📭 No se encontraron órdenes</h3>
+                    <h3>No se encontraron órdenes</h3>
                     <p>
                         {showAllOrders 
                             ? "No hay órdenes registradas en el sistema"
@@ -360,7 +360,7 @@ export function OrderPage() {
                 <div className="orders-list">
                     <div className="orders-header">
                         <h2>
-                            {showAllOrders ? "📋 Todas las Órdenes" : "📋 Órdenes Encontradas"}: 
+                            {showAllOrders ? "Todas las Órdenes" : "Órdenes Encontradas"}: 
                             <span className="results-count"> {orders.length}</span>
                         </h2>
                         <div className="orders-meta">
@@ -371,13 +371,13 @@ export function OrderPage() {
                                 }
                             </p>
                             <p className="last-updated">
-                                📅 Actualizado: {new Date().toLocaleDateString('es-ES')}
+                                Actualizado: {new Date().toLocaleDateString('es-ES')}
                             </p>
                             <button 
                                 onClick={toggleAllOrders}
                                 className="toggle-all-btn"
                             >
-                                {expandedOrders.size === orders.length ? "🙈 Contraer Todas" : "👁️ Expandir Todas"}
+                                {expandedOrders.size === orders.length ? "Contraer Todas" : "Expandir Todas"}
                             </button>
                         </div>
                     </div>
@@ -416,7 +416,7 @@ export function OrderPage() {
                                 {isExpanded && (
                                     <div className="order-expandable-content" onClick={(e) => e.stopPropagation()}>
                                         <div className="customer-info">
-                                            <h4>👤 Información del Cliente</h4>
+                                            <h4>Información del Cliente</h4>
                                             <div className="customer-details">
                                                 <p><strong>Nombre:</strong> {order.user.name}</p>
                                                 <p><strong>Email:</strong> {order.user.email}</p>
@@ -444,7 +444,7 @@ export function OrderPage() {
 
                                         <div className="order-details-section">
                                             <h4>
-                                                🎁 Productos ({getTotalItems(order.orderDetails)} items)
+                                                Productos ({getTotalItems(order.orderDetails)} items)
                                             </h4>
                                             <div className="order-details">
                                                 {order.orderDetails.map((detail) => (
@@ -482,13 +482,7 @@ export function OrderPage() {
                 <div className="modal-overlay" onClick={closeModal}>
                     <div className="modal-content" onClick={(e) => e.stopPropagation()}>
                         <div className={`modal-header ${modal.type}`}>
-                            <h3>
-                                {modal.type === 'success' && '✅ '}
-                                {modal.type === 'error' && '❌ '}
-                                {modal.type === 'warning' && '⚠️ '}
-                                {modal.type === 'confirm' && '❓ '}
-                                Mensaje del Sistema
-                            </h3>
+                            <h3>Mensaje del Sistema</h3> 
                             <button className="close-btn" onClick={closeModal}>×</button>
                         </div>
                         <div className="modal-body">
@@ -505,14 +499,14 @@ export function OrderPage() {
                                         }}
                                         disabled={loading}
                                     >
-                                        {loading ? "⏳ Procesando..." : "✅ Sí"}
+                                        {loading ? "Procesando..." : "Sí"}
                                     </button>
                                     <button 
                                         className="modal-btn cancel-btn"
                                         onClick={closeModal}
                                         disabled={loading}
                                     >
-                                        ❌ No
+                                        No
                                     </button>
                                 </>
                             ) : (

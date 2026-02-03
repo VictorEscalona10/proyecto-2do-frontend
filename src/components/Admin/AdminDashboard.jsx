@@ -52,7 +52,7 @@ export function AdminDashboard({ onShowModal }) {
 
         <div className="sidebar-footer">
           <Link to="/" className="logout-link">
-            <span className="logout-icon">🚪</span>
+            <span className="logout-icon"></span>
             {sidebarOpen && <span>Salir</span>}
           </Link>
         </div>
@@ -63,7 +63,7 @@ export function AdminDashboard({ onShowModal }) {
         <header className="admin-header">
           <h1>Panel de Administración</h1>
           <div className="user-info">
-            <span className="user-avatar">👤</span>
+            <span className="user-avatar"></span>
             <span className="user-name">Administrador</span>
           </div>
         </header>

@@ -1132,3 +1132,82 @@
     width: 100%;
   }
 }
+
+/* ============================= */
+/* OVERRIDE FINAL – MODAL COMPACTO */
+/* ============================= */
+
+.modal-content {
+  max-width: 480px;
+  max-height: 85vh;
+  overflow-y: hidden; /* clave */
+}
+
+/* Header más compacto */
+.modal-header {
+  padding: 14px 18px;
+}
+
+.modal-header h2,
+.modal-header h3 {
+  font-size: 1.2rem;
+}
+
+/* Body compacto */
+.modal-body {
+  padding: 16px;
+}
+
+/* Formulario compacto */
+.product-form {
+  gap: 12px;
+}
+
+/* Labels más pequeños */
+.form-group label {
+  font-size: 0.75rem;
+  margin-bottom: 4px;
+}
+
+/* Inputs compactos */
+.form-group input,
+.form-group textarea {
+  padding: 6px 8px;
+  font-size: 0.85rem;
+}
+
+/* Textarea fijo (evita scroll) */
+.form-group textarea {
+  resize: none;
+  height: 55px;
+}
+
+/* Precio + categoría más juntos */
+.form-row {
+  gap: 10px;
+}
+
+/* Input file compacto */
+input[type="file"] {
+  font-size: 0.75rem;
+}
+
+/* Botón más bajo */
+.submit-btn {
+  padding: 8px;
+  font-size: 0.9rem;
+  margin-top: 6px;
+}
+
+/* Evitar scroll interno */
+.modal-content::-webkit-scrollbar {
+  display: none;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .modal-content {
+    max-width: 95%;
+    max-height: 90vh;
+  }
+}

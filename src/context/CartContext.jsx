@@ -21,6 +21,8 @@ const saveCartToStorage = (cart) => {
   }
 };
 
+const MAX_PRODUCT_QUANTITY = 5;
+
 const cartReducer = (state, action) => {
   let newState;
 
@@ -31,18 +33,23 @@ const cartReducer = (state, action) => {
         items: action.payload.items || [],
       };
 
-    case "ADD_ITEM":
+    case "ADD_ITEM": {
       const existingItem = state.items.find(
-        (item) => item.id === action.payload.id
+        (item) => item.id === action.payload.id,
       );
 
       if (existingItem) {
+        const newQuantity = Math.min(
+          MAX_PRODUCT_QUANTITY,
+          existingItem.quantity + action.payload.quantity,
+        );
+
         newState = {
           ...state,
           items: state.items.map((item) =>
             item.id === action.payload.id
-              ? { ...item, quantity: item.quantity + action.payload.quantity }
-              : item
+              ? { ...item, quantity: newQuantity }
+              : item,
           ),
         };
       } else {
@@ -50,11 +57,15 @@ const cartReducer = (state, action) => {
           ...state,
           items: [
             ...state.items,
-            { ...action.payload, quantity: action.payload.quantity },
+            {
+              ...action.payload,
+              quantity: Math.min(MAX_PRODUCT_QUANTITY, action.payload.quantity),
+            },
           ],
         };
       }
       break;
+    }
 
     case "REMOVE_ITEM":
       newState = {
@@ -66,13 +77,17 @@ const cartReducer = (state, action) => {
     case "UPDATE_QUANTITY":
       newState = {
         ...state,
-        items: state.items
-          .map((item) =>
-            item.id === action.payload.id
-              ? { ...item, quantity: Math.max(0, action.payload.quantity) }
-              : item
-          )
-          .filter((item) => item.quantity > 0), // Eliminar items con cantidad 0
+        items: state.items.map((item) =>
+          item.id === action.payload.id
+            ? {
+                ...item,
+                quantity: Math.min(
+                  MAX_PRODUCT_QUANTITY,
+                  Math.max(1, action.payload.quantity),
+                ),
+              }
+            : item,
+        ),
       };
       break;
 
@@ -102,16 +117,16 @@ export const CartProvider = ({ children }) => {
   }, []);
 
   const addToCart = (product, quantity = 1) => {
-  dispatch({ 
-    type: 'ADD_ITEM', 
-    payload: { 
-      ...product, 
-      quantity,
-      price: Number(product.price), // Asegurar que price sea número
-      categoryId: Number(product.categoryId || product.category?.id || 1)
-    } 
-  });
-};
+    dispatch({
+      type: "ADD_ITEM",
+      payload: {
+        ...product,
+        quantity,
+        price: Number(product.price), // Asegurar que price sea número
+        categoryId: Number(product.categoryId || product.category?.id || 1),
+      },
+    });
+  };
 
   const removeFromCart = (productId) => {
     dispatch({ type: "REMOVE_ITEM", payload: productId });
@@ -128,7 +143,7 @@ export const CartProvider = ({ children }) => {
   const getTotalPrice = () => {
     return state.items.reduce(
       (total, item) => total + item.price * item.quantity,
-      0
+      0,
     );
   };
 

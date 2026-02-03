@@ -22,22 +22,22 @@ export default function AdminChatPage() {
     socketRef.current = socket;
 
     socket.on('connect', () => {
-      console.log('✅ Admin conectado', socket.id);
+      console.log('Admin conectado', socket.id);
       setConnected(true);
 
       socket.emit('get_my_chats', (res) => {
-        console.log('📂 Chats:', res);
+        console.log('Chats:', res);
         if (res?.success) setChats(res.chats);
       });
     });
 
     socket.on('disconnect', () => {
-      console.log('❌ Desconectado');
+      console.log('Desconectado');
       setConnected(false);
     });
 
     socket.on('new_message', (msg) => {
-      console.log('📩 Nuevo mensaje', msg);
+      console.log('Nuevo mensaje', msg);
       if (msg.chatId === activeChat?.id) {
         setMessages((prev) => [...prev, msg]);
       }
@@ -83,7 +83,7 @@ export default function AdminChatPage() {
       {/* CHAT LIST */}
       <aside style={{ width: 300, borderRight: '1px solid #ddd', padding: 10 }}>
         <h3>Chats ({chats.length})</h3>
-        {!connected && <p>🔴 Desconectado</p>}
+        {!connected && <p>Desconectado</p>}
 
         {chats.map((c) => (
           <div

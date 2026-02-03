@@ -77,13 +77,13 @@ export default function AdminCustomization() {
 
     // Verificación de Auth SOLO al intentar crear
     if (!isAuthenticated) {
-      showModal("🔒 Debes iniciar sesión como Administrador para guardar cambios.", "error");
+      showModal("Debes iniciar sesión como Administrador para guardar cambios.", "error");
       return;
     }
     
     // Verificación de Rol
     if (user?.role !== "ADMINISTRADOR") {
-      showModal("⛔ Solo los administradores pueden crear grupos.", "error");
+      showModal("Solo los administradores pueden crear grupos.", "error");
       return;
     }
 
@@ -104,14 +104,14 @@ export default function AdminCustomization() {
       });
 
       if (response.ok) {
-        showModal("✅ Grupo de personalización creado con éxito", "success");
+        showModal("Grupo de personalización creado con éxito", "success");
         setNewGroup({ name: "", min: 0, max: 1 });
         fetchCategoryData(); // Recargar datos
       } else {
         throw new Error("Error al guardar");
       }
     } catch (error) {
-      showModal("❌ Error al crear el grupo. Verifica tu conexión.", "error");
+      showModal("Error al crear el grupo. Verifica tu conexión.", "error");
     } finally {
       setActionLoading(false);
     }
@@ -123,12 +123,12 @@ export default function AdminCustomization() {
     
     // Verificación de Auth
     if (!isAuthenticated) {
-      showModal("🔒 Debes iniciar sesión para agregar opciones.", "error");
+      showModal("Debes iniciar sesión para agregar opciones.", "error");
       return;
     }
 
     if (!optionData || !optionData.name.trim()) {
-        showModal("⚠️ El nombre de la opción es obligatorio.", "warning");
+        showModal("El nombre de la opción es obligatorio.", "warning");
         return;
     }
 
@@ -146,7 +146,7 @@ export default function AdminCustomization() {
       });
 
       if (response.ok) {
-        showModal(`✅ Opción "${optionData.name}" agregada correctamente`, "success");
+        showModal(`Opción "${optionData.name}" agregada correctamente`, "success");
         // Limpiar input solo de este grupo
         setNewOptions(prev => ({
           ...prev,
@@ -157,7 +157,7 @@ export default function AdminCustomization() {
         throw new Error("Error al guardar opción");
       }
     } catch (error) {
-      showModal("❌ Error al agregar la opción.", "error");
+      showModal("Error al agregar la opción.", "error");
     } finally {
       setActionLoading(false);
     }
@@ -175,19 +175,19 @@ export default function AdminCustomization() {
   };
 
   // RENDERIZADO
-  if (loading) return <div className="loading-container">⏳ Cargando panel de administración...</div>;
-  if (!category) return <div className="error-container">❌ No se encontró la categoría base.</div>;
+  if (loading) return <div className="loading-container">Cargando panel de administración...</div>;
+  if (!category) return <div className="error-container">No se encontró la categoría base.</div>;
 
   return (
     <div className="admin-custom-page">
       <header className="page-header">
-        <h1>🛠️ Personalización: {category.name}</h1>
+        <h1>Personalización: {category.name}</h1>
         <p>Gestiona los ingredientes y extras disponibles para tus clientes</p>
       </header>
 
       {/* FORMULARIO DE CREAR GRUPO */}
       <section className="create-section">
-        <h2>✨ Nuevo Grupo (Ej: Relleno, Pisos)</h2>
+        <h2>Nuevo Grupo (Ej: Relleno, Pisos)</h2>
         <form onSubmit={handleCreateGroup} className="admin-form">
           <div className="form-group">
             <label>Nombre del Grupo</label>
@@ -223,7 +223,7 @@ export default function AdminCustomization() {
           </div>
 
           <button type="submit" className="primary-btn" disabled={actionLoading}>
-            {actionLoading ? "⏳ Guardando..." : "💾 Crear Grupo"}
+            {actionLoading ? "Guardando..." : "Crear Grupo"}
           </button>
         </form>
       </section>
@@ -231,12 +231,12 @@ export default function AdminCustomization() {
       {/* LISTADO DE GRUPOS EXISTENTES */}
       <div className="groups-container">
         {category.customizationGroups?.length === 0 ? (
-          <div className="no-groups">📭 No hay grupos de personalización creados todavía.</div>
+          <div className="no-groups">No hay grupos de personalización creados todavía.</div>
         ) : (
           category.customizationGroups?.map(group => (
             <div key={group.id} className="group-card">
               <div className="group-header">
-                <h3>📂 {group.name}</h3>
+                <h3>{group.name}</h3>
                 <span className="group-rules">
                   Selección: {group.minSelection} - {group.maxSelection}
                 </span>
@@ -264,7 +264,7 @@ export default function AdminCustomization() {
                             <span className="price-badge">+${Number(opt.priceExtra).toFixed(2)}</span>
                           ) : "Gratis"}
                         </td>
-                        <td>{opt.isAvailable ? "✅" : "❌"}</td>
+                        <td>{opt.isAvailable ? "Disponible" : "No disponible"}</td>
                       </tr>
                     ))}
                   </tbody>
