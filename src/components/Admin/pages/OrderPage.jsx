@@ -140,9 +140,21 @@ export function OrderPage() {
         }
 
         if (searchType === 'email') {
-            getOrdersByEmail(searchTerm);
+            // Validación básica de email
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(searchTerm.trim())) {
+                setError('Por favor ingresa un email con formato válido');
+                return;
+            }
+            getOrdersByEmail(searchTerm.trim());
         } else {
-            getOrdersByIdentification(searchTerm);
+            // Asegurarnos que la cédula solo tenga dígitos
+            const digitsOnly = searchTerm.replace(/\D/g, '');
+            if (!digitsOnly) {
+                setError('Por favor ingresa una cédula válida (solo números)');
+                return;
+            }
+            getOrdersByIdentification(digitsOnly);
         }
     };
 
@@ -283,7 +295,15 @@ export function OrderPage() {
                         <input
                             type="text"
                             value={searchTerm}
-                            onChange={(e) => setSearchTerm(e.target.value)}
+                            onChange={(e) => {
+                                const val = e.target.value;
+                                if (searchType === 'identification') {
+                                    // mantener solo dígitos
+                                    setSearchTerm(val.replace(/\D/g, ''));
+                                } else {
+                                    setSearchTerm(val);
+                                }
+                            }}
                             onKeyPress={handleKeyPress}
                             placeholder={
                                 searchType === 'email' 

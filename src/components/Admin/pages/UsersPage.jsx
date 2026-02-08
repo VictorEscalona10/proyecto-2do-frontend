@@ -511,7 +511,15 @@ export const Users = () => {
                 <input
                   type={searchType === 'Identification' ? 'number' : 'text'}
                   value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
+                  onChange={(e) => {
+                    const val = e.target.value;
+                    if (searchType === 'name') {
+                      const sanitized = val.replace(/[^A-Za-zÁÉÍÓÚáéíóúÑñ\s]/g, '');
+                      setSearchTerm(sanitized);
+                    } else {
+                      setSearchTerm(val);
+                    }
+                  }}
                   onKeyPress={handleKeyPress}
                   placeholder={getSearchPlaceholder()}
                   className="search-input"

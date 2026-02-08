@@ -68,6 +68,13 @@ export function Category() {
       return;
     }
 
+    // Validar que el nombre no contenga números u otros caracteres inválidos
+    const sanitized = name.replace(/[^A-Za-zÁÉÍÓÚáéíóúÑñ\s]/g, '').trim();
+    if (!sanitized) {
+      showModal("El nombre de la categoría no puede contener números ni caracteres especiales", "warning");
+      return;
+    }
+
     try {
       const request = await fetch(`${API_URL}/category/create`, {
         method: "POST",
@@ -75,7 +82,7 @@ export function Category() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ name }),
+        body: JSON.stringify({ name: sanitized.toLowerCase() }),
       });
       
       if (!request.ok) {
@@ -265,9 +272,15 @@ export function Category() {
                 <input
                   type="text"
                   value={newCategory}
-                  onChange={(e) => setNewCategory(e.target.value)}
+                  onChange={(e) => {
+                    const val = e.target.value.replace(/[^A-Za-zÁÉÍÓÚáéíóúÑñ\s]/g, '');
+                    setNewCategory(val);
+                  }}
                   placeholder="Nombre de la nueva categoría"
                   className="category-input"
+                  required
+                  pattern="^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$"
+                  title="El nombre no puede contener números ni caracteres especiales"
                 />
                 <button type="submit" className="add-btn">
                   Crear Categoría

@@ -105,19 +105,6 @@ const StatsPage = () => {
           </ResponsiveContainer>
         </ChartContainer>
 
-        {/* Gráfico 4: Métodos de Pago (Distribución) */}
-        <ChartContainer title="Métodos de Pago">
-          <ResponsiveContainer width="100%" height={300}>
-            <PieChart>
-              <Pie data={data.payments} dataKey="transactionCount" nameKey="paymentMethod" cx="50%" cy="50%" outerRadius={80} label>
-                {data.payments.map((entry, index) => <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />)}
-              </Pie>
-              <Tooltip />
-              <Legend />
-            </PieChart>
-          </ResponsiveContainer>
-        </ChartContainer>
-
         {/* Gráfico 5: Desempeño por Categoría (Ingresos) */}
         <ChartContainer title="Ingresos por Categoría">
           <ResponsiveContainer width="100%" height={300}>

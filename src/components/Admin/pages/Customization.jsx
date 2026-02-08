@@ -87,7 +87,12 @@ export default function AdminCustomization() {
       return;
     }
 
-    if (!newGroup.name.trim()) return;
+    // Sanitizar nombre de grupo (sin números ni caracteres especiales)
+    const sanitizedName = (newGroup.name || '').replace(/[^A-Za-zÁÉÍÓÚáéíóúÑñ\s]/g, '').trim();
+    if (!sanitizedName) {
+      showModal('El nombre del grupo no puede contener números ni caracteres especiales.', 'warning');
+      return;
+    }
 
     try {
       setActionLoading(true);
@@ -96,7 +101,7 @@ export default function AdminCustomization() {
         headers: { "Content-Type": "application/json" },
         credentials: "include", // Importante para enviar Cookies
         body: JSON.stringify({
-          name: newGroup.name,
+            name: sanitizedName,
           minSelection: parseInt(newGroup.min),
           maxSelection: parseInt(newGroup.max),
           categoryId: category.id
@@ -128,8 +133,15 @@ export default function AdminCustomization() {
     }
 
     if (!optionData || !optionData.name.trim()) {
-        showModal("El nombre de la opción es obligatorio.", "warning");
-        return;
+      showModal("El nombre de la opción es obligatorio.", "warning");
+      return;
+    }
+
+    // Sanitizar nombre de opción
+    const sanitizedOptionName = optionData.name.replace(/[^A-Za-zÁÉÍÓÚáéíóúÑñ\s]/g, '').trim();
+    if (!sanitizedOptionName) {
+      showModal('El nombre de la opción no puede contener números ni caracteres especiales.', 'warning');
+      return;
     }
 
     try {
@@ -139,7 +151,7 @@ export default function AdminCustomization() {
         headers: { "Content-Type": "application/json" },
         credentials: "include",
         body: JSON.stringify({
-          name: optionData.name,
+          name: sanitizedOptionName,
           priceExtra: parseFloat(optionData.price || 0),
           groupId: groupId
         })
@@ -165,11 +177,16 @@ export default function AdminCustomization() {
 
   // Manejar inputs de opciones individuales
   const handleOptionInputChange = (groupId, field, value) => {
+    // Si el campo es 'name' sanitizamos para evitar números/caracteres especiales
+    const newValue = field === 'name'
+      ? value.replace(/[^A-Za-zÁÉÍÓÚáéíóúÑñ\s]/g, '')
+      : value;
+
     setNewOptions(prev => ({
       ...prev,
       [groupId]: {
         ...prev[groupId],
-        [field]: value
+        [field]: newValue
       }
     }));
   };
@@ -196,8 +213,10 @@ export default function AdminCustomization() {
               type="text" 
               placeholder="Ej: Sabor del Bizcocho"
               value={newGroup.name}
-              onChange={e => setNewGroup({...newGroup, name: e.target.value})}
+              onChange={e => setNewGroup({...newGroup, name: e.target.value.replace(/[^A-Za-zÁÉÍÓÚáéíóúÑñ\s]/g, '')})}
               required
+              pattern="^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$"
+              title="El nombre no puede contener números ni caracteres especiales"
             />
           </div>
           
@@ -279,6 +298,8 @@ export default function AdminCustomization() {
                     style={{flex: 2}}
                     value={newOptions[group.id]?.name || ""}
                     onChange={e => handleOptionInputChange(group.id, 'name', e.target.value)}
+                    pattern="^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$"
+                    title="El nombre no puede contener números ni caracteres especiales"
                   />
                   <input 
                     type="number" 

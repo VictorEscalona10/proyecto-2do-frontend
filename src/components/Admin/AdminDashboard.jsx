@@ -5,6 +5,7 @@ import './AdminDashboard.css';
 import { Category } from './pages/CategoryPage.jsx';
 import { ProductPage } from './pages/ProductPage.jsx';
 import AdminChatPage  from './pages/AdminChatPage.jsx';
+import AdminCustomization from './pages/Customization';
 import { OrderPage } from './pages/OrderPage.jsx';
 import { Users } from './pages/UsersPage.jsx';
 import { PDFTester } from './pages/PDFTester.jsx';
@@ -22,6 +23,7 @@ export function AdminDashboard({ onShowModal }) {
     { path: '/admin/orders', name: 'Órdenes', icon: '' },
     { path: '/admin/stats', name: 'Estadísticas', icon: '' },
     { path: '/admin/pdf-tester', name: 'PDF Tester', icon: '' },
+    { path: '/admin/customization', name: 'Personalización', icon: '' },
     { path: '/admin/chats', name: 'Chats', icon: '' },
   ];
 
@@ -92,6 +94,7 @@ export function AdminDashboard({ onShowModal }) {
             <Route path="products" element={<ProductPage onShowModal={onShowModal} />} />
             <Route path="categories" element={<Category onShowModal={onShowModal} />} />
             <Route path="users" element={<Users onShowModal={onShowModal} />} />
+            <Route path="customization" element={<AdminCustomization onShowModal={onShowModal} />} />
             <Route path="stats" element={<StatsPage onShowModal={onShowModal} />} />
             <Route path="orders" element={<OrderPage onShowModal={onShowModal} />} />
             <Route path="pdf-tester" element={<PDFTester onShowModal={onShowModal} />} />
