@@ -1,0 +1,125 @@
+.payment-proof-viewer {
+  background: white;
+  border-radius: 10px;
+  border: 2px solid #e1c4e8;
+  padding: 15px;
+  margin: 15px 0;
+}
+
+.proof-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #f0e6f5;
+}
+
+.proof-header h4 {
+  color: #8b008b;
+  margin: 0;
+  font-family: 'Georgia', serif;
+}
+
+.proof-download-link {
+  color: #8b008b;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.9rem;
+  padding: 6px 12px;
+  border: 1px solid #8b008b;
+  border-radius: 6px;
+  transition: all 0.3s ease;
+}
+
+.proof-download-link:hover {
+  background: #8b008b;
+  color: white;
+  text-decoration: none;
+}
+
+.proof-image-container {
+  text-align: center;
+  margin: 15px 0;
+}
+
+.proof-image {
+  max-width: 100%;
+  max-height: 300px;
+  border-radius: 8px;
+  border: 2px solid #f0e6f5;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.proof-footer {
+  margin-top: 15px;
+  padding-top: 10px;
+  border-top: 1px solid #f0e6f5;
+}
+
+.proof-note {
+  color: #666;
+  font-size: 0.85rem;
+  margin: 0;
+  text-align: center;
+}
+
+/* Estados de carga y error */
+.proof-loading,
+.proof-error,
+.proof-empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 20px;
+  background: #fcfafc;
+  border-radius: 10px;
+  border: 1px dashed #e1c4e8;
+  margin: 15px 0;
+}
+
+.proof-loading {
+  flex-direction: column;
+}
+
+.loading-spinner {
+  width: 30px;
+  height: 30px;
+  border: 3px solid #f3f3f3;
+  border-top: 3px solid #8b008b;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.proof-error {
+  background: #fff5f5;
+  border-color: #ffb3b3;
+  color: #dc3545;
+}
+
+.error-icon {
+  font-size: 1.2rem;
+}
+
+.error-text {
+  font-weight: 500;
+}
+
+.proof-empty {
+  color: #666;
+  font-style: italic;
+}
+
+.empty-icon {
+  font-size: 1.2rem;
+}
+
+.empty-text {
+  font-size: 0.95rem;
+}

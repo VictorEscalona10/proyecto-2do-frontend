@@ -21,7 +21,8 @@ const StatsPage = () => {
   useEffect(() => {
     const fetchAllStats = async () => {
       try {
-        const baseUrl = 'http://localhost:3000/analytics'; // Ajusta a tu URL
+        const API_URL = process.env.VITE_API_URL;
+        const baseUrl = `${API_URL}/analytics`; 
         const [summary, products, monthly, categories, status, weekday, payments] = await Promise.all([
           fetch(`${baseUrl}/sales-summary`).then(res => res.json()),
           fetch(`${baseUrl}/top-products`).then(res => res.json()),

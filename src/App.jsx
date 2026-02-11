@@ -5,6 +5,7 @@ import { useState } from "react";
 import Header from "./Header.jsx";
 import { useAuth } from "./hooks/useAuth.jsx";
 import Modal from "./components/pages/Modal/Modal.jsx";
+import {CheckoutPage} from "./components/pages/CartDropdown/CheckoutPage.jsx";
 
 import Home from "./components/pages/Home/Home.jsx";
 import Login from "./components/pages/Login/Login.jsx";
@@ -19,7 +20,6 @@ import {ProductDetail} from "./components/pages/Products/ProductDetail.jsx";
 import { CustomCakeBuilder } from "./components/pages/customCake/CustomCake.jsx";
 import { OrderPage } from "./components/pages/Orders/Orders.jsx";
 
-// Importar componentes de chat
 import { ChatBubble } from "./components/pages/ChatBubble/Chatbubble.jsx";
 
 // Componente de ruta protegida
@@ -81,6 +81,7 @@ function App() {
           <Route path="/reset_password" element={<Reset_Password onShowModal={showModal} />} />
           <Route path="/reset-password" element={<Reset_Password onShowModal={showModal} />} />
           <Route path="/products" element={<Products onShowModal={showModal} />} />
+          <Route path="/checkout" element={<CheckoutPage />} />
           <Route path="/About" element={<About onShowModal={showModal} />} />
           <Route path="/product/:name" element={<ProductDetail onShowModal={showModal} />} />
           <Route path="/custom-cake" element={<CustomCakeBuilder onShowModal={showModal} />} />

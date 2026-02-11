@@ -27,6 +27,19 @@ export function AdminDashboard({ onShowModal }) {
     { path: '/admin/chats', name: 'Chats', icon: '' },
   ];
 
+  const sessionClose = async () => {
+    try {
+      const response = await fetch('http://localhost:3000/auth/logout', {
+        method: 'POST',
+        credentials: 'include',
+      });
+      if (response.ok) {
+        window.location.href = '/login';
+      }
+    } catch (error) {
+      console.error('Error cerrando sesión:', error);
+    }
+  }
   const toggleSidebar = () => {
     setSidebarOpen(!sidebarOpen);
   };
@@ -53,10 +66,9 @@ export function AdminDashboard({ onShowModal }) {
         </div>
 
         <div className="sidebar-footer">
-          <Link to="/" className="logout-link">
+
             <span className="logout-icon"></span>
-            {sidebarOpen && <span>Salir</span>}
-          </Link>
+            {sidebarOpen && <span onClick={sessionClose}>Salir</span>}
         </div>
       </div>
 

@@ -1,11 +1,13 @@
 import { useCart } from "../../../context/CartContext";
 import { useAuth } from "../../../hooks/AuthContext.jsx";
+import { useNavigate } from "react-router-dom";
 import styles from "./CartDropdown.module.css";
 
 export default function CartDropdown({ isOpen, onClose, onShowModal }) {
   const { items, removeFromCart, updateQuantity, getTotalPrice, clearCart } =
     useCart();
   const { isAuthenticated, isLoading: authLoading } = useAuth();
+  const navigate = useNavigate();
 
   const API_URL = import.meta.env.VITE_API_URL;
 
@@ -22,7 +24,7 @@ export default function CartDropdown({ isOpen, onClose, onShowModal }) {
 
   if (!isOpen) return null;
 
-  const handleOrder = async () => {
+  const handleOrder = () => {
     try {
       if (!isAuthenticated) {
         showModalSafe({
@@ -30,95 +32,21 @@ export default function CartDropdown({ isOpen, onClose, onShowModal }) {
           message: 'Debes iniciar sesión para realizar un pedido',
           onConfirm: () => {
             onClose();
-            window.location.href = '/login';
+            navigate('/login');
           }
         });
         return;
       }
 
-      // Obtener información del usuario actual
-      const userResponse = await fetch(`${API_URL}/auth/me`, {
-        method: 'GET',
-        credentials: 'include'
-      });
-
-      const userData = await userResponse.json();
+      // Redirigir a la página de checkout
+      onClose();
+      navigate('/checkout');
       
-      if (!userData.authenticated || !userData.user) {
-        showModalSafe({
-          type: 'error',
-          message: 'No se pudo obtener la información del usuario'
-        });
-        return;
-      }
-
-      // Preparar los datos en el formato que espera el backend
-      const orderData = {
-        userId: userData.user.id,
-        items: items.map(item => ({
-          id: Number(item.id),
-          count: Number(item.quantity), // Asegúrate que se llame 'count' como en el DTO
-          price: Number(parseFloat(item.price).toFixed(2)),
-          
-          // AGREGADO IMPORTANTE: 
-          // Pasamos las personalizaciones si existen, si no, null.
-          // Esto arregla el error y además permite guardar los toppings.
-          customizations: item.customizations || null 
-        }))
-      };
-
-      console.log('Enviando orden:', orderData);
-
-      showModalSafe({
-        type: 'confirm',
-        message: `¿Estás seguro de realizar el pedido por un total de $${getTotalPrice().toFixed(2)}?`,
-        onConfirm: async () => {
-          const response = await fetch(`${API_URL}/orders`, {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(orderData),
-            credentials: 'include'
-          });
-
-          if (response.ok) {
-            const orderResult = await response.json();
-            showModalSafe({
-              type: 'success',
-              message: `¡Pedido realizado exitosamente! Número de orden: ${orderResult.order?.id || orderResult.orderNumber}`
-            });
-            clearCart();
-            onClose();
-            
-            setTimeout(() => {
-              window.location.href = '/pedidos';
-            }, 2000);
-          } else {
-            const error = await response.json();
-            
-            if (response.status === 401) {
-              showModalSafe({
-                type: 'warning',
-                message: 'Sesión expirada. Por favor inicia sesión nuevamente.',
-                onConfirm: () => {
-                  window.location.href = '/login';
-                }
-              });
-            } else {
-              showModalSafe({
-                type: 'error',
-                message: error.message || 'Error al realizar el pedido'
-              });
-            }
-          }
-        }
-      });
     } catch (error) {
       console.error('Error:', error);
       showModalSafe({
         type: 'error',
-        message: 'Error de conexión. Verifica tu conexión a internet.'
+        message: 'Error al procesar la solicitud. Por favor intenta de nuevo.'
       });
     }
   };
@@ -161,6 +89,19 @@ export default function CartDropdown({ isOpen, onClose, onShowModal }) {
                     {item.category?.name || item.category || "General"}
                   </span>
                   <span className={styles.itemPrice}>${item.price} c/u</span>
+                  {/* Mostrar personalizaciones si existen */}
+                  {item.customizations && item.customizations.length > 0 && (
+                    <div className={styles.customizations}>
+                      <small>Personalizaciones:</small>
+                      <ul className={styles.customizationsList}>
+                        {item.customizations.map((custom, index) => (
+                          <li key={index} className={styles.customizationItem}>
+                            {custom.name} (+${custom.price})
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
                 </div>
 
                 <div className={styles.itemActions}>
@@ -212,7 +153,7 @@ export default function CartDropdown({ isOpen, onClose, onShowModal }) {
                   onClick={(e) => {
                     e.preventDefault();
                     onClose();
-                    window.location.href = "/login";
+                    navigate("/login");
                   }}
                 >
                   iniciar sesión
@@ -234,7 +175,7 @@ export default function CartDropdown({ isOpen, onClose, onShowModal }) {
                 onClick={handleOrder}
                 disabled={authLoading || !isAuthenticated}
               >
-                {authLoading ? "Verificando..." : "Realizar Pedido"}
+                {authLoading ? "Verificando..." : "Proceder al Pago"}
               </button>
             </div>
           </div>
