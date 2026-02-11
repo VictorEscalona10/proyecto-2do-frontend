@@ -302,3 +302,60 @@
 .items::-webkit-scrollbar-thumb:hover {
   background: #a8a8a8;
 }
+
+/* Estilos para personalizaciones */
+.customizations {
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px dashed #e9ecef;
+}
+
+.customizations small {
+  display: block;
+  color: #666;
+  font-size: 11px;
+  margin-bottom: 4px;
+  font-weight: 600;
+}
+
+.customizationsList {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+  max-height: 60px;
+  overflow-y: auto;
+}
+
+.customizationItem {
+  font-size: 11px;
+  color: #8b008b;
+  padding: 2px 0;
+  display: flex;
+  align-items: center;
+}
+
+.customizationItem::before {
+  content: "•";
+  color: #ff6b6b;
+  margin-right: 6px;
+  font-size: 14px;
+}
+
+/* Scrollbar para la lista de personalizaciones */
+.customizationsList::-webkit-scrollbar {
+  width: 4px;
+}
+
+.customizationsList::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 2px;
+}
+
+.customizationsList::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 2px;
+}
+
+.customizationsList::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
+}

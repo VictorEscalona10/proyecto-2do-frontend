@@ -77,17 +77,22 @@ export default function AdminCustomization() {
 
     // Verificación de Auth SOLO al intentar crear
     if (!isAuthenticated) {
-      showModal("🔒 Debes iniciar sesión como Administrador para guardar cambios.", "error");
+      showModal("Debes iniciar sesión como Administrador para guardar cambios.", "error");
       return;
     }
     
     // Verificación de Rol
     if (user?.role !== "ADMINISTRADOR") {
-      showModal("⛔ Solo los administradores pueden crear grupos.", "error");
+      showModal("Solo los administradores pueden crear grupos.", "error");
       return;
     }
 
-    if (!newGroup.name.trim()) return;
+    // Sanitizar nombre de grupo (sin números ni caracteres especiales)
+    const sanitizedName = (newGroup.name || '').replace(/[^A-Za-zÁÉÍÓÚáéíóúÑñ\s]/g, '').trim();
+    if (!sanitizedName) {
+      showModal('El nombre del grupo no puede contener números ni caracteres especiales.', 'warning');
+      return;
+    }
 
     try {
       setActionLoading(true);
@@ -96,7 +101,7 @@ export default function AdminCustomization() {
         headers: { "Content-Type": "application/json" },
         credentials: "include", // Importante para enviar Cookies
         body: JSON.stringify({
-          name: newGroup.name,
+            name: sanitizedName,
           minSelection: parseInt(newGroup.min),
           maxSelection: parseInt(newGroup.max),
           categoryId: category.id
@@ -104,14 +109,14 @@ export default function AdminCustomization() {
       });
 
       if (response.ok) {
-        showModal("✅ Grupo de personalización creado con éxito", "success");
+        showModal("Grupo de personalización creado con éxito", "success");
         setNewGroup({ name: "", min: 0, max: 1 });
         fetchCategoryData(); // Recargar datos
       } else {
         throw new Error("Error al guardar");
       }
     } catch (error) {
-      showModal("❌ Error al crear el grupo. Verifica tu conexión.", "error");
+      showModal("Error al crear el grupo. Verifica tu conexión.", "error");
     } finally {
       setActionLoading(false);
     }
@@ -123,13 +128,20 @@ export default function AdminCustomization() {
     
     // Verificación de Auth
     if (!isAuthenticated) {
-      showModal("🔒 Debes iniciar sesión para agregar opciones.", "error");
+      showModal("Debes iniciar sesión para agregar opciones.", "error");
       return;
     }
 
     if (!optionData || !optionData.name.trim()) {
-        showModal("⚠️ El nombre de la opción es obligatorio.", "warning");
-        return;
+      showModal("El nombre de la opción es obligatorio.", "warning");
+      return;
+    }
+
+    // Sanitizar nombre de opción
+    const sanitizedOptionName = optionData.name.replace(/[^A-Za-zÁÉÍÓÚáéíóúÑñ\s]/g, '').trim();
+    if (!sanitizedOptionName) {
+      showModal('El nombre de la opción no puede contener números ni caracteres especiales.', 'warning');
+      return;
     }
 
     try {
@@ -139,14 +151,14 @@ export default function AdminCustomization() {
         headers: { "Content-Type": "application/json" },
         credentials: "include",
         body: JSON.stringify({
-          name: optionData.name,
+          name: sanitizedOptionName,
           priceExtra: parseFloat(optionData.price || 0),
           groupId: groupId
         })
       });
 
       if (response.ok) {
-        showModal(`✅ Opción "${optionData.name}" agregada correctamente`, "success");
+        showModal(`Opción "${optionData.name}" agregada correctamente`, "success");
         // Limpiar input solo de este grupo
         setNewOptions(prev => ({
           ...prev,
@@ -157,7 +169,7 @@ export default function AdminCustomization() {
         throw new Error("Error al guardar opción");
       }
     } catch (error) {
-      showModal("❌ Error al agregar la opción.", "error");
+      showModal("Error al agregar la opción.", "error");
     } finally {
       setActionLoading(false);
     }
@@ -165,29 +177,34 @@ export default function AdminCustomization() {
 
   // Manejar inputs de opciones individuales
   const handleOptionInputChange = (groupId, field, value) => {
+    // Si el campo es 'name' sanitizamos para evitar números/caracteres especiales
+    const newValue = field === 'name'
+      ? value.replace(/[^A-Za-zÁÉÍÓÚáéíóúÑñ\s]/g, '')
+      : value;
+
     setNewOptions(prev => ({
       ...prev,
       [groupId]: {
         ...prev[groupId],
-        [field]: value
+        [field]: newValue
       }
     }));
   };
 
   // RENDERIZADO
-  if (loading) return <div className="loading-container">⏳ Cargando panel de administración...</div>;
-  if (!category) return <div className="error-container">❌ No se encontró la categoría base.</div>;
+  if (loading) return <div className="loading-container">Cargando panel de administración...</div>;
+  if (!category) return <div className="error-container">No se encontró la categoría base.</div>;
 
   return (
     <div className="admin-custom-page">
       <header className="page-header">
-        <h1>🛠️ Personalización: {category.name}</h1>
+        <h1>Personalización: {category.name}</h1>
         <p>Gestiona los ingredientes y extras disponibles para tus clientes</p>
       </header>
 
       {/* FORMULARIO DE CREAR GRUPO */}
       <section className="create-section">
-        <h2>✨ Nuevo Grupo (Ej: Relleno, Pisos)</h2>
+        <h2>Nuevo Grupo (Ej: Relleno, Pisos)</h2>
         <form onSubmit={handleCreateGroup} className="admin-form">
           <div className="form-group">
             <label>Nombre del Grupo</label>
@@ -196,8 +213,10 @@ export default function AdminCustomization() {
               type="text" 
               placeholder="Ej: Sabor del Bizcocho"
               value={newGroup.name}
-              onChange={e => setNewGroup({...newGroup, name: e.target.value})}
+              onChange={e => setNewGroup({...newGroup, name: e.target.value.replace(/[^A-Za-zÁÉÍÓÚáéíóúÑñ\s]/g, '')})}
               required
+              pattern="^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$"
+              title="El nombre no puede contener números ni caracteres especiales"
             />
           </div>
           
@@ -223,7 +242,7 @@ export default function AdminCustomization() {
           </div>
 
           <button type="submit" className="primary-btn" disabled={actionLoading}>
-            {actionLoading ? "⏳ Guardando..." : "💾 Crear Grupo"}
+            {actionLoading ? "Guardando..." : "Crear Grupo"}
           </button>
         </form>
       </section>
@@ -231,12 +250,12 @@ export default function AdminCustomization() {
       {/* LISTADO DE GRUPOS EXISTENTES */}
       <div className="groups-container">
         {category.customizationGroups?.length === 0 ? (
-          <div className="no-groups">📭 No hay grupos de personalización creados todavía.</div>
+          <div className="no-groups">No hay grupos de personalización creados todavía.</div>
         ) : (
           category.customizationGroups?.map(group => (
             <div key={group.id} className="group-card">
               <div className="group-header">
-                <h3>📂 {group.name}</h3>
+                <h3>{group.name}</h3>
                 <span className="group-rules">
                   Selección: {group.minSelection} - {group.maxSelection}
                 </span>
@@ -264,7 +283,7 @@ export default function AdminCustomization() {
                             <span className="price-badge">+${Number(opt.priceExtra).toFixed(2)}</span>
                           ) : "Gratis"}
                         </td>
-                        <td>{opt.isAvailable ? "✅" : "❌"}</td>
+                        <td>{opt.isAvailable ? "Disponible" : "No disponible"}</td>
                       </tr>
                     ))}
                   </tbody>
@@ -279,6 +298,8 @@ export default function AdminCustomization() {
                     style={{flex: 2}}
                     value={newOptions[group.id]?.name || ""}
                     onChange={e => handleOptionInputChange(group.id, 'name', e.target.value)}
+                    pattern="^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$"
+                    title="El nombre no puede contener números ni caracteres especiales"
                   />
                   <input 
                     type="number" 

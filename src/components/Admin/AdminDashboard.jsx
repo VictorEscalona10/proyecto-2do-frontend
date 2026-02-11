@@ -1,122 +1,122 @@
-import { useState } from "react";
-import { Category } from "./pages/CategoryPage";
-import { ProductPage } from "./pages/ProductPage";
-import { Users } from "./pages/UsersPage";
-import { OrderPage } from "./pages/OrderPage";
-import { PDFTester } from "./pages/PDFTester"; // Nuevo componente
-import AdminCustomization from "./pages/Customization";
-import "./AdminDashboard.css";
+// AdminDashboard.jsx - Versión CORREGIDA
+import { useState } from 'react';
+import { Routes, Route, Link, useLocation, Navigate } from 'react-router-dom';
+import './AdminDashboard.css';
+import { Category } from './pages/CategoryPage.jsx';
+import { ProductPage } from './pages/ProductPage.jsx';
+import AdminChatPage  from './pages/AdminChatPage.jsx';
+import AdminCustomization from './pages/Customization';
+import { OrderPage } from './pages/OrderPage.jsx';
+import { Users } from './pages/UsersPage.jsx';
+import { PDFTester } from './pages/PDFTester.jsx';
+import StatsPage  from './pages/StatsPage.jsx';
 
-export const AdminDashboard = () => {
-  const [tab, setTab] = useState("category");
-  const [logoutLoading, setLogoutLoading] = useState(false);
-  const [showLogoutModal, setShowLogoutModal] = useState(false);
+export function AdminDashboard({ onShowModal }) {
+  const location = useLocation();
+  const [sidebarOpen, setSidebarOpen] = useState(true);
 
-  const API_URL = import.meta.env.VITE_API_URL;
+  const menuItems = [
+    { path: '/admin/dashboard', name: 'Dashboard', icon: '' },
+    { path: '/admin/products', name: 'Productos', icon: '' },
+    { path: '/admin/categories', name: 'Categorías', icon: '' },
+    { path: '/admin/users', name: 'Usuarios', icon: '' },
+    { path: '/admin/orders', name: 'Órdenes', icon: '' },
+    { path: '/admin/stats', name: 'Estadísticas', icon: '' },
+    { path: '/admin/pdf-tester', name: 'PDF Tester', icon: '' },
+    { path: '/admin/customization', name: 'Personalización', icon: '' },
+    { path: '/admin/chats', name: 'Chats', icon: '' },
+  ];
 
-  const handleLogout = async () => {
-    setLogoutLoading(true);
+  const sessionClose = async () => {
     try {
-      await fetch(`${API_URL}/auth/logout`, {
+      const response = await fetch('http://localhost:3000/auth/logout', {
         method: 'POST',
         credentials: 'include',
       });
-      localStorage.clear();
-      sessionStorage.clear();
-      window.location.href = '/login';
+      if (response.ok) {
+        window.location.href = '/login';
+      }
     } catch (error) {
       console.error('Error cerrando sesión:', error);
-      localStorage.clear();
-      sessionStorage.clear();
-      window.location.href = '/login';
     }
+  }
+  const toggleSidebar = () => {
+    setSidebarOpen(!sidebarOpen);
   };
-
-  const confirmLogout = () => {
-    setShowLogoutModal(true);
-  };
-
-  const navItems = [
-    { id: "category", label: "Inicio", icon: "🏠" },
-    { id: "users", label: "Usuarios", icon: "👥" },
-    { id: "products", label: "Productos", icon: "📦" },
-    { id: "orders", label: "Órdenes", icon: "📋" },
-    { id: "customization", label: "Personalización", icon: "🎨" },
-    { id: "pdf-tester", label: "Exportar PDFs", icon: "📄" }
-  ];
 
   return (
     <div className="admin-dashboard">
-      <header className="admin-header">
-        <div className="admin-header-content">
-          <div className="admin-title-section">
-            <h1 className="admin-main-title">🍰 Panel de Administración</h1>
-            <p className="admin-subtitle">Migdalis Tortas - Gestión Integral</p>
+      {/* Sidebar */}
+      <div className={`sidebar ${sidebarOpen ? 'open' : 'closed'}`}>
+        <div className="sidebar-header">
+          <h2>Panel de administrador</h2>
+        </div>
+        
+        <div className="sidebar-menu">
+          {menuItems.map((item) => (
+            <Link
+              key={item.path}
+              to={item.path}
+              className={`menu-item ${location.pathname === item.path ? 'active' : ''}`}
+            >
+              <span className="menu-icon">{item.icon}</span>
+              {sidebarOpen && <span className="menu-text">{item.name}</span>}
+            </Link>
+          ))}
+        </div>
+
+        <div className="sidebar-footer">
+
+            <span className="logout-icon"></span>
+            {sidebarOpen && <span onClick={sessionClose}>Salir</span>}
+        </div>
+      </div>
+
+      {/* Main Content */}
+      <div className="main-content">
+        <header className="admin-header">
+          <h1>Panel de Administración</h1>
+          <div className="user-info">
+            <span className="user-avatar"></span>
+            <span className="user-name">Administrador</span>
           </div>
-          <button 
-            onClick={confirmLogout}
-            disabled={logoutLoading}
-            className="logout-btn"
-          >
-            {logoutLoading ? "⏳ Cerrando..." : "🚪 Cerrar Sesión"}
-          </button>
-        </div>
-      </header>
+        </header>
 
-      <nav className="admin-nav">
-        {navItems.map((item) => (
-          <button
-            key={item.id}
-            onClick={() => setTab(item.id)}
-            className={`nav-btn ${tab === item.id ? 'nav-btn-active' : ''}`}
-          >
-            <span className="nav-icon">{item.icon}</span>
-            <span className="nav-label">{item.label}</span>
-          </button>
-        ))}
-      </nav>
-
-      <main className="admin-main">
-        <div className="admin-content">
-          {tab === "category" && <Category />}
-          {tab === "users" && <Users />}
-          {tab === "products" && <ProductPage />}
-          {tab === "orders" && <OrderPage />}
-          {tab === "pdf-tester" && <PDFTester />} {/* Nuevo componente */}
-          {tab === "customization" && <AdminCustomization />}
+        <div className="content-area">
+          <Routes>
+            {/* RUTAS CORREGIDAS - USANDO PATHS RELATIVOS */}
+            <Route 
+              index 
+              element={
+                <div className="dashboard-welcome">
+                  <h2>Bienvenido al Panel de Administración</h2>
+                  <p>Selecciona una opción del menú para comenzar.</p>
+                </div>
+              } 
+            />
+            <Route 
+              path="dashboard" 
+              element={
+                <div className="dashboard-welcome">
+                  <h2>Bienvenido al Panel de Administración</h2>
+                  <p>Selecciona una opción del menú para comenzar.</p>
+                </div>
+              } 
+            />
+            <Route path="products" element={<ProductPage onShowModal={onShowModal} />} />
+            <Route path="categories" element={<Category onShowModal={onShowModal} />} />
+            <Route path="users" element={<Users onShowModal={onShowModal} />} />
+            <Route path="customization" element={<AdminCustomization onShowModal={onShowModal} />} />
+            <Route path="stats" element={<StatsPage onShowModal={onShowModal} />} />
+            <Route path="orders" element={<OrderPage onShowModal={onShowModal} />} />
+            <Route path="pdf-tester" element={<PDFTester onShowModal={onShowModal} />} />
+            <Route path="chats" element={<AdminChatPage onShowModal={onShowModal} />} />
+            
+            {/* Redirección para rutas no encontradas */}
+            <Route path="*" element={<Navigate to="/admin/dashboard" replace />} />
+          </Routes>
         </div>
-      </main>
-
-      {/* Modal de Confirmación de Logout */}
-      {showLogoutModal && (
-        <div className="modal-overlay" onClick={() => setShowLogoutModal(false)}>
-          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-            <div className="modal-header warning">
-              <h3>⚠️ Confirmar Cierre de Sesión</h3>
-              <button className="close-btn" onClick={() => setShowLogoutModal(false)}>×</button>
-            </div>
-            <div className="modal-body">
-              <p>¿Estás seguro de que quieres cerrar sesión?</p>
-            </div>
-            <div className="modal-footer">
-              <button 
-                className="modal-btn confirm-btn"
-                onClick={handleLogout}
-                disabled={logoutLoading}
-              >
-                {logoutLoading ? "⏳ Cerrando..." : "✅ Sí, Cerrar Sesión"}
-              </button>
-              <button 
-                className="modal-btn cancel-btn"
-                onClick={() => setShowLogoutModal(false)}
-                disabled={logoutLoading}
-              >
-                ❌ Cancelar
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      </div>
     </div>
   );
-};
+}

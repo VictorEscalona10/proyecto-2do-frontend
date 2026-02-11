@@ -95,7 +95,7 @@ export default function Login({ onShowModal }) {
         }
         
         setTimeout(() => {
-          navigate('/');
+          navigate('/admin');
         }, 1500);
       } else {
         console.error("Error en el login:", data.message || response.statusText);

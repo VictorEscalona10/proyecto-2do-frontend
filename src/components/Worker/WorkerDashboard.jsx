@@ -108,7 +108,7 @@ const closeModal = () => {
       onConfirm: async () => {
         setLogoutLoading(true);
         try {
-          await fetch('http://localhost:3000/auth/logout', {
+          await fetch(`${API_URL}/auth/logout`, {
             method: 'POST',
             credentials: 'include',
           });

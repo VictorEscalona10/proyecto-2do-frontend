@@ -68,6 +68,13 @@ export function Category() {
       return;
     }
 
+    // Validar que el nombre no contenga números u otros caracteres inválidos
+    const sanitized = name.replace(/[^A-Za-zÁÉÍÓÚáéíóúÑñ\s]/g, '').trim();
+    if (!sanitized) {
+      showModal("El nombre de la categoría no puede contener números ni caracteres especiales", "warning");
+      return;
+    }
+
     try {
       const request = await fetch(`${API_URL}/category/create`, {
         method: "POST",
@@ -75,7 +82,7 @@ export function Category() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ name }),
+        body: JSON.stringify({ name: sanitized.toLowerCase() }),
       });
       
       if (!request.ok) {
@@ -85,7 +92,7 @@ export function Category() {
       const response = await request.json();
       setCategories([...categories, response]);
       setNewCategory("");
-      showModal("✅ Categoría creada con éxito", "success");
+      showModal("Categoría creada con éxito", "success");
     } catch (error) {
       console.error("Error creating category:", error);
       showModal("Error al crear la categoría", "error");
@@ -103,7 +110,7 @@ export function Category() {
             credentials: "include",
           });
           setCategories(categories.filter((category) => category.name !== name));
-          showModal("✅ Categoría eliminada con éxito", "success");
+          showModal("Categoría eliminada con éxito", "success");
         } catch (error) {
           console.error("Error deleting category:", error);
           showModal("Error al eliminar la categoría", "error");
@@ -142,20 +149,20 @@ export function Category() {
           className={`tab-button ${activeTab === 'list' ? 'active' : ''}`}
           onClick={() => setActiveTab('list')}
         >
-          📋 Lista de Categorías
+          Lista de Categorías
         </button>
         <button 
           className={`tab-button ${activeTab === 'create' ? 'active' : ''}`}
           onClick={() => setActiveTab('create')}
         >
-          ➕ Crear Categoría
+          Crear Categoría
         </button>
       </div>
 
       {activeTab === 'list' && (
         <div className="list-panel">
           <div className="search-panel">
-            <h3>🔍 Buscar Categorías</h3>
+            <h3>Buscar Categorías</h3>
             <div className="search-controls">
               <div className="search-type-selector">
                 <label htmlFor="searchType">Buscar por:</label>
@@ -175,7 +182,7 @@ export function Category() {
                   type="text"
                   value={searchTerm}
                   onChange={handleSearch}
-                  placeholder={searchType === 'name' ? "🔍 Buscar por nombre..." : "🔍 Buscar por ID..."}
+                  placeholder={searchType === 'name' ? "Buscar por nombre..." : "Buscar por ID..."}
                   className="search-input"
                 />
                 {searchTerm && (
@@ -184,7 +191,7 @@ export function Category() {
                     className="clear-search-btn"
                     title="Limpiar búsqueda"
                   >
-                    ✕
+                    X
                   </button>
                 )}
               </div>
@@ -204,48 +211,48 @@ export function Category() {
               className="load-btn"
               disabled={loading}
             >
-              {loading ? "⏳ Cargando..." : "🔄 Actualizar Lista"}
+              {loading ? "Cargando..." : "Actualizar Lista"}
             </button>
           </div>
 
           <div className="categories-list">
             {loading ? (
               <div className="loading-state">
-                <p>⏳ Cargando categorías...</p>
+                <p>Cargando categorías...</p>
               </div>
             ) : filteredCategories.length === 0 ? (
               <div className="empty-state">
                 {searchTerm ? (
                   <>
-                    <p>🔍 No se encontraron categorías</p>
+                    <p>No se encontraron categorías</p>
                     <p>No hay resultados para "{searchTerm}"</p>
                     <button onClick={clearSearch} className="load-btn">
-                      🔄 Mostrar todas
+                      Mostrar todas
                     </button>
                   </>
                 ) : (
                   <>
-                    <p>📭 No hay categorías cargadas</p>
+                    <p>No hay categorías cargadas</p>
                     <p>Haz clic en "Actualizar Lista" para cargar las categorías</p>
                   </>
                 )}
               </div>
             ) : (
               <>
-                <h3>📂 Categorías Existentes ({filteredCategories.length})</h3>
+                <h3>Categorías Existentes ({filteredCategories.length})</h3>
                 <div className="categories-grid">
                   {filteredCategories.map((category) => (
                     <div key={category.id} className="category-card">
                       <div className="category-info">
                         <div className="category-id">ID: {category.id}</div>
-                        <span className="category-name">🏷️ {category.name}</span>
+                        <span className="category-name">{category.name}</span>
                       </div>
                       <button
                         onClick={() => handleDelete(category.name)}
                         className="delete-btn"
                         title="Eliminar categoría"
                       >
-                        🗑️ Eliminar
+                        Eliminar
                       </button>
                     </div>
                   ))}
@@ -259,18 +266,24 @@ export function Category() {
       {activeTab === 'create' && (
         <div className="create-panel">
           <div className="category-form">
-            <h3>➕ Crear Nueva Categoría</h3>
+            <h3>Crear Nueva Categoría</h3>
             <form onSubmit={handleSubmit}>
               <div className="form-group">
                 <input
                   type="text"
                   value={newCategory}
-                  onChange={(e) => setNewCategory(e.target.value)}
-                  placeholder="📝 Nombre de la nueva categoría"
+                  onChange={(e) => {
+                    const val = e.target.value.replace(/[^A-Za-zÁÉÍÓÚáéíóúÑñ\s]/g, '');
+                    setNewCategory(val);
+                  }}
+                  placeholder="Nombre de la nueva categoría"
                   className="category-input"
+                  required
+                  pattern="^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$"
+                  title="El nombre no puede contener números ni caracteres especiales"
                 />
                 <button type="submit" className="add-btn">
-                  ➕ Crear Categoría
+                  Crear Categoría
                 </button>
               </div>
             </form>
@@ -280,7 +293,7 @@ export function Category() {
           </div>
 
           <div className="existing-categories-preview">
-            <h4>📋 Categorías Existentes ({categories.length})</h4>
+            <h4>Categorías Existentes ({categories.length})</h4>
             {categories.length > 0 ? (
               <div className="categories-preview-list">
                 {categories.slice(0, 5).map((category) => (
@@ -306,13 +319,7 @@ export function Category() {
         <div className="modal-overlay" onClick={closeModal}>
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>
             <div className={`modal-header ${modal.type}`}>
-              <h3>
-                {modal.type === 'success' && '✅ '}
-                {modal.type === 'error' && '❌ '}
-                {modal.type === 'warning' && '⚠️ '}
-                {modal.type === 'confirm' && '❓ '}
-                Mensaje del Sistema
-              </h3>
+              <h3>Mensaje del Sistema</h3>
               <button className="close-btn" onClick={closeModal}>×</button>
             </div>
             <div className="modal-body">
@@ -328,13 +335,13 @@ export function Category() {
                       closeModal();
                     }}
                   >
-                    ✅ Sí
+                    Sí
                   </button>
                   <button 
                     className="modal-btn cancel-btn"
                     onClick={closeModal}
                   >
-                    ❌ No
+                    No
                   </button>
                 </>
               ) : (

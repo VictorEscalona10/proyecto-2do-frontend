@@ -7,10 +7,10 @@ const Modal = ({ show, type, message, onConfirm, onClose, autoHide }) => {
 
   const getModalTitle = () => {
     switch (type) {
-      case 'success': return '✅ Operación Exitosa';
-      case 'error': return '❌ Error';
-      case 'warning': return '⚠️ Advertencia';
-      case 'confirm': return '❓ Confirmación';
+      case 'success': return 'Operación Exitosa';
+      case 'error': return 'Error';
+      case 'warning': return 'Advertencia';
+      case 'confirm': return 'Confirmación';
       default: return 'Mensaje del Sistema';
     }
   };
@@ -41,13 +41,13 @@ const Modal = ({ show, type, message, onConfirm, onClose, autoHide }) => {
                     onClose();
                   }}
                 >
-                  ✅ Sí
+                  Sí
                 </button>
                 <button 
                   className={`${styles.modalBtn} ${styles.cancelBtn}`}
                   onClick={onClose}
                 >
-                  ❌ No
+                  No
                 </button>
               </>
             ) : (
@@ -109,7 +109,7 @@ export const PDFTester = () => {
       // Mostrar mensaje de inicio
       showModal({
         type: 'success',
-        message: '⏳ Generando PDF...',
+        message: `Generando PDF...`,
         autoHide: false
       });
 
@@ -132,7 +132,7 @@ export const PDFTester = () => {
       // Mostrar mensaje de éxito que se auto-cierra
       showModal({
         type: 'success',
-        message: `✅ PDF "${filename}" descargado exitosamente`,
+        message: `PDF "${filename}" descargado exitosamente`,
         autoHide: true
       });
       
@@ -140,7 +140,7 @@ export const PDFTester = () => {
       console.error('Error descargando PDF:', error);
       showModal({
         type: 'error',
-        message: `❌ Error al descargar el PDF: ${error.message}`,
+        message: `Error al descargar el PDF: ${error.message}`,
         autoHide: true
       });
     } finally {
@@ -215,7 +215,7 @@ export const PDFTester = () => {
 
       {loading && (
         <div className={styles.loadingOverlay}>
-          <div className={styles.loadingSpinner}>⏳ Generando PDF...</div>
+          <div className={styles.loadingSpinner}>Generando PDF...</div>
         </div>
       )}
 
@@ -224,7 +224,7 @@ export const PDFTester = () => {
         <div className={styles.section}>
           <h2 className={styles.sectionTitle}>
             Bitácora de Base de Datos 
-            <span className={`${styles.status} ${styles.statusActive}`}>✓ Listo</span>
+            <span className={`${styles.status} ${styles.statusActive}`}>Listo</span>
           </h2>
           <p className={styles.sectionDescription}>
             Exporta reportes completos de las operaciones registradas en la base de datos.
@@ -243,7 +243,7 @@ export const PDFTester = () => {
               })}
               disabled={loading}
             >
-              📄 Descargar Todos los Logs
+              Descargar Todos los Logs
             </button>
           </div>
 
@@ -279,7 +279,7 @@ export const PDFTester = () => {
               onClick={downloadFilteredLogs}
               disabled={loading}
             >
-              🔍 Descargar con Filtros
+              Descargar con Filtros
             </button>
           </div>
 
@@ -292,28 +292,28 @@ export const PDFTester = () => {
                 onClick={() => downloadSpecificLogs('Product', 'logs-productos.pdf')}
                 disabled={loading}
               >
-                🛍️ Logs de Productos
+                Logs de Productos
               </button>
               <button 
                 className={styles.btn}
                 onClick={() => downloadSpecificLogs('Order', 'logs-ordenes.pdf')}
                 disabled={loading}
               >
-                📦 Logs de Órdenes
+                Logs de Órdenes
               </button>
               <button 
                 className={styles.btn}
                 onClick={() => downloadSpecificLogs('User', 'logs-usuarios.pdf')}
                 disabled={loading}
               >
-                👥 Logs de Usuarios
+                Logs de Usuarios
               </button>
               <button 
                 className={styles.btn}
                 onClick={() => downloadSpecificLogs('Category', 'logs-categorias.pdf')}
                 disabled={loading}
               >
-                🏷️ Logs de Categorías
+                Logs de Categorías
               </button>
             </div>
           </div>
@@ -322,8 +322,8 @@ export const PDFTester = () => {
         {/* Sección 2: Usuarios */}
         <div className={styles.section}>
           <h2 className={styles.sectionTitle}>
-            👥 Reportes de Usuarios 
-            <span className={`${styles.status} ${styles.statusActive}`}>✓ Listo</span>
+            Reportes de Usuarios 
+            <span className={`${styles.status} ${styles.statusActive}`}>Listo</span>
           </h2>
           <p className={styles.sectionDescription}>
             Exporta reportes completos de los usuarios registrados en el sistema.
@@ -342,7 +342,7 @@ export const PDFTester = () => {
               })}
               disabled={loading}
             >
-              📄 Descargar Todos los Usuarios
+              Descargar Todos los Usuarios
             </button>
           </div>
 
@@ -355,21 +355,21 @@ export const PDFTester = () => {
                 onClick={() => downloadSpecificUsers('ADMINISTRADOR', 'administradores.pdf')}
                 disabled={loading}
               >
-                👨‍💼 Administradores
+                Administradores
               </button>
               <button 
                 className={styles.btn}
                 onClick={() => downloadSpecificUsers('USUARIO', 'usuarios-clientes.pdf')}
                 disabled={loading}
               >
-                👤 Usuarios/Clientes
+                Usuarios/Clientes
               </button>
               <button 
                 className={styles.btn}
                 onClick={() => downloadSpecificUsers('TRABAJADOR', 'trabajadores.pdf')}
                 disabled={loading}
               >
-                👷 Trabajadores
+                Trabajadores
               </button>
             </div>
           </div>
@@ -402,7 +402,7 @@ export const PDFTester = () => {
               onClick={downloadFilteredUsers}
               disabled={loading}
             >
-              🔍 Descargar con Filtros
+              Descargar con Filtros
             </button>
           </div>
         </div>

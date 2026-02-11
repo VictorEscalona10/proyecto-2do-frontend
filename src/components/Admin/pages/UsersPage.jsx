@@ -149,9 +149,9 @@ const UserCard = ({ user, onUpdateRole, onDeleteUser, actionLoading, onShowModal
         onClick={() => setIsExpanded(!isExpanded)}
       >
         <div className="user-header-main">
-          <h4>👤 {user.name}</h4>
+          <h4>{user.name}</h4>
           <span className={`status-badge ${getStatusClass(user.isActive)}`}>
-            {user.isActive ? '✅ Activo' : '❌ Inactivo'}
+            {user.isActive ? 'Activo' : 'Inactivo'}
           </span>
         </div>
         <div className={`expand-arrow ${isExpanded ? 'expanded' : ''}`}>
@@ -164,22 +164,22 @@ const UserCard = ({ user, onUpdateRole, onDeleteUser, actionLoading, onShowModal
         <div className="user-content">
           <div className="user-details">
             <div className="detail-row">
-              <strong>📧 Email:</strong> {user.email}
+              <strong>Email:</strong> {user.email}
             </div>
             <div className="detail-row">
-              <strong>🆔 Cédula:</strong> {user.Identification}
+              <strong>Cédula:</strong> {user.Identification}
             </div>
             <div className="detail-row">
-              <strong>📞 Teléfono:</strong> {user.phoneNumber}
+              <strong>Teléfono:</strong> {user.phoneNumber}
             </div>
             <div className="detail-row">
-              <strong>👑 Rol:</strong>
+              <strong>Rol:</strong>
               <span className={`role-badge ${getRoleClass(user.role)}`}>
                 {user.role}
               </span>
             </div>
             <div className="detail-row">
-              <strong>📅 Registro:</strong> {formatDate(user.createdAt)}
+              <strong>Registro:</strong> {formatDate(user.createdAt)}
             </div>
           </div>
 
@@ -200,7 +200,7 @@ const UserCard = ({ user, onUpdateRole, onDeleteUser, actionLoading, onShowModal
               disabled={actionLoading}
               className="delete-btn"
             >
-              🗑️ Eliminar
+              Eliminar
             </button>
           </div>
         </div>
@@ -215,10 +215,10 @@ const Modal = ({ show, type, message, onConfirm, onClose }) => {
 
   const getModalTitle = () => {
     switch (type) {
-      case 'success': return '✅ Operación Exitosa';
-      case 'error': return '❌ Error';
-      case 'warning': return '⚠️ Advertencia';
-      case 'confirm': return '❓ Confirmación';
+      case 'success': return 'Operación Exitosa';
+      case 'error': return 'Error';
+      case 'warning': return 'Advertencia';
+      case 'confirm': return 'Confirmación';
       default: return 'Mensaje del Sistema';
     }
   };
@@ -243,13 +243,13 @@ const Modal = ({ show, type, message, onConfirm, onClose }) => {
                   onClose();
                 }}
               >
-                ✅ Sí
+                Sí
               </button>
               <button 
                 className="modal-btn cancel-btn"
                 onClick={onClose}
               >
-                ❌ No
+                No
               </button>
             </>
           ) : (
@@ -351,7 +351,7 @@ export const Users = () => {
     try {
       const searchResult = await searchUsers(searchTerm, searchType);
       setFilteredUsers(searchResult.data || []);
-      showMessage(`✅ ${searchResult.count || searchResult.data.length} usuario(s) encontrado(s)`, 'success');
+      showMessage(`${searchResult.count || searchResult.data.length} usuario(s) encontrado(s)`, 'success');
     } catch (error) {
       if (error.message.includes('404')) {
         showMessage('No se encontraron usuarios con los criterios especificados', 'warning');
@@ -369,7 +369,7 @@ export const Users = () => {
     setMessage('');
     try {
       await updateUserRole(email, newRole);
-      showMessage(`✅ Rol actualizado correctamente a ${newRole}`, 'success');
+      showMessage(`Rol actualizado correctamente a ${newRole}`, 'success');
       // Actualizar la lista local
       const updatedUsers = users.map(user => 
         user.email === email ? { ...user, role: newRole } : user
@@ -377,7 +377,7 @@ export const Users = () => {
       setUsers(updatedUsers);
       setFilteredUsers(updatedUsers);
     } catch (error) {
-      showMessage(`❌ Error al actualizar rol: ${error.message}`, 'error');
+      showMessage(`Error al actualizar rol: ${error.message}`, 'error');
     } finally {
       setActionLoading(false);
     }
@@ -388,11 +388,11 @@ export const Users = () => {
     setMessage('');
     try {
       await deleteUser(email);
-      showMessage('✅ Usuario eliminado correctamente', 'success');
+      showMessage('Usuario eliminado correctamente', 'success');
       // Recargar la lista
       loadAllUsers();
     } catch (error) {
-      showMessage(`❌ Error al eliminar usuario: ${error.message}`, 'error');
+      showMessage(`Error al eliminar usuario: ${error.message}`, 'error');
     } finally {
       setActionLoading(false);
     }
@@ -411,23 +411,23 @@ export const Users = () => {
   };
 
   const getMessageClass = () => {
-    if (message.includes('Error') || message.includes('❌')) return 'message-error';
-    if (message.includes('actualizado') || message.includes('eliminado') || message.includes('✅')) return 'message-success';
+    if (message.toLowerCase().includes('error')) return 'message-error';
+    if (message.includes('actualizado') || message.includes('eliminado')) return 'message-success';
     return 'message-warning';
-  };
+  }; 
 
   const getSearchPlaceholder = () => {
     switch (searchType) {
-      case 'email': return '📧 Buscar por email...';
-      case 'name': return '👤 Buscar por nombre...';
-      case 'Identification': return '🆔 Buscar por cédula...';
+      case 'email': return 'Buscar por email...';
+      case 'name': return 'Buscar por nombre...';
+      case 'Identification': return 'Buscar por cédula...';
       default: return 'Buscar usuarios...';
     }
   };
 
   return (
     <div className="users-page">
-      <h2>👥 Gestión de Usuarios</h2>
+      <h2>Gestión de Usuarios</h2>
       
       {/* Tabs de navegación */}
       <div className="tabs">
@@ -435,13 +435,13 @@ export const Users = () => {
           className={`tab-button ${activeTab === 'list' ? 'active' : ''}`}
           onClick={() => setActiveTab('list')}
         >
-          📋 Lista de Usuarios
+          Lista de Usuarios
         </button>
         <button 
           className={`tab-button ${activeTab === 'search' ? 'active' : ''}`}
           onClick={() => setActiveTab('search')}
         >
-          🔍 Buscar Usuarios
+          Buscar Usuarios
         </button>
       </div>
 
@@ -456,21 +456,21 @@ export const Users = () => {
       {activeTab === 'list' && (
         <div className="list-panel">
           <div className="panel-header">
-            <h3>📋 Todos los Usuarios ({users.length})</h3>
+            <h3>Todos los Usuarios ({users.length})</h3>
             <button 
               onClick={loadAllUsers}
               disabled={loading}
               className="refresh-btn"
             >
-              {loading ? '⏳ Cargando...' : '🔄 Actualizar Lista'}
+              {loading ? 'Cargando...' : 'Actualizar Lista'}
             </button> 
           </div>
 
           {loading ? (
-            <div className="loading-state">⏳ Cargando usuarios...</div>
+            <div className="loading-state">Cargando usuarios...</div>
           ) : filteredUsers.length === 0 ? (
             <div className="empty-state">
-              <p>📭 No hay usuarios registrados</p>
+              <p>No hay usuarios registrados</p>
             </div>
           ) : (
             <div className="users-grid">
@@ -492,7 +492,7 @@ export const Users = () => {
       {/* Panel de Búsqueda Minimalista */}
       {activeTab === 'search' && (
         <div className="search-panel">
-          <h3>🔍 Buscar Usuarios</h3>
+          <h3>Buscar Usuarios</h3>
           
           {/* Búsqueda minimalista */}
           <div className="minimal-search">
@@ -502,8 +502,8 @@ export const Users = () => {
                 onChange={(e) => setSearchType(e.target.value)}
                 className="search-type-select"
               >
-                <option value="email">📧 Email</option>
-                <option value="name">👤 Nombre</option>
+                <option value="email">Email</option>
+                <option value="name">Nombre</option>
                 <option value="Identification">🆔 Cédula</option>
               </select>
               
@@ -511,7 +511,15 @@ export const Users = () => {
                 <input
                   type={searchType === 'Identification' ? 'number' : 'text'}
                   value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
+                  onChange={(e) => {
+                    const val = e.target.value;
+                    if (searchType === 'name') {
+                      const sanitized = val.replace(/[^A-Za-zÁÉÍÓÚáéíóúÑñ\s]/g, '');
+                      setSearchTerm(sanitized);
+                    } else {
+                      setSearchTerm(val);
+                    }
+                  }}
                   onKeyPress={handleKeyPress}
                   placeholder={getSearchPlaceholder()}
                   className="search-input"
@@ -522,7 +530,7 @@ export const Users = () => {
                     className="clear-search-btn"
                     title="Limpiar búsqueda"
                   >
-                    ✕
+                    X
                   </button>
                 )}
               </div>
@@ -532,7 +540,7 @@ export const Users = () => {
                 disabled={searchLoading}
                 className="search-btn"
               >
-                {searchLoading ? '⏳' : '🔍'}
+                {searchLoading ? 'Cargando...' : 'Buscar'}
               </button>
             </div>
           </div>
@@ -541,12 +549,12 @@ export const Users = () => {
           {filteredUsers.length > 0 ? (
             <div className="search-results">
               <div className="results-header">
-                <h4>📊 Resultados encontrados: {filteredUsers.length}</h4>
+                <h4>Resultados encontrados: {filteredUsers.length}</h4>
                 <button 
                   onClick={clearSearch}
                   className="clear-results-btn"
                 >
-                  🔄 Mostrar todos
+                  Mostrar todos
                 </button>
               </div>
               
@@ -565,12 +573,12 @@ export const Users = () => {
             </div>
           ) : searchTerm && !searchLoading ? (
             <div className="no-results">
-              <p>🔍 No se encontraron usuarios</p>
+              <p>No se encontraron usuarios</p>
               <p>Intenta con otros términos de búsqueda</p>
             </div>
           ) : (
             <div className="search-info">
-              <p>💡 Selecciona un tipo de búsqueda e ingresa el término para buscar usuarios</p>
+              <p>Selecciona un tipo de búsqueda e ingresa el término para buscar usuarios</p>
             </div>
           )}
         </div>
